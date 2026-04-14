@@ -26,6 +26,7 @@ IMPORTANT_FILES = [
     APP_ROOT / "static" / "js" / "app.js",
     APP_ROOT / "templates" / "index.html",
     APP_ROOT / "openapi.yaml",
+    APP_ROOT / "README.md",
     APP_ROOT / "start_UnityAssetsManager.bat",
 ]
 
@@ -139,7 +140,7 @@ def sync_app_py(new_version: str) -> bool:
 def sync_readme(new_version: str) -> bool:
     target = APP_ROOT / "README.md"
     text = target.read_text(encoding="utf-8")
-    new_text, changed = replace_first(r"^\*\*Version\*\*:\s*\d+\.\d+\.\d+.*$", f"**Version**: {new_version}", text)
+    new_text, changed = replace_first(r"^Version:\s*\d+\.\d+\.\d+.*$", f"Version: {new_version}", text)
     if not changed:
         return False
     if new_text == text:
