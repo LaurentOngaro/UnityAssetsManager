@@ -13,7 +13,6 @@ import argparse
 import re
 import subprocess
 import sys
-from datetime import date
 from pathlib import Path
 
 
@@ -35,7 +34,6 @@ SYNC_FILES = [
     APP_ROOT / "README.md",
     APP_ROOT / "API_GUIDE.md",
     APP_ROOT / "openapi.yaml",
-    APP_ROOT / "CHANGELOG.md",
     VERSION_FILE,
 ]
 
@@ -193,40 +191,6 @@ def sync_openapi(new_version: str) -> bool:
     return True
 
 
-def sync_changelog(new_version: str, scope: str, changed_files: list[str]) -> bool:
-    target = APP_ROOT / "CHANGELOG.md"
-    text = target.read_text(encoding="utf-8")
-
-    if f"## [{new_version}]" in text:
-        return False
-
-    today = date.today().isoformat()
-    pretty_changed = ", ".join(changed_files) if changed_files else "(manual)"
-    entry = (
-        f"## [{new_version}] - {today}\n\n"
-        "### 🔧 Modifié\n\n"
-        f"- Bump automatique `{scope}` déclenché sur fichiers importants.\n"
-        f"- Fichiers importants détectés: {pretty_changed}.\n\n"
-        "---\n\n"
-    )
-
-    lines = text.splitlines(keepends=True)
-    if not lines:
-        new_text = "# Changelog\n\n" + entry
-    else:
-        # Keep title as first line and insert new release block right after.
-        head = lines[0]
-        tail = "".join(lines[1:])
-        if not tail.startswith("\n"):
-            tail = "\n" + tail
-        new_text = head + "\n" + entry + tail
-
-    if new_text == text:
-        return False
-    target.write_text(new_text, encoding="utf-8")
-    return True
-
-
 def sync_all(new_version: str, scope: str, changed_files: list[str]) -> list[str]:
     touched: list[str] = []
 
@@ -240,8 +204,6 @@ def sync_all(new_version: str, scope: str, changed_files: list[str]) -> list[str
         touched.append("API_GUIDE.md")
     if sync_openapi(new_version):
         touched.append("openapi.yaml")
-    if sync_changelog(new_version, scope, changed_files):
-        touched.append("CHANGELOG.md")
 
     return touched
 

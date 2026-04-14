@@ -2,10 +2,9 @@
 
 ## Bugs (last: BUG1)
 
-## Corrections immédiates (last:CI2)
+## Corrections immédiates (last:CI1)
 
 - [ ] CI1: déplacer `config.json` en `config/config.json`
-- [x] CI2: créer des modules git dédiés pour les 2 projets (car ils appartiennes à 2 dépot différents)
 
 ## Améliorations du projet
 
@@ -13,35 +12,41 @@ Pour plus de détails sur l'implémentation de ces modifications, consulter le f
 
 ### Priorités d'implémentation
 
-classement des demandes par priorité de la plus urgente à la moins urgente:
+classement simplifie des demandes par priorité de la plus urgente à la moins urgente, avec les mêmes identifiants que `PLAN_ACTIONS.md`:
 
-- GE2 (Création agent & instructions type FabAssetsManager)
-- CI1 (Déplacer config.json vers config/config.json)
+- CI1 (Déplacer `config.json` vers `config/config.json`)
+- GE2 (Créer instructions et agent spécifiques au projet)
+- GE1 (Ajouter une zone de maintenance dans l'UI)
 - REF1 (Isoler constantes et variables globales)
-- REF2 (Découpage de app.py en modules)
-- API3 (Standardiser le format des erreurs API pendant le découpage des routes)
+- REF2 (Découper `app.py` en modules et optimiser SQLite)
+- API3 (Uniformiser le contrat d'erreur sur toutes les routes)
+- API1 (Vérifier la cohérence OpenAPI)
+- API2 (Ajouter des tests API d'erreurs standards)
 - DOC1 (Fusionner les documents de suivi et migration)
-- DOC2 (Consolider README et API_GUIDE)
-- API1 (Cohérence OpenAPI)
-- API2 (Tests d'API)
-- GE1 (Actions de maintenance UI)
-- DOC3 (Update SQLITE_SUPPORT)
-- AFF1 (Drag-and-drop colonnes)
+- DOC2 (Consolider `README.md` et `API_GUIDE.md`)
+- DOC3 (Garder `SQLITE_SUPPORT.md` orienté setup SQLite)
+- AFF1 (Redimensionner les colonnes)
 - AFF2 (Popup détail de ligne)
 - FEAT1 (Parité V1 restante)
-- MIG1 (Nomenclature globale)
+- MIG1 (Mettre à jour la nomenclature)
+- MIG2 (Déprécier les flux legacy)
+- MIG3 (Archiver V1 après validation)
+- INT1 (Service de normalisation raw multi-boutiques)
+- INT2 (Provider Unity)
+- INT3 (Provider Fab)
+- INT4 (Provider boutiques manuelles)
 
 ### Documentation (last: DOC3)
 
-- [ ] DOC1: Analyse et prioriser ou Fusionner les docs "MIGRATION STATE V1 to V2" "plan_action_UnityAssetsManager" "PLAN_ACTIONS"
-- [ ] DOC2: Consolider les redondances entre `README.md`, `API_GUIDE.md` et docs techniques.
-- [ ] DOC3: Garder `SQLITE_SUPPORT.md` orienté setup SQLite uniquement.
+- [ ] DOC1: Analyse et prioriser ou Fusionner les docs "MIGRATION STATE V1 to V2" ([source backlog](./_helpers/MIGRATION%20STATE%20V1%20to%20V2%20.md)), [plan_action_UnityAssetsManager](./_helpers/plan_action_UnityAssetsManager.md) et [PLAN_ACTIONS](./_helpers/PLAN_ACTIONS.md).
+- [ ] DOC2: Consolider les redondances entre `README.md` ([README](./README.md)), `API_GUIDE.md` ([API guide](./API_GUIDE.md)) et docs techniques.
+- [ ] DOC3: Garder `SQLITE_SUPPORT.md` ([support SQLite](./_helpers/SQLITE_SUPPORT.md)) orienté setup SQLite uniquement.
 
 ### filtrage (last: )
 
 ### pagination (last: )
 
-### gestion (last: GE1)
+### gestion (last: GE2)
 
 - [ ] GE1: ajouter une zone avec des action de maintenance en bas de la colonne de gauche
 - [ ] GE2: créer des instructions et un agent spécifique à ce projet
@@ -50,7 +55,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 ### refactoring (last: REF2)
 
 - [ ] REF1: Déplacer les constantes de configuration et magic numbers (ex: `DATA_PATH`, `DEFAULT_EXPORT_TEMPLATES`) codés en dur dans `app.py` vers le fichier de configuration dédié ou un module `config.py`. (Nécessite de générer un doc de validation temporaire avant d'appliquer).
-- [ ] REF2: Modulariser l'application (découper le monolithe `app.py` en modules distincts, supprimer les dépendances legacy, optimiser SQLite). Voir `_helpers/REFACTORING_MODULARIZATION.md`.
+- [ ] REF2: Modulariser l'application (découper le monolithe `app.py` en modules distincts, supprimer les dépendances legacy, optimiser SQLite). Voir [REFACTORING_MODULARIZATION.md](./_helpers/REFACTORING_MODULARIZATION.md).
 
 ### Affichage (last: AFF2)
 
@@ -59,9 +64,9 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Features (last: FEAT1)
 
-- [ ] FEAT1: traiter `MIGRATION STATE V1 to V2 .md` comme backlog de parité V1 restant.
+- [ ] FEAT1: traiter `MIGRATION STATE V1 to V2 .md` ([backlog migration](./_helpers/MIGRATION%20STATE%20V1%20to%20V2%20.md)) comme backlog de parité V1 restant.
 
-### Renforcement du contrat API (last: API4)
+### Renforcement du contrat API (last: API3)
 
 - [ ] API1: Vérifier la cohérence entre implémentation Flask et `openapi.yaml`.
 - [ ] API2: Ajouter des tests API pour les cas d'erreurs standards (payload invalide, profil absent, setup invalide).

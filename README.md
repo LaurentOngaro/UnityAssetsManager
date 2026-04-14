@@ -191,8 +191,11 @@ profiles/
 
 ### Documentation technique
 
-- **Migration V1→V2**: [`MIGRATION STATE V1 to V2.md`](MIGRATION%20STATE%20V1%20to%20V2%20.md) - Matrice complète, gaps, roadmap (8/12 features V1 = 67% parité)
-- **Support SQLite**: `_Helpers/SQLITE_SUPPORT.md` - Guide configuration, migration CSV→SQLite, API, troubleshooting, benchmarks
+- **Backlog principal**: [`TODO.md`](TODO.md) - Vue priorisée des tâches à faire
+- **Plan d'action**: [`PLAN_ACTIONS.md`](./_helpers/PLAN_ACTIONS.md) - Vue détaillée et ordonnée des tâches
+- **Migration V1→V2**: [`MIGRATION STATE V1 to V2.md`](MIGRATION%20STATE%20V1%20to%20V2%20.md) - Matrice complète, gaps, roadmap, source backlog liée à FEAT1/MIG1/MIG2/MIG3
+- **Refactoring & modularisation**: [`REFACTORING_MODULARIZATION.md`](./_helpers/REFACTORING_MODULARIZATION.md) - Plan détaillé lié à REF2
+- **Support SQLite**: [`SQLITE_SUPPORT.md`](./_helpers/SQLITE_SUPPORT.md) - Guide configuration, migration CSV→SQLite, API, troubleshooting, benchmarks
 - **Setup**: [`SETUP_CHECKLIST.md`](SETUP_CHECKLIST.md) - Checklist installation et configuration
 - **Quickstart**: [`QUICKSTART.md`](QUICKSTART.md) - Guide démarrage rapide
 - **Checklist manuelle scriptée**: [`_helpers/MANUAL_CHECKLIST.md`](_helpers/MANUAL_CHECKLIST.md)
@@ -219,8 +222,11 @@ Pour les bugs: Créer un issue dans le repo TerraBloom
 
 **Documentation complète:**
 
+- Backlog principal: [`TODO.md`](TODO.md)
+- Plan d'action: [`PLAN_ACTIONS.md`](./_helpers/PLAN_ACTIONS.md)
 - Guide migration: [`MIGRATION STATE V1 to V2.md`](MIGRATION%20STATE%20V1%20to%20V2%20.md)
-- Support SQLite: [`SQLITE_SUPPORT.md`](SQLITE_SUPPORT.md)
+- Refactoring & modularisation: [`REFACTORING_MODULARIZATION.md`](./_helpers/REFACTORING_MODULARIZATION.md)
+- Support SQLite: [`SQLITE_SUPPORT.md`](./_helpers/SQLITE_SUPPORT.md)
 - Setup: [`SETUP_CHECKLIST.md`](SETUP_CHECKLIST.md)
 - Quickstart: [`QUICKSTART.md`](QUICKSTART.md)
 
