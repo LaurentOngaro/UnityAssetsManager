@@ -1,0 +1,80 @@
+{
+  "name": "851_054_Audio_Music_And_Ambience",
+  "description": "Audio: music & ambience - background music tracks and ambiances.",
+  "lastUpdated": "2026-02-12",
+  "updatedBy": "Gemini 3 Flash (Preview)",
+  "column_profile": {
+    "cols": [
+      "DisplayName",
+      "DisplayCategory",
+      "DisplayPublisher",
+      "PackageTags",
+      "Keywords",
+      "Description",
+      "URPCompatible",
+      "HDRPCompatible",
+      "BIRPCompatible",
+      "SupportedUnityVersions",
+      "AssetLink",
+      "Slug",
+      "AssetSource"
+    ],
+    "saved_at": "2026-02-09T00:00:00Z"
+  },
+  "filter_columns": [
+    "URPCompatible",
+    "DisplayName",
+    "DisplayCategory",
+    "DisplayPublisher",
+    "PackageTags",
+    "AssetSource"
+  ],
+  "filter_stack": [
+    {
+      "mode": "include",
+      "filters": {
+        "URPCompatible": {
+          "values": [
+            true
+          ]
+        }
+      },
+      "search_term": "",
+      "timestamp": "2026-02-09T00:00:01Z"
+    },
+    {
+      "mode": "include",
+      "filters": {
+        "DisplayCategory": {
+          "values": [
+            "Audio",
+            "Audio/Ambient",
+            "Audio/Ambient/Fantasy",
+            "Audio/Ambient/Nature",
+            "Audio/Ambient/Noise",
+            "Audio/Ambient/Sci-Fi",
+            "Audio/Ambient/Urban",
+            "Audio/Music",
+            "Audio/Music/Electronic",
+            "Audio/Music/Electronic/8bit",
+            "Audio/Music/Orchestral",
+            "Audio/Music/Rock",
+            "Audio/Music/World",
+            "Audio/Sound FX",
+            "Audio/Sound FX/Animals",
+            "Audio/Sound FX/Creatures",
+            "Audio/Sound FX/Foley",
+            "Audio/Sound FX/Transportation",
+            "Audio/Sound FX/Voices",
+            "Audio/Sound FX/Weapons"
+          ]
+        }
+      },
+      "search_term": "",
+      "timestamp": "2026-02-09T00:00:02Z"
+    }
+  ],
+  "column_aliases": {
+    "Url": "AssetLink"
+  }
+}

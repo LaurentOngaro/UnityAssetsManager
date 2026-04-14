@@ -1,0 +1,454 @@
+openapi: 3.0.3
+info:
+  title: UnityAssetsManager API
+  version: 1.1.1
+  description: API locale pour exploration et export d'assets Unity (CSV/SQLite). 5003 is the default port and can be changed in the config.
+servers:
+  - url: http://localhost:5003
+paths:
+  /api/data:
+    get:
+      summary: Liste paginee des donnees assets
+      parameters:
+        - in: query
+          name: draw
+          schema:
+            type: integer
+        - in: query
+          name: start
+          schema:
+            type: integer
+        - in: query
+          name: length
+          schema:
+            type: integer
+        - in: query
+          name: search[value]
+          schema:
+            type: string
+        - in: query
+          name: search[regex]
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Donnees paginees
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  draw:
+                    type: integer
+                  recordsTotal:
+                    type: integer
+                  recordsFiltered:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      type: object
+  /api/columns:
+    get:
+      summary: Liste des colonnes disponibles
+      responses:
+        '200':
+          description: Colonnes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  columns:
+                    type: array
+                    items:
+                      type: string
+                  count:
+                    type: integer
+  /api/templates:
+    get:
+      summary: Liste des templates d'export
+      responses:
+        '200':
+          description: Templates
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  templates:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        pattern:
+                          type: string
+  /api/profiles:
+    get:
+      summary: Liste des profils
+      responses:
+        '200':
+          description: Profils
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profiles:
+                    type: array
+                    items:
+                      type: string
+    post:
+      summary: Sauvegarder un profil
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileSaveRequest'
+      responses:
+        '200':
+          description: Profil sauvegarde
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  name:
+                    type: string
+        '400':
+          description: Requete invalide
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '500':
+          description: Erreur interne
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/profiles/{name}:
+    get:
+      summary: Charger un profil
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Profil
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Profil absent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+    delete:
+      summary: Supprimer un profil
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Profil supprime
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  name:
+                    type: string
+        '404':
+          description: Profil absent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/export:
+    post:
+      summary: Exporter les donnees filtrees
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequest'
+      responses:
+        '200':
+          description: Fichier exporte (binaire)
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Erreur de requete/template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '500':
+          description: Erreur export
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/batch-export:
+    post:
+      summary: Exporter les donnees en mode headless vers un fichier local
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchExportRequest'
+      responses:
+        '200':
+          description: Export batch ecrit sur disque
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  path:
+                    type: string
+                  filename:
+                    type: string
+                  rows:
+                    type: integer
+                  columns:
+                    type: integer
+                  template:
+                    type: string
+                  bytes:
+                    type: integer
+        '400':
+          description: Requete batch invalide
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '500':
+          description: Erreur batch export
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/reload:
+    post:
+      summary: Recharger les donnees depuis la source
+      responses:
+        '200':
+          description: Rechargement effectue
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  rows:
+                    type: integer
+                  columns:
+                    type: integer
+  /api/stats:
+    get:
+      summary: Statistiques sur la source courante
+      responses:
+        '200':
+          description: Statistiques
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Aucune donnee chargee
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/setup:
+    post:
+      summary: Configurer la source de donnees
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetupRequest'
+      responses:
+        '200':
+          description: Setup applique
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data_path:
+                    type: string
+                  source_type:
+                    type: string
+                  db_table:
+                    type: string
+                    nullable: true
+        '400':
+          description: Parametres setup invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '500':
+          description: Erreur setup
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/test-path:
+    post:
+      summary: Tester un chemin source CSV/SQLite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+      responses:
+        '200':
+          description: Resultat du test
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+                  type:
+                    type: string
+                  rows:
+                    type: integer
+                  cols:
+                    type: integer
+                  tables:
+                    type: array
+                    items:
+                      type: string
+                  error:
+                    type: string
+components:
+  schemas:
+    ApiErrorEnvelope:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ApiError'
+      required:
+        - error
+    ApiError:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        http_status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        path:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+      required:
+        - code
+        - message
+        - http_status
+        - timestamp
+        - path
+        - details
+    SetupRequest:
+      type: object
+      properties:
+        data_path:
+          type: string
+        db_table:
+          type: string
+      required:
+        - data_path
+    ProfileSaveRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        columns:
+          type: array
+          items:
+            type: string
+        filter_columns:
+          type: array
+          items:
+            type: string
+        filter_stack:
+          type: array
+          items:
+            type: object
+      required:
+        - name
+    ExportRequest:
+      type: object
+      properties:
+        template:
+          type: string
+        columns:
+          type: array
+          items:
+            type: string
+        search:
+          type: string
+        filter_columns:
+          type: array
+          items:
+            type: string
+        filter_stack:
+          type: array
+          items:
+            type: object
+        alias_map:
+          type: object
+          additionalProperties:
+            type: string
+    BatchExportRequest:
+      allOf:
+        - $ref: '#/components/schemas/ExportRequest'
+        - type: object
+          properties:
+            output_dir:
+              type: string
+            file_name:
+              type: string

@@ -1,0 +1,33 @@
+{
+  "name": "default",
+  "description": "Default profile with usual columns and no filters",
+  "column_profile": {
+    "cols": [
+      "DisplayName",
+      "DisplayCategory",
+      "DisplayPublisher",
+      "PackageTags",
+      "Keywords",
+      "Description",
+      "URPCompatible",
+      "HDRPCompatible",
+      "BIRPCompatible",
+      "SupportedUnityVersions",
+      "AssetLink",
+      "Slug",
+      "AssetSource"
+    ],
+    "saved_at": "2026-02-08T19:30:02.115302+00:00"
+  },
+  "filter_columns": [
+    "URPCompatible",
+    "DisplayName",
+    "DisplayCategory",
+    "DisplayPublisher",
+    "PackageTags",
+    "AssetSource"
+  ],
+  "column_aliases": {
+    "Url": "AssetLink"
+  }
+}

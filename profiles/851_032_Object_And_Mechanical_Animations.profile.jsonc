@@ -1,0 +1,78 @@
+{
+  "name": "851_032_Object_And_Mechanical_Animations",
+  "description": "Object & mechanical animations - doors, machines, vehicles and timing clips.",
+  "lastUpdated": "2026-02-12",
+  "updatedBy": "Gemini 3 Flash (Preview)",
+  "column_profile": {
+    "cols": [
+      "DisplayName",
+      "DisplayCategory",
+      "DisplayPublisher",
+      "PackageTags",
+      "Keywords",
+      "Description",
+      "URPCompatible",
+      "HDRPCompatible",
+      "BIRPCompatible",
+      "SupportedUnityVersions",
+      "AssetLink",
+      "Slug",
+      "AssetSource"
+    ],
+    "saved_at": "2026-02-09T00:00:00Z"
+  },
+  "filter_columns": [
+    "URPCompatible",
+    "DisplayName",
+    "DisplayCategory",
+    "DisplayPublisher",
+    "PackageTags",
+    "AssetSource"
+  ],
+  "filter_stack": [
+    {
+      "mode": "include",
+      "filters": {
+        "URPCompatible": {
+          "values": [
+            true
+          ]
+        }
+      },
+      "search_term": "",
+      "timestamp": "2026-02-09T00:00:01Z"
+    },
+    {
+      "mode": "include",
+      "filters": {
+        "DisplayCategory": {
+          "values": [
+            "3D/Animations",
+            "Animation",
+            "Animation/Bipedal",
+            "Scripting",
+            "Scripting/AI",
+            "Scripting/Animation",
+            "Scripting/Audio",
+            "Scripting/Camera",
+            "Scripting/Effects",
+            "Scripting/GUI",
+            "Scripting/Input - Output",
+            "Scripting/Integration",
+            "Scripting/Machine Learning",
+            "Scripting/Modeling",
+            "Scripting/Modelling",
+            "Scripting/Network",
+            "Scripting/Physics",
+            "Scripting/Video"
+          ]
+        }
+      },
+      "search_term": "",
+      "timestamp": "2026-02-09T00:00:02Z"
+    }
+  ],
+  "column_aliases": {
+    "Url": "AssetLink"
+  }
+}

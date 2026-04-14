@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">❌ Erreur de chargement</h4>
+                <p class="mb-3">{{ error }}</p>
+
+                <hr>
+
+                <h5>🔧 Solutions possibles:</h5>
+                <ol>
+                    <li>
+                        <strong>Vérifier le chemin du fichier:</strong>
+                        <pre class="bg-light p-2 mt-2"><code>{{ data_path }}</code></pre>
+                    </li>
+                    <li>
+                        <strong>Adapter DATA_PATH dans app.py:</strong>
+                        <pre class="bg-light p-2 mt-2"><code>DATA_PATH = "H:\\Sync\\PKM_PROJECTS\\TerraBloom\\_Fichiers\\assets.csv"</code></pre>
+                    </li>
+                    <li>
+                        <strong>Vérifier que le fichier existe et est lisible</strong>
+                    </li>
+                    <li>
+                        <strong>Redémarrer le serveur:</strong>
+                        <pre class="bg-light p-2 mt-2"><code>python app.py</code></pre>
+                    </li>
+                </ol>
+
+                <hr>
+
+                <p class="mb-0">
+                    <a href="/" class="btn btn-primary">Réessayer</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

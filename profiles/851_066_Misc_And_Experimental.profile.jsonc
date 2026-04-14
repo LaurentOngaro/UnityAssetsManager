@@ -1,0 +1,62 @@
+{
+  "name": "851_066_Misc_And_Experimental",
+  "description": "Misc & experimental - experimental assets and uncategorized utilities.",
+  "lastUpdated": "2026-02-09",
+  "updatedBy": "Raptor mini (Preview)",
+  "column_profile": {
+    "cols": [
+      "DisplayName",
+      "DisplayCategory",
+      "DisplayPublisher",
+      "PackageTags",
+      "Keywords",
+      "Description",
+      "URPCompatible",
+      "HDRPCompatible",
+      "BIRPCompatible",
+      "SupportedUnityVersions",
+      "AssetLink",
+      "Slug",
+      "AssetSource"
+    ],
+    "saved_at": "2026-02-09T00:00:00Z"
+  },
+  "filter_columns": [
+    "URPCompatible",
+    "DisplayName",
+    "DisplayCategory",
+    "DisplayPublisher",
+    "PackageTags",
+    "AssetSource"
+  ],
+  "filter_stack": [
+    {
+      "mode": "include",
+      "filters": {
+        "URPCompatible": {
+          "values": [
+            true
+          ]
+        }
+      },
+      "search_term": "",
+      "timestamp": "2026-02-09T00:00:01Z"
+    },
+    {
+      "mode": "include",
+      "filters": {
+        "DisplayCategory": {
+          "values": [
+            "3D Models",
+            "Tool"
+          ]
+        }
+      },
+      "search_term": "",
+      "timestamp": "2026-02-09T00:00:02Z"
+    }
+  ],
+  "column_aliases": {
+    "Url": "AssetLink"
+  }
+}

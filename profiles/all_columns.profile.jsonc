@@ -1,0 +1,50 @@
+{
+  "name": "all_columns",
+  "description": "Profile with all columns and no filters",
+  "column_profile": {
+    "cols": [
+      "DisplayName",
+      "DisplayCategory",
+      "DisplayPublisher",
+      "PackageTags",
+      "Keywords",
+      "Description",
+      "URPCompatible",
+      "HDRPCompatible",
+      "BIRPCompatible",
+      "SupportedUnityVersions",
+      "AssetLink",
+      "Slug",
+      "Slug",
+      "AssetSource",
+      "FirstRelease",
+      "LastRelease",
+      "LatestVersion",
+      "PriceEur",
+      "PurchaseDate",
+      "AssetRating",
+      "RatingCount",
+      "ReleaseNotes",
+      "Revision",
+      "SafeCategory",
+      "SafeName",
+      "SafePublisher",
+      "Version",
+      "Id",
+      "ParentId"
+    ],
+    "saved_at": "2026-02-08T19:40:49.567399+00:00"
+  },
+  "filter_columns": [
+    "DisplayName",
+    "DisplayCategory",
+    "DisplayPublisher",
+    "PackageTags",
+    "Keywords",
+    "AssetSource"
+  ],
+  "filter_stack": [],
+  "column_aliases": {
+    "Url": "AssetLink"
+  }
+}

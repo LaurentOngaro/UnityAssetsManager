@@ -1,0 +1,65 @@
+{
+  "name": "851_045_Post_Processing_And_Fullscreen_Shaders",
+  "description": "Post-processing & fullscreen shaders - color grading, LUTs and screen effects.",
+  "lastUpdated": "2026-02-12",
+  "updatedBy": "Gemini 3 Flash (Preview)",
+  "column_profile": {
+    "cols": [
+      "DisplayName",
+      "DisplayCategory",
+      "DisplayPublisher",
+      "PackageTags",
+      "Keywords",
+      "Description",
+      "URPCompatible",
+      "HDRPCompatible",
+      "BIRPCompatible",
+      "SupportedUnityVersions",
+      "AssetLink",
+      "Slug",
+      "AssetSource"
+    ],
+    "saved_at": "2026-02-09T00:00:00Z"
+  },
+  "filter_columns": [
+    "URPCompatible",
+    "DisplayName",
+    "DisplayCategory",
+    "DisplayPublisher",
+    "PackageTags",
+    "AssetSource"
+  ],
+  "filter_stack": [
+    {
+      "mode": "include",
+      "filters": {
+        "URPCompatible": {
+          "values": [
+            true
+          ]
+        }
+      },
+      "search_term": "",
+      "timestamp": "2026-02-09T00:00:01Z"
+    },
+    {
+      "mode": "include",
+      "filters": {
+        "DisplayCategory": {
+          "values": [
+            "Shaders",
+            "Shaders/Fullscreen & Camera Effects",
+            "VFX",
+            "VFX/Particles",
+            "VFX/Shaders"
+          ]
+        }
+      },
+      "search_term": "",
+      "timestamp": "2026-02-09T00:00:02Z"
+    }
+  ],
+  "column_aliases": {
+    "Url": "AssetLink"
+  }
+}

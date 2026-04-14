@@ -1,0 +1,54 @@
+{
+  "name": "851_052_UI_Icons_And_Item_Sprites",
+  "description": "Auto-generated profile for UI - Icons & Item Sprites",
+  "column_profile": {
+    "cols": [
+      "DisplayName",
+      "DisplayCategory",
+      "DisplayPublisher",
+      "PackageTags",
+      "Keywords",
+      "Description",
+      "URPCompatible",
+      "HDRPCompatible",
+      "BIRPCompatible",
+      "SupportedUnityVersions",
+      "AssetLink",
+      "Slug",
+      "AssetSource"
+    ],
+    "saved_at": "2026-02-09T00:00:00Z"
+  },
+  "filter_columns": [
+    "URPCompatible",
+    "DisplayName",
+    "DisplayCategory",
+    "DisplayPublisher",
+    "PackageTags",
+    "AssetSource"
+  ],
+  "filter_stack": [
+    {
+      "mode": "include",
+      "filters": {
+        "DisplayCategory": {
+          "values": [
+            "2D/GUI",
+            "2D/GUI/Icons",
+            "2D/Textures & Materials",
+            "2D/Textures & Materials/Floors",
+            "2D/Textures & Materials/Metals",
+            "2D/Textures & Materials/Stone"
+          ]
+        }
+      },
+      "search_term": "",
+      "timestamp": "2026-02-09T00:00:02Z"
+    }
+  ],
+  "column_aliases": {
+    "Url": "AssetLink"
+  },
+  "lastUpdated": "2026-02-12",
+  "updatedBy": "Gemini 3 Flash (Preview)"
+}
