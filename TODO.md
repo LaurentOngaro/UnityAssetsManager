@@ -4,8 +4,8 @@
 
 ## Corrections immédiates (last:CI2)
 
-- [] CI1: déplacer `config.json` en `config/config.json`
-- [] CI2: créer des modules git dédiés pour les 2 projets (car ils appartiennes à 2 dépot différents)
+- [ ] CI1: déplacer `config.json` en `config/config.json`
+- [x] CI2: créer des modules git dédiés pour les 2 projets (car ils appartiennes à 2 dépot différents)
 
 ## Améliorations du projet
 
@@ -88,6 +88,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] CI2: Initialiser des dépôts Git locaux dédiés pour UnityAssetsManager et FabAssetsManager (commit initial effectué).
 - [x] Implémenter `/api/batch-export` pour usage headless/automation.
 - [x] Ajouter mode include/exclude explicite dans le filter builder.
 - [x] Ajouter tests de non-régression sur export templates (md/csv/json/txt).

@@ -4,8 +4,6 @@ File version: 1.1.1
 
 Application web locale pour la gestion rapide et efficace d'inventaires d'assets (3800+ lignes) avec support multi-source (CSV/SQLite), filtrage avancé, profils personnalisés et exports flexibles.
 
-**Performance haute vitesse pour gestion d'assets 3800+ lignes**
-
 ## Améliorations par rapport à V1 (Streamlit)
 
 | Aspect              | V1 Streamlit         | V2 Flask                 |
