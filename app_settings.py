@@ -1,10 +1,9 @@
-"""Configuration centralisee pour UnityAssetsManager.
-
-Ce module regroupe les constantes applicatives extraites de `app.py`
-(REF1) pour limiter les valeurs en dur et faciliter la maintenance.
-
+# ============================================================================
+# UnityAssetsManager - app_settings.py
+# ============================================================================
+# Description: Constantes de configuration et chemins par défaut.
 # Version: 1.2.3
-"""
+# ============================================================================
 
 from __future__ import annotations
 

@@ -1,4 +1,10 @@
+# ============================================================================
+# UnityAssetsManager - config.py
+# ============================================================================
+# Description: Gestion de la configuration runtime et des templates d'export.
 # Version: 1.2.3
+# ============================================================================
+
 import logging
 from pathlib import Path
 import pandas as pd

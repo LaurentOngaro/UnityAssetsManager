@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Bump UnityAssetsManager version using a Fab-style central VERSION file.
 
 Behavior:
@@ -25,8 +24,26 @@ APP_ROOT = SCRIPT_DIR.parent
 VERSION_FILE = APP_ROOT / "VERSION.txt"
 
 IMPORTANT_FILES = [
-    APP_ROOT / "app.py", APP_ROOT / "routes.py", APP_ROOT / "data_manager.py", APP_ROOT / "filters.py", APP_ROOT / "config.py", APP_ROOT / "utils.py",
-    APP_ROOT / "app_settings.py", APP_ROOT / "static" / "js" / "app.js", APP_ROOT / "templates" / "index.html", APP_ROOT / "openapi.yaml",
+    APP_ROOT / "app.py",  #
+    APP_ROOT / "app_settings.py",  #
+    APP_ROOT / "config.py",  #
+    APP_ROOT / "data_manager.py",  #
+    APP_ROOT / "filters.py",  #
+    APP_ROOT / "routes.py",  #
+    APP_ROOT / "utils.py",  #
+    APP_ROOT / "static" / "js" / "app.js",  #
+    APP_ROOT / "templates" / "base.html",  #
+    APP_ROOT / "templates" / "index.html",  #
+    APP_ROOT / "templates" / "setup.html",  #
+    APP_ROOT / "_helpers" / "bumpImportantVersion.py",  #
+    APP_ROOT / "API_GUIDE.md",  #
+    APP_ROOT / "openapi.yaml",  #
+    APP_ROOT / "VERSION.txt",  #
+    # APP_ROOT / "CHANGELOG.md",  #
+    # APP_ROOT / "README.md",  #
+    # APP_ROOT / "start_UnityAssetsManager.bat",  #
+    # APP_ROOT / "tests" / "test_export_non_regression.py",  #
+    # APP_ROOT / "tests" / "test_unity_assets_manager_helpers.py",  #
 ]
 
 VERSION_TAG_EXTENSIONS = {".py", ".md", ".html", ".htm", ".js", ".yaml", ".yml"}

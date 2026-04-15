@@ -1,5 +1,7 @@
 // ============================================================================
-// UnityAssetsManager - Logique client
+// UnityAssetsManager - static/js/app.js
+// ============================================================================
+// Description: Logique client (Vanilla JS) pour l'interface DataTables.
 // Version: 1.2.3
 // ============================================================================
 
