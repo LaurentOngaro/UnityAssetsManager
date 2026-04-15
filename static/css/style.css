@@ -9,6 +9,7 @@
     --danger-color: #dc3545;
     --light-gray: #f8f9fa;
     --border-color: #dee2e6;
+    --resizer-width: 10px; /* Zone sensible pour le redimensionnement */
 }
 
 /* Body et layout */
@@ -95,7 +96,7 @@ body {
     position: absolute;
     top: 0;
     right: 0;
-    width: 5px;
+    width: var(--resizer-width);
     cursor: col-resize;
     user-select: none;
     height: 100%;

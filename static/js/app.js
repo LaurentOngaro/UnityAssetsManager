@@ -6,7 +6,8 @@
 // ============================================================================
 
 // Configuration
-const MIN_COL_WIDTH = 150;  // Largeur minimum en pixels pour chaque colonne
+const MIN_COL_WIDTH = 150;     // Largeur minimum en pixels pour chaque colonne
+const RESIZER_SENSITIVITY = 10; // Zone sensible pour le redimensionnement (pixels)
 
 let dataTable;
 let assetDetailModal;
@@ -1217,6 +1218,93 @@ function showModal(title, content) {
     $('body').append(modal);
     new bootstrap.Modal(modal[0]).show();
     modal.on('hidden.bs.modal', function() { $(this).remove(); });
+}
+
+// ============================================================================
+// REDIMENSIONNEMENT DES COLONNES (AFF1)
+// ============================================================================
+
+function setupColumnResizing() {
+    const table = document.getElementById('assetsTable');
+    if (!table) return;
+    const cols = table.querySelectorAll('thead th');
+
+    cols.forEach(col => {
+        // Ajouter la poignée de redimensionnement s'il n'y en a pas déjà une
+        if (!col.querySelector('.resizer')) {
+            const resizer = document.createElement('div');
+            resizer.classList.add('resizer');
+            col.appendChild(resizer);
+            createResizableColumn(col, resizer);
+        }
+    });
+}
+
+function createResizableColumn(col, resizer) {
+    let x = 0;
+    let w = 0;
+
+    const mouseDownHandler = function(e) {
+        x = e.clientX;
+
+        const styles = window.getComputedStyle(col);
+        w = parseInt(styles.width, 10);
+
+        document.addEventListener('mousemove', mouseMoveHandler);
+        document.addEventListener('mouseup', mouseUpHandler);
+
+        resizer.classList.add('resizing');
+    };
+
+    const mouseMoveHandler = function(e) {
+        const dx = e.clientX - x;
+        col.style.width = `${w + dx}px`;
+        col.style.minWidth = `${w + dx}px`;
+    };
+
+    const mouseUpHandler = function() {
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+        resizer.classList.remove('resizing');
+    };
+
+    resizer.addEventListener('mousedown', mouseDownHandler);
+}
+
+// ============================================================================
+// AFFICHAGE DES DÉTAILS (AFF2)
+// ============================================================================
+
+function setupRowClickHandlers() {
+    $('#assetsTable tbody').off('click', 'tr').on('click', 'tr', function() {
+        const data = dataTable.row(this).data();
+        if (data) {
+            showAssetDetails(data);
+        }
+    });
+}
+
+function showAssetDetails(data) {
+    const $tbody = $('#assetDetailTableBody');
+    if (!$tbody.length) return;
+    $tbody.empty();
+
+    // Trier les clés pour un affichage cohérent
+    const keys = Object.keys(data).sort();
+
+    keys.forEach(key => {
+        let val = data[key];
+        if (val === null || val === undefined) val = '';
+
+        $tbody.append(`
+            <tr>
+                <th class="bg-light" style="width: 30%; font-size: 0.85rem;">${escapeHtml(key)}</th>
+                <td style="font-size: 0.85rem; word-break: break-all;">${escapeHtml(String(val))}</td>
+            </tr>
+        `);
+    });
+
+    if (assetDetailModal) assetDetailModal.show();
 }
 
 function escapeHtml(text) {

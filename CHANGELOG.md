@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🔧 Modifié
 
-- [x] AFF1: pouvoir Redimensionner les colonnes (au mieux par drag-and-drop sinon via un menu de configuration de l'affichage)
-- [x] AFF2: Popup détail ligne ( manque d'info, qu'est ce que cela signifie ?)
+- AFF1: pouvoir Redimensionner les colonnes (au mieux par drag-and-drop sinon via un menu de configuration de l'affichage)
+- AFF2: Popup détail ligne ( manque d'info, qu'est ce que cela signifie ?)
 - Extraction et unification du module de logging dans `logging_setup.py`.
 - Standardisation des clés de configuration du logging (`log_file`, `log_level`, `log_output`, `log_max_bytes`, `log_backup_count`).
 - Support de la clé `log_file` dans le fichier `config.json` pour personnaliser le nom du fichier de log.

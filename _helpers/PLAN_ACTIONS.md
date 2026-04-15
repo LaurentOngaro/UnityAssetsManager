@@ -24,7 +24,7 @@ Chaque fois qu'une modification est teminée:
 ## Rattachement rapide des sprints aux TODO
 
 - Sprint P3 - MIG2, MIG3
-- Sprint P4 - AFF1, AFF2,A FF3
+- Sprint P4 - AFF3
 - Sprint P5 - INT1, INT2, INT3, INT4
 
 ## TOP Priorités (pour les corrections immédiates)
@@ -66,7 +66,9 @@ Chaque fois qu'une modification est teminée:
 cete répartition est indicative et peut être ajustée en fonction des dépendances et de l'avancement.
 Elle n'est pas un classement par priorité mais plutôt une organisation thématique pour structurer les sprints.
 
-### Sprint P4 - Parite V1 restante (AFF1, AFF2, AFF3)
+### Sprint P4 - Parite V1 restante (AFF3)
+
+- AFF3 : Reprendre le thème de couleur "sombre" de FabAssetsManager.
 
 ### Sprint P3 - Validation finale (MIG2, MIG3)
 

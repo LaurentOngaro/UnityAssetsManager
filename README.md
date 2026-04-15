@@ -35,8 +35,10 @@ Le serveur démarre par défaut sur **http://localhost:5003**. Ce port peut êtr
 1. **Recherche** 🔍: Cherche dans tous les champs en temps réel (côté serveur)
 2. **Sélection colonnes** 📋: Choisir les colonnes à afficher (Ctrl+clic pour sélection multiple)
 3. **Pagination**: 25/50/100/250 lignes par page (DataTables)
-4. **Profils** 💽: Sauvegarder/charger vos réglages préférés
-5. **Export** 💾:
+4. **Redimensionnement des colonnes** ↔️ : Survolez le bord droit d'un en-tête pour redimensionner (Zone sensible: 10px).
+5. **Détails rapides** 📄 : Cliquez sur n'importe quelle ligne pour ouvrir une popup avec tous les détails de l'asset.
+6. **Profils** 💽 : Sauvegarder/charger vos réglages préférés
+7. **Export** 💾 :
 
 - CSV standard / séparateur point-virgule
 - CSV avec URL
