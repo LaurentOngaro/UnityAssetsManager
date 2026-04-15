@@ -2,6 +2,13 @@
 
 Ce document ordonne et détaille les étapes d'implémentation selon les Groupes définies dans le fichier `TODO.md`.
 
+## Contexte et Lignes Directrices (Héritées du plan de migration)
+
+- **Source d'inspiration** : S'aligner sur la structure et le contrat API de `FabAssetsManager` (TODO par blocs, actions exécutables, OpenAPI).
+- **Séparation des rôles** : Garder une séparation claire entre l'outil applicatif (`UnityAssetsManager`) et le pipeline de curation (`_Helpers/04_Assets/AssetsCuration/`).
+- **Règle de documentation** : Ne pas supprimer une documentation sans avoir créé son équivalent consolidé. Les redondances doivent être fusionnées proprement.
+- **Nomenclature** : Le nom officiel est `UnityAssetsManager`. Toute ancienne référence (AssetManagerV2, AssetsManagerV2) est dépréciée.
+
 **REGLE D'OR : Toujours proposer d'effectuer les corrections de bugs et les corrections immédiates en premier. Elles sont listées dans les section "Corrections immédiates" et "Bugs" du fichier `TODO.md`.**
 
 Chaque fois qu'une modification est teminée:
@@ -41,14 +48,14 @@ Chaque fois qu'une modification est teminée:
 
 ### Documentation
 
-- DOC1: analyser puis fusionner ou prioriser les docs de migration et de suivi.
-  - éviter la duplication entre `MIGRATION STATE V1 to V2`, `plan_action_UnityAssetsManager` et `PLAN_ACTIONS`.
-  - documents liés: [MIGRATION STATE V1 to V2 .md](MIGRATION%20STATE%20V1%20to%20V2%20.md), [plan_action_UnityAssetsManager.md](plan_action_UnityAssetsManager.md), PLAN_ACTIONS.md.
-- DOC2: consolider `README.md`, `API_GUIDE.md` et les docs techniques.
+- DONE DOC1: analyser puis fusionner ou prioriser les docs de migration et de suivi.
+  - consolidation effectuée entre `plan_action_UnityAssetsManager` (archivé) et `PLAN_ACTIONS`.
+  - documents liés: [MIGRATION STATE V1 to V2 .md](MIGRATION%20STATE%20V1%20to%20V2%20.md), PLAN_ACTIONS.md.
+- DONE DOC2: consolider `README.md`, `API_GUIDE.md` et les docs techniques.
   - réserver chaque doc à son rôle principal.
   - déplacer les détails d'exécution dans le bon fichier.
   - documents liés: [README.md](../README.md), [API_GUIDE.md](../API_GUIDE.md).
-- DOC3: garder `SQLITE_SUPPORT.md` orienté setup SQLite uniquement.
+- DONE DOC3: garder `SQLITE_SUPPORT.md` orienté setup SQLite uniquement.
   - limiter ce fichier au support d'installation et de configuration SQLite.
   - document lié: [SQLITE_SUPPORT.md](SQLITE_SUPPORT.md).
 
@@ -88,7 +95,7 @@ Chaque fois qu'une modification est teminée:
 cete répartition est indicative et peut être ajustée en fonction des dépendances et de l'avancement.
 Elle n'est pas un classement par priorité mais plutôt une organisation thématique pour structurer les sprints.
 
-### Sprint P2 - Contrat API & Documentation (API1, API2, API3, DOC1, DOC2, DOC3)
+### DONE Sprint P2 - Contrat API & Documentation (API1, API2, API3, DOC1, DOC2, DOC3)
 
 - Action: Maintenir `openapi.yaml` en source de verite des endpoints.
 - Action: Ajouter exemples de payloads succes/erreur dans `API_GUIDE.md`.

@@ -79,17 +79,11 @@ Configurer la source via la page `/setup` (recommandé) ou en éditant `config/c
 - `exports/`: Fichiers exportés
 - `.cache/`: Cache interne (1h TTL)
 
-## 📊 API Endpoints
+## 📊 API & Documentation technique
 
-| Url             | Méthode  | Description                      |
-| --------------- | -------- | -------------------------------- |
-| `/`             | GET      | Page principale                  |
-| `/api/data`     | GET      | Données avec pagination/filtrage |
-| `/api/columns`  | GET      | Liste des colonnes               |
-| `/api/stats`    | GET      | Statistiques                     |
-| `/api/export`   | POST     | Exporter données                 |
-| `/api/profiles` | GET/POST | Gérer profils                    |
-| `/api/reload`   | POST     | Recharger données                |
+- **Guide API Complet**: [API_GUIDE.md](./API_GUIDE.md) (Endpoints, format JSON, payloads, batch-export).
+- **Setup SQLite & Migration**: [SQLITE_SUPPORT.md](./_helpers/SQLITE_SUPPORT.md).
+- **Checklist Qualité**: [MANUAL_CHECKLIST.md](./_helpers/MANUAL_CHECKLIST.md).
 
 ## 🎯 Exemples d'utilisation
 
@@ -170,21 +164,22 @@ ou bien modifier `flask_port` dans `config/config.json`
 
 ### Architecture
 
-```
-app.py (serveur Flask, 1214 lignes)
-├── app_settings.py (constantes applicatives centralisées)
-├── /api/data → AssetDataManager.get_data()
-├── /api/export → apply_export_template()
-├── /api/profiles → load_profile() / save_profile()
-└── /api/templates → load_export_templates()
+```text
+app.py (point d'entrée Flask)
+config.py (configuration)
+data_manager.py (chargement CSV/SQLite)
+filters.py (logique de filtrage)
+routes.py (endpoints API)
+utils.py (fonctions utilitaires)
 
 templates/
 ├── base.html (layout)
+├── setup.html (page config)
 └── index.html (tableau + filter builder)
 
 static/
 ├── css/style.css
-└── js/app.js (DataTables + Ajax + export preview)
+└── js/app.js (DataTables + Ajax)
 
 data/
 └── export_templates.jsonc (11 templates configurables)
@@ -196,19 +191,16 @@ profiles/
 ### Documentation technique
 
 - **Backlog principal**: [`TODO.md`](TODO.md) - Vue priorisée des tâches à faire
-- **Plan d'action**: [`PLAN_ACTIONS.md`](./_helpers/PLAN_ACTIONS.md) - Vue détaillée et ordonnée des tâches
-- **Migration V1→V2**: [`MIGRATION STATE V1 to V2.md`](MIGRATION%20STATE%20V1%20to%20V2%20.md) - Matrice complète, gaps, roadmap, source backlog liée à FEAT1/MIG1/MIG2/MIG3
-- **Refactoring & modularisation**: [`REFACTORING_MODULARIZATION.md`](./_helpers/REFACTORING_MODULARIZATION.md) - Plan détaillé lié à REF2
-- **Support SQLite**: [`SQLITE_SUPPORT.md`](./_helpers/SQLITE_SUPPORT.md) - Guide configuration, migration CSV→SQLite, API, troubleshooting, benchmarks
-- **Setup**: [`SETUP_CHECKLIST.md`](SETUP_CHECKLIST.md) - Checklist installation et configuration
-- **Quickstart**: [`QUICKSTART.md`](QUICKSTART.md) - Guide démarrage rapide
-- **Checklist manuelle scriptée**: [`_helpers/MANUAL_CHECKLIST.md`](_helpers/MANUAL_CHECKLIST.md)
+- **Plan d'action**: [`_helpers/PLAN_ACTIONS.md`](./_helpers/PLAN_ACTIONS.md) - Vue détaillée et ordonnée des tâches
+- **Migration V1→V2**: [`_helpers/MIGRATION STATE V1 to V2 .md`](./_helpers/MIGRATION%20STATE%20V1%20to%20V2%20.md) - Matrice complète, gaps, roadmap
+- **Support SQLite**: [`_helpers/SQLITE_SUPPORT.md`](./_helpers/SQLITE_SUPPORT.md) - Guide SQLite
+- **Checklist**: [`_helpers/MANUAL_CHECKLIST.md`](./_helpers/MANUAL_CHECKLIST.md)
 
 ### Validation rapide
 
 ```powershell
 python -m pytest _Helpers/04_Assets/UnityAssetsManager/tests/test_export_non_regression.py -v
-pwsh -NoProfile -File _Helpers/04_Assets/UnityAssetsManager/_helpers/runManualChecklist.ps1
+python _Helpers/04_Assets/UnityAssetsManager/_helpers/run_manual_checklist.py
 python _Helpers/04_Assets/UnityAssetsManager/_helpers/bumpImportantVersion.py --scope patch --dry-run
 ```
 
@@ -224,18 +216,8 @@ TerraBloom Project
 
 Pour les bugs: Créer un issue dans le repo TerraBloom
 
-**Documentation complète:**
-
-- Backlog principal: [`TODO.md`](TODO.md)
-- Plan d'action: [`PLAN_ACTIONS.md`](./_helpers/PLAN_ACTIONS.md)
-- Guide migration: [`MIGRATION STATE V1 to V2.md`](MIGRATION%20STATE%20V1%20to%20V2%20.md)
-- Refactoring & modularisation: [`REFACTORING_MODULARIZATION.md`](./_helpers/REFACTORING_MODULARIZATION.md)
-- Support SQLite: [`SQLITE_SUPPORT.md`](./_helpers/SQLITE_SUPPORT.md)
-- Setup: [`SETUP_CHECKLIST.md`](SETUP_CHECKLIST.md)
-- Quickstart: [`QUICKSTART.md`](QUICKSTART.md)
-
 ---
 
-**Version**: 1.1.3
-**Dernière mise à jour**: 2026-03-06
-**Status**: Production (69% features V2, 67% parité V1)
+**Version**: 1.2.1
+**Dernière mise à jour**: 2026-04-15
+**Status**: Production (Architecture modulaire, API stabilisée)

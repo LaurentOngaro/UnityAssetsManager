@@ -2,8 +2,7 @@
 
 ## Clarification du fichier de suivi
 
-- Fichier de suivi actuel et unique: `_Helpers/04_Assets/UnityAssetsManager/MIGRATION STATE V1 to V2 .md`
-- Le fichier `_Helpers/artifacts/ASSETMANAGERV2_SESSION_20260306.md` est remplacé/supprimé
+- Fichier de suivi actuel et unique: `_Helpers/04_Assets/UnityAssetsManager/_Helpers/MIGRATION STATE V1 to V2 .md`
 - Toute la synthèse de session est désormais centralisée ici
 - Référence à utiliser dans README et dans les prochains échanges: `MIGRATION STATE V1 to V2 .md`
 
@@ -52,7 +51,7 @@
 
 8. Décision documentaire
 
-- `SQLITE_SUPPORT.md` conservé comme doc technique détaillée
+- `_helpers/SQLITE_SUPPORT.md` conservé comme doc technique détaillée
 - README garde une vue synthétique et renvoie vers les docs détaillées
 
 ---
@@ -244,7 +243,7 @@
 
 **Estimation**: 1.5h
 **Priorité**: Haute
-**Statut**: ⏳ À FAIRE
+**Statut**: ✅ TERMINÉ
 
 ### 🟡 N2 - Mode include/exclude dans "Ajouter filtre"
 
@@ -271,7 +270,7 @@
 
 **Estimation**: 1h
 **Priorité**: Moyenne
-**Statut**: ⏳ À FAIRE
+**Statut**: ✅ TERMINÉ
 
 ### 🟡 N3 - Redimensionnement des colonnes (drag and drop)
 
@@ -372,8 +371,8 @@ python -m pytest tests/test_filters.py -v
 ### Backlog V2 (Nouvelles Fonctionnalités)
 
 - P2.3 - Options d'affichage (v1 settings) - ⏳ À FAIRE
-- N1 - Export en batch (CLI/API sans UI) - ⏳ À FAIRE (HIGH)
-- N2 - Include/exclude dans le builder - ⏳ À FAIRE (MEDIUM)
+- N1 - Export en batch (CLI/API sans UI) - ✅ TERMINÉ (HIGH)
+- N2 - Include/exclude dans le builder - ✅ TERMINÉ (MEDIUM)
 - N3 - Resize colonnes tableau - ⏳ À FAIRE (MEDIUM)
 - N4 - Popup détail ligne - ⏳ À FAIRE (LOW)
 
@@ -589,4 +588,3 @@ python -m pytest tests/test_filters.py -v
 **version**: 2.0.1 (nettoyage de doublons, synthèse consolidée)
 
 **updatedBy: GPT-5.3-Codex**
-

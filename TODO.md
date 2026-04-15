@@ -15,9 +15,6 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 - API1 (Vérifier la cohérence OpenAPI)
 - API2 (Ajouter des tests API d'erreurs standards)
 - API3 (Uniformiser le contrat d'erreur sur toutes les routes)
-- DOC1 (Consolider les documents de suivi et migration)
-- DOC2 (Consolider `README.md` et `API_GUIDE.md`)
-- DOC3 (Garder `SQLITE_SUPPORT.md` orienté setup SQLite)
 - FEAT1 (Parité V1 restante)
 - AFF1 (Redimensionner les colonnes)
 - AFF2 (Popup détail de ligne)
@@ -30,18 +27,14 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Documentation (last: DOC3)
 
-- [ ] DOC1: Analyse et prioriser ou Consolider les docs "MIGRATION STATE V1 to V2" ([source backlog](./_helpers/MIGRATION%20STATE%20V1%20to%20V2%20.md)), [plan_action_UnityAssetsManager](./_helpers/plan_action_UnityAssetsManager.md) et [PLAN_ACTIONS](./_helpers/PLAN_ACTIONS.md).
-- [ ] DOC2: Consolider les redondances entre `README.md` ([README](./README.md)), `API_GUIDE.md` ([API guide](./API_GUIDE.md)) et docs techniques.
-- [ ] DOC3: Garder `SQLITE_SUPPORT.md` ([support SQLite](./_helpers/SQLITE_SUPPORT.md)) orienté setup SQLite uniquement.
-
 ### Filtrage (last: )
 
 ### Pagination (last: )
 
 ### Affichage (last: AFF2)
 
-- [ ] AFF1 - pouvoir Redimensionner les colonnes (au mieux par drag-and-drop sinon via un menu de configuration de l'affichage)
-- [ ] AFF2 - Popup détail ligne ( manque d'info, qu'est ce que cela signifie ?)
+- [ ] AFF1: pouvoir Redimensionner les colonnes (au mieux par drag-and-drop sinon via un menu de configuration de l'affichage)
+- [ ] AFF2: Popup détail ligne ( manque d'info, qu'est ce que cela signifie ?)
 
 ### Features (last: FEAT1)
 
@@ -73,6 +66,9 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] DOC1: Analyse et priorisation des docs de migration terminées. `plan_action_UnityAssetsManager.md` archivé et fusionné avec `PLAN_ACTIONS.md`.
+- [x] DOC2: Consolider les redondances entre `README.md`, `API_GUIDE.md` et docs techniques.
+- [x] DOC3: Garder `SQLITE_SUPPORT.md` orienté setup SQLite uniquement.
 - [x] MIG1: Mettre à jour prompts/docs restants vers la nomenclature `UnityAssetsManager`.
 - [x] REF2: Modulariser l'application (découper le monolithe `app.py` en modules distincts, supprimer les dépendances legacy, optimiser SQLite). Voir [REFACTORING_MODULARIZATION.md](./_helpers/REFACTORING_MODULARIZATION.md).
 - [x] CI1: déplacer `config.json` en `config/config.json`
