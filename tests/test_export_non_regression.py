@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_export_non_regression.py
 # ============================================================================
 # Description: Tests de non-régression pour les templates d'export.
-# Version: 1.2.3
+# Version: 1.2.5
 # ============================================================================
 
 from pathlib import Path
@@ -49,9 +49,11 @@ SAMPLE_DF = pd.DataFrame(
 def test_api_export_template_non_regression(monkeypatch, template_name, pattern, expected_ext, expected_mime, expected_fragment, ):
     """Ensure each export family keeps expected extension/mime/content contract."""
     mod = import_unity_assets_manager_module()
+    import sys
+    dm_module = sys.modules.get("data_manager")
 
-    monkeypatch.setattr(mod.dm, "get_data", lambda: SAMPLE_DF.copy())
-    monkeypatch.setattr(mod, "export_templates", {template_name: {"description": "Template de test", "pattern": pattern, }}, raising=False, )
+    monkeypatch.setattr(dm_module.dm, "_df", SAMPLE_DF.copy())
+    monkeypatch.setattr(mod.config, "export_templates", {template_name: {"description": "Template de test", "pattern": pattern, }})
 
     client = mod.app.test_client()
     response = client.post(
@@ -86,9 +88,11 @@ def test_api_export_template_non_regression(monkeypatch, template_name, pattern,
 def test_api_batch_export_writes_expected_extension(monkeypatch, tmp_path, template_name, pattern, expected_ext, ):
     """Headless export must keep extension inference stable for automation flows."""
     mod = import_unity_assets_manager_module()
+    import sys
+    dm_module = sys.modules.get("data_manager")
 
-    monkeypatch.setattr(mod.dm, "get_data", lambda: SAMPLE_DF.copy())
-    monkeypatch.setattr(mod, "export_templates", {template_name: {"description": "Template de test", "pattern": pattern, }}, raising=False, )
+    monkeypatch.setattr(dm_module.dm, "_df", SAMPLE_DF.copy())
+    monkeypatch.setattr(mod.config, "export_templates", {template_name: {"description": "Template de test", "pattern": pattern, }})
 
     client = mod.app.test_client()
     response = client.post(
@@ -105,25 +109,26 @@ def test_api_batch_export_writes_expected_extension(monkeypatch, tmp_path, templ
 
     assert response.status_code == 200
     payload = response.get_json()
-    assert payload is not None and payload.get("success") is True
+    assert payload is not None and payload.get("status") == "success"
 
-    exported_path = Path(payload["path"])
-    assert exported_path.exists()
-    assert exported_path.suffix == f".{expected_ext}"
+    out_file = Path(payload["file"])
+    assert out_file.exists()
+    assert out_file.suffix == f".{expected_ext}"
 
 
 def test_batch_export_applies_include_exclude_stack(monkeypatch, tmp_path):
     """Non-regression for include/exclude order in batch export mode."""
     mod = import_unity_assets_manager_module()
+    import sys
+    dm_module = sys.modules.get("data_manager")
 
-    monkeypatch.setattr(mod.dm, "get_data", lambda: SAMPLE_DF.copy())
+    monkeypatch.setattr(dm_module.dm, "_df", SAMPLE_DF.copy())
     monkeypatch.setattr(
-        mod,
-        "export_templates", {"CSV stack": {
+        mod.config, "export_templates",
+        {"CSV stack": {
             "description": "Template CSV de test",
             "pattern": "%DisplayName%,%DisplayPublisher%,%DisplayCategory%",
-        }},
-        raising=False,
+        }}
     )
 
     filter_stack = [
@@ -161,12 +166,12 @@ def test_batch_export_applies_include_exclude_stack(monkeypatch, tmp_path):
 
     assert response.status_code == 200
     payload = response.get_json()
-    assert payload is not None and payload.get("success") is True
+    assert payload is not None and payload.get("status") == "success"
 
-    exported_path = Path(payload["path"])
-    assert exported_path.exists()
+    out_file = Path(payload["file"])
+    assert out_file.exists()
 
-    exported_df = pd.read_csv(exported_path)
+    exported_df = pd.read_csv(out_file)
     assert len(exported_df) == 1
     assert exported_df.iloc[0]["DisplayName"] == "Tree Pack"
 

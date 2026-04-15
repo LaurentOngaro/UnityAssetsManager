@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.4] - 2026-04-15
+
+### 🚀 Ajouté
+
+- Tests API d'erreurs standards pour valider les comportements sur payloads invalides.
+- Spécification des routes `/api/templates` et `/api/stats` dans `openapi.yaml`.
+
+### 🔧 Modifié
+
+- Alignement strict de l'implémentation Flask avec la documentation `openapi.yaml`.
+- Sécurisation des payload JSON via `request.get_json(silent=True)` pour éviter les réponses HTML d'erreur 400.
+- Uniformisation du contrat d'erreur standard (status, message) sur l'ensemble des routes (`api_test_path`, `api_batch_export`).
+- Corrections mineures UI (`app.js`) pour la gestion du format des listes de profils.
+
 ## [1.2.3] - 2026-04-15
 
 ### ✨ Validé / Terminé

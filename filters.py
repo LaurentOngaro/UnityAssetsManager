@@ -2,7 +2,7 @@
 # UnityAssetsManager - filters.py
 # ============================================================================
 # Description: Moteur de filtrage et recherche (stack de filtres, tags).
-# Version: 1.2.3
+# Version: 1.2.5
 # ============================================================================
 
 import pandas as pd
@@ -33,7 +33,7 @@ def vectorized_tag_filter(series: pd.Series, selected_tags: list) -> pd.Series:
     pattern = '|'.join(rf'(?:^|[;,|\s]){tag}(?:[;,|\s]|$)' for tag in escaped_tags)
     try:
         return series.astype(str).str.contains(pattern, case=False, na=False, regex=True)
-    except re.error:
+    except Exception:
         return series.astype(str).apply(lambda s: any(t in tokenize_cell(s) for t in selected_tags))
 
 
@@ -95,7 +95,7 @@ def apply_filter_stack(df: pd.DataFrame, filter_stack: list | None, alias_map: d
             if search_val:
                 try:
                     col_mask = filtered_df[resolved_col].astype(str).str.contains(search_val, case=False, na=False, regex=is_regex)
-                except re.error:
+                except Exception:
                     col_mask = pd.Series(False, index=filtered_df.index)
             elif selected:
                 if is_tag_column(resolved_col):

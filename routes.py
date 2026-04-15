@@ -2,16 +2,18 @@
 # UnityAssetsManager - routes.py
 # ============================================================================
 # Description: Définition des routes web et des endpoints API.
-# Version: 1.2.3
+# Version: 1.2.5
 # ============================================================================
 
 import logging
+import sqlite3
+import pandas as pd
 from datetime import datetime, timezone
 from pathlib import Path
 from flask import render_template, request, jsonify, send_file, redirect, url_for, Blueprint
 from io import BytesIO
 
-from config import config, PROFILES_DIR
+from config import config, PROFILES_DIR, EXPORTS_DIR
 from utils import read_json, write_json_normalized
 from data_manager import dm
 from filters import apply_filter_stack, _build_alias_map_from_profile
@@ -169,7 +171,7 @@ def api_get_profile(name):
 
 @bp.route('/api/profiles', methods=['POST'])
 def api_save_profile():
-    data = request.json
+    data = request.get_json(silent=True)
     if not data or 'name' not in data:
         return api_error("INVALID_PAYLOAD", "Nom de profil manquant", 400)
     save_profile(data['name'], data)
@@ -192,7 +194,7 @@ def api_delete_profile(name):
 
 @bp.route('/api/export', methods=['POST'])
 def api_export():
-    data = request.json
+    data = request.get_json(silent=True)
     if not data:
         return api_error("INVALID_PAYLOAD", "Données manquantes pour l'export", 400)
 
@@ -233,9 +235,19 @@ def api_reload():
     return jsonify({"status": "success", "message": "Données rechargées"})
 
 
+@bp.route('/api/stats', methods=['GET'])
+def api_stats():
+    df = dm.get_data()
+    if df is None or df.empty:
+        return api_error("DATA_NOT_FOUND", "Aucune donnée n'est chargée.", 404)
+    sample = df.head(5).astype(str).values.tolist()
+    stats = {"total_rows": len(df), "total_columns": len(df.columns), "columns": list(df.columns), "sample": sample}
+    return jsonify(stats)
+
+
 @bp.route('/api/setup', methods=['POST'])
 def api_setup_save():
-    data = request.json
+    data = request.get_json(silent=True)
     if not data:
         return api_error("INVALID_PAYLOAD", "Config manquante", 400)
 
@@ -251,28 +263,62 @@ def api_setup_save():
 
 @bp.route('/api/test-path', methods=['POST'])
 def api_test_path():
-    data = request.json
+    data = request.get_json(silent=True)
     if not data:
-        return jsonify({"exists": False, "error": "Payload JSON manquant"})
+        return api_error("INVALID_PAYLOAD", "Payload JSON manquant", 400)
     path_str = data.get('path')
     if not path_str:
-        return jsonify({"exists": False, "error": "Path vide"})
+        return api_error("INVALID_PAYLOAD", "Path vide", 400)
 
     path = Path(path_str)
     exists = path.exists()
     is_dir = path.is_dir() if exists else False
 
     tables = []
+    source_type = None
+    rows = 0
+    cols = 0
+    warning = None
+
     if exists and not is_dir:
-        if dm.detect_source_type(path) == 'sqlite':
+        source_type = dm.detect_source_type(path)
+        if source_type == 'sqlite':
             tables = dm.list_sqlite_tables(path)
+            if tables:
+                try:
+                    conn = sqlite3.connect(str(path))
+                    table_name = tables[0]  # On prend la première par défaut pour le test
+                    cursor = conn.cursor()
+                    cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+                    rows = cursor.fetchone()[0]
+                    cursor.execute(f"PRAGMA table_info({table_name})")
+                    cols = len(cursor.fetchall())
+                    conn.close()
+                except Exception as e:
+                    logger.warning(f"Erreur meta SQLite: {e}")
+        else:
+            # CSV: Rapid check
+            try:
+                # On lit juste le début pour les colonnes
+                df_sample = pd.read_csv(path, sep=None, engine='python', nrows=0)
+                cols = len(df_sample.columns)
+                # Pour les lignes, on compte les sauts de ligne (plus rapide que read_csv complet)
+                with open(path, 'rb') as f:
+                    rows = sum(1 for _ in f) - 1  # -1 pour le header
+            except Exception as e:
+                logger.warning(f"Erreur meta CSV: {e}")
+                warning = f"Format potentiellement malformé: {e}"
 
     return jsonify(
         {
             "exists": exists,
             "is_dir": is_dir,
-            "source_type": dm.detect_source_type(path) if exists and not is_dir else None,
-            "tables": tables
+            "type": source_type,
+            "source_type": source_type,  # Backwards compatibility
+            "tables": tables,
+            "rows": max(0, rows),
+            "cols": cols,
+            "warning": warning
         }
     )
 
@@ -285,37 +331,64 @@ def api_columns():
     return jsonify([])
 
 
+@bp.route('/api/templates', methods=['GET'])
+def api_templates():
+    templates_list = [
+        {
+            "name": name,
+            "description": tpl.get("description", ""),
+            "pattern": tpl.get("pattern", "")
+        } for name, tpl in config.export_templates.items()
+    ]
+    return jsonify({"templates": templates_list})
+
+
 @bp.route('/api/batch-export', methods=['POST'])
 def api_batch_export():
     """Headless export for automation."""
-    data = request.json
+    data = request.get_json(silent=True)
     if not data:
         return api_error("INVALID_PAYLOAD", "Payload manquant", 400)
 
     profile_name = data.get('profile')
     template_name = data.get('template')
-    output_path = data.get('output_path')
+    filter_stack = data.get('filter_stack', [])
+    alias_map = data.get('alias_map', {})
 
-    if not profile_name or not template_name:
-        return api_error("MISSING_PARAMS", "profile and template are required", 400)
+    # Support for both explicit path or split dir/name
+    output_path = data.get('output_path')
+    output_dir = data.get('output_dir')
+    file_name = data.get('file_name')
+
+    if not template_name:
+        return api_error("MISSING_PARAMS", "template is required", 400)
 
     df = dm.get_data()
-    profile = load_profile(profile_name)
-    if not profile:
-        return api_error("PROFILE_NOT_FOUND", f"Profile {profile_name} not found", 404)
 
-    alias_map = _build_alias_map_from_profile(profile)
-    filtered_df = apply_filter_stack(df, profile.get('filter_stack', []), alias_map)
+    if profile_name:
+        profile = load_profile(profile_name)
+        if not profile:
+            return api_error("PROFILE_NOT_FOUND", f"Profile {profile_name} not found", 404)
+        filter_stack = profile.get('filter_stack', [])
+        alias_map = _build_alias_map_from_profile(profile)
+
+    filtered_df = apply_filter_stack(df, filter_stack, alias_map)
 
     try:
         export_content = config.apply_export_template(filtered_df, template_name)
+        ext, _ = config.detect_export_format(template_name)
+
         if output_path:
             out_file = Path(output_path)
-            out_file.parent.mkdir(exist_ok=True, parents=True)
-            out_file.write_text(export_content, encoding='utf-8')
-            return jsonify({"status": "success", "file": str(out_file)})
         else:
-            ext, _ = config.detect_export_format(template_name)
-            return jsonify({"status": "success", "content": export_content, "format": ext, "count": len(filtered_df)})
+            base_dir = Path(output_dir) if output_dir else EXPORTS_DIR
+            name = file_name or f"batch_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            out_file = base_dir / f"{name}.{ext}"
+
+        out_file.parent.mkdir(exist_ok=True, parents=True)
+        out_file.write_text(export_content, encoding='utf-8')
+
+        return jsonify({"status": "success", "file": str(out_file), "format": ext, "count": len(filtered_df)})
     except Exception as e:
+        logger.error(f"Batch export error: {e}")
         return api_error("BATCH_EXPORT_ERROR", str(e), 500)

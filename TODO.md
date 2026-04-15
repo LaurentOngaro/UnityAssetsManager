@@ -12,9 +12,6 @@ Pour plus de détails sur l'implémentation de ces modifications, consulter le f
 
 classement des demandes par priorité de la plus urgente à la moins urgente:
 
-- API3 (Uniformiser le contrat d'erreur sur toutes les routes)
-- API1 (Vérifier la cohérence OpenAPI)
-- API2 (Ajouter des tests API d'erreurs standards)
 - FEAT1 (Parité V1 restante)
 - AFF1 (Redimensionner les colonnes)
 - AFF2 (Popup détail de ligne)
@@ -42,11 +39,6 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Renforcement du contrat API (last: API3)
 
-- [ ] API1: Vérifier la cohérence entre implémentation Flask et `openapi.yaml`.
-- [ ] API2: Ajouter des tests API pour les cas d'erreurs standards (payload invalide, profil absent, setup invalide).
-- [ ] API3: Finaliser le contrat d'erreur uniforme sur toutes les routes (`error.code`, `error.message`, `error.http_status`, `error.timestamp`, `error.path`, `error.details`).
-  - reprendre ce qui a été fait pour `FabAssetsManager` et l'adapter à `UnityAssetsManager`.
-
 ### Migration (last: MIG3)
 
 - [ ] MIG2: Finaliser la dépréciation des flux legacy `assetsCuration/85X_A00_*.json` après migration complète.
@@ -66,6 +58,9 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] API1: Vérifier la cohérence entre implémentation Flask et `openapi.yaml`.
+- [x] API2: Ajouter des tests API pour les cas d'erreurs standards.
+- [x] API3: Finaliser le contrat d'erreur uniforme sur toutes les routes.
 - [x] DOC1: Analyse et priorisation des docs de migration terminées. `plan_action_UnityAssetsManager.md` archivé et fusionné avec `PLAN_ACTIONS.md`.
 - [x] DOC2: Consolider les redondances entre `README.md`, `API_GUIDE.md` et docs techniques.
 - [x] DOC3: Garder `SQLITE_SUPPORT.md` orienté setup SQLite uniquement.

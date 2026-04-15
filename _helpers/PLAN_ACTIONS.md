@@ -23,7 +23,6 @@ Chaque fois qu'une modification est teminée:
 
 ## Rattachement rapide des sprints aux TODO
 
-- Sprint P2 - API1, API2, API3, DOC1, DOC2, DOC3
 - Sprint P3 - MIG2, MIG3
 - Sprint P4 - FEAT1, AFF1, AFF2
 - Sprint P5 - INT1, INT2, INT3, INT4
@@ -34,30 +33,7 @@ Chaque fois qu'une modification est teminée:
 
 ### Refactoring
 
-### Contrat API
-
-- API1: vérifier la cohérence entre l'implémentation Flask et `openapi.yaml`.
-  - s'assurer que chaque route décrite est présente et que ses paramètres sont alignés.
-  - éviter les divergences entre documentation et code.
-- API2: ajouter des tests API pour les cas d'erreurs standards.
-  - couvrir payload invalide, profil absent, setup invalide et autres erreurs attendues.
-  - verrouiller le contrat de réponse d'erreur.
-- API3: finaliser le contrat d'erreur uniforme sur toutes les routes.
-  - standardiser `error.code`, `error.message`, `error.http_status`, `error.timestamp`, `error.path`, `error.details`.
-  - réutiliser la logique déjà stabilisée côté `FabAssetsManager`.
-
 ### Documentation
-
-- DONE DOC1: analyser puis fusionner ou prioriser les docs de migration et de suivi.
-  - consolidation effectuée entre `plan_action_UnityAssetsManager` (archivé) et `PLAN_ACTIONS`.
-  - documents liés: [MIGRATION STATE V1 to V2 .md](MIGRATION%20STATE%20V1%20to%20V2%20.md), PLAN_ACTIONS.md.
-- DONE DOC2: consolider `README.md`, `API_GUIDE.md` et les docs techniques.
-  - réserver chaque doc à son rôle principal.
-  - déplacer les détails d'exécution dans le bon fichier.
-  - documents liés: [README.md](../README.md), [API_GUIDE.md](../API_GUIDE.md).
-- DONE DOC3: garder `SQLITE_SUPPORT.md` orienté setup SQLite uniquement.
-  - limiter ce fichier au support d'installation et de configuration SQLite.
-  - document lié: [SQLITE_SUPPORT.md](SQLITE_SUPPORT.md).
 
 ### Affichage
 
@@ -94,23 +70,6 @@ Chaque fois qu'une modification est teminée:
 
 cete répartition est indicative et peut être ajustée en fonction des dépendances et de l'avancement.
 Elle n'est pas un classement par priorité mais plutôt une organisation thématique pour structurer les sprints.
-
-### DONE Sprint P2 - Contrat API & Documentation (API1, API2, API3, DOC1, DOC2, DOC3)
-
-- Action: Maintenir `openapi.yaml` en source de verite des endpoints.
-- Action: Ajouter exemples de payloads succes/erreur dans `API_GUIDE.md`.
-- Action: Verifier les routes:
-  - `GET /api/data`
-  - `GET /api/columns`
-  - `GET /api/profiles`
-  - `GET /api/profiles/{name}`
-  - `DELETE /api/profiles/{name}`
-  - `POST /api/profiles`
-  - `POST /api/export`
-  - `POST /api/reload`
-  - `POST /api/setup`
-  - `POST /api/test-path`
-- Definition of done: alignement implementation/API_GUIDE/OpenAPI sans divergence fonctionnelle.
 
 ### Sprint P4 - Parite V1 restante (FEAT1, AFF1, AFF2)
 

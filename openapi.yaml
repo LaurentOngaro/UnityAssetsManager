@@ -57,14 +57,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  columns:
-                    type: array
-                    items:
-                      type: string
-                  count:
-                    type: integer
+                type: array
+                items:
+                  type: string
   /api/templates:
     get:
       summary: Liste des templates d'export
@@ -96,12 +91,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  profiles:
-                    type: array
-                    items:
-                      type: string
+                type: array
+                items:
+                  type: string
     post:
       summary: Sauvegarder un profil
       requestBody:
@@ -118,9 +110,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                  name:
+                  status:
+                    type: string
+                  message:
                     type: string
         '400':
           description: Requete invalide
@@ -172,9 +164,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                  name:
+                  status:
+                    type: string
+                  message:
                     type: string
         '404':
           description: Profil absent
@@ -265,12 +257,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                  rows:
-                    type: integer
-                  columns:
-                    type: integer
+                  status:
+                    type: string
+                  message:
+                    type: string
   /api/stats:
     get:
       summary: Statistiques sur la source courante
@@ -304,15 +294,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                  data_path:
+                  status:
                     type: string
-                  source_type:
+                  message:
                     type: string
-                  db_table:
-                    type: string
-                    nullable: true
         '400':
           description: Parametres setup invalides
           content:

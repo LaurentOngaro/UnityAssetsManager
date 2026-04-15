@@ -2,7 +2,7 @@
 // UnityAssetsManager - static/js/app.js
 // ============================================================================
 // Description: Logique client (Vanilla JS) pour l'interface DataTables.
-// Version: 1.2.3
+// Version: 1.2.5
 // ============================================================================
 
 // Configuration
@@ -600,7 +600,8 @@ function loadProfilesList() {
         url: '/api/profiles',
         type: 'GET',
         success: function(response) {
-            const profiles = response.profiles || [];
+            // response est une liste directement, ou contient {profiles: ...} selon le backend
+            const profiles = Array.isArray(response) ? response : (response.profiles || []);
             const $select = $('#profilesList');
 
             console.log('[Profile] Profils chargés:', profiles);
@@ -771,7 +772,7 @@ function deleteProfile() {
                 url: '/api/profiles',
                 type: 'GET',
                 success: function(response) {
-                    const profiles = response.profiles || [];
+                    const profiles = Array.isArray(response) ? response : (response.profiles || []);
                     const $select = $('#profilesList');
                     $select.find('option:not(:first)').remove();
                     profiles.forEach(function(profile) {
