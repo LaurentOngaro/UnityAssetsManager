@@ -83,7 +83,7 @@ Configurer la source via la page `/setup` (recommandé) ou en éditant `config/c
 
 - **Guide API Complet**: [API_GUIDE.md](./API_GUIDE.md) (Endpoints, format JSON, payloads, batch-export).
 - **Setup SQLite & Migration**: [SQLITE_SUPPORT.md](./_helpers/SQLITE_SUPPORT.md).
-- **Checklist Qualité**: [MANUAL_CHECKLIST.md](./_helpers/MANUAL_CHECKLIST.md).
+- **Test Qualité**: [tests/test_manual_checklist.py](./tests/test_manual_checklist.py).
 
 ## 🎯 Exemples d'utilisation
 
@@ -194,13 +194,13 @@ profiles/
 - **Plan d'action**: [`_helpers/PLAN_ACTIONS.md`](./_helpers/PLAN_ACTIONS.md) - Vue détaillée et ordonnée des tâches
 - **Migration V1→V2**: [`_helpers/MIGRATION STATE V1 to V2 .md`](./_helpers/MIGRATION%20STATE%20V1%20to%20V2%20.md) - Matrice complète, gaps, roadmap
 - **Support SQLite**: [`_helpers/SQLITE_SUPPORT.md`](./_helpers/SQLITE_SUPPORT.md) - Guide SQLite
-- **Checklist**: [`_helpers/MANUAL_CHECKLIST.md`](./_helpers/MANUAL_CHECKLIST.md)
+- **Test**: [`tests/test_manual_checklist.py`](./tests/test_manual_checklist.py)
 
 ### Validation rapide
 
 ```powershell
 python -m pytest _Helpers/04_Assets/UnityAssetsManager/tests/test_export_non_regression.py -v
-python _Helpers/04_Assets/UnityAssetsManager/_helpers/run_manual_checklist.py
+python -m pytest _Helpers/04_Assets/UnityAssetsManager/tests/test_manual_checklist.py -v
 python _Helpers/04_Assets/UnityAssetsManager/_helpers/bumpImportantVersion.py --scope patch --dry-run
 ```
 

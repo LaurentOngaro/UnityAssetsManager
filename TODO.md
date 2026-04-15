@@ -12,9 +12,9 @@ Pour plus de détails sur l'implémentation de ces modifications, consulter le f
 
 classement des demandes par priorité de la plus urgente à la moins urgente:
 
+- API3 (Uniformiser le contrat d'erreur sur toutes les routes)
 - API1 (Vérifier la cohérence OpenAPI)
 - API2 (Ajouter des tests API d'erreurs standards)
-- API3 (Uniformiser le contrat d'erreur sur toutes les routes)
 - FEAT1 (Parité V1 restante)
 - AFF1 (Redimensionner les colonnes)
 - AFF2 (Popup détail de ligne)
