@@ -12,7 +12,9 @@ Pour plus de détails sur l'implémentation de ces modifications, consulter le f
 
 classement des demandes par priorité de la plus urgente à la moins urgente:
 
-- FEAT1 (Parité V1 restante)
+- REF3 (Centralisation erreurs API)
+- REF4 (Amélioration du logging)
+- API4 (Endpoints de diagnostic)
 - AFF1 (Redimensionner les colonnes)
 - AFF2 (Popup détail de ligne)
 - MIG2 (Déprécier les flux legacy)
@@ -35,9 +37,14 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Features (last: FEAT1)
 
-- [ ] FEAT1: traiter `MIGRATION STATE V1 to V2 .md` ([backlog migration](./_helpers/MIGRATION%20STATE%20V1%20to%20V2%20.md)) comme backlog de parité V1 restant.
+### Renforcement du contrat API (last: API4)
 
-### Renforcement du contrat API (last: API3)
+- [ ] API4: Ajouter des endpoints de diagnostic et de configuration (ex: `/api/test`, `/api/config`) pour faciliter l'automatisation.
+
+### Refactoring (last: REF4)
+
+- [ ] REF3: Centraliser la gestion des erreurs API via un module `errors.py` (classes et Enum), sur le modèle de FAM.
+- [ ] REF4: Améliorer le système de logging avec un `RotatingFileHandler` et des paramètres dynamiques (niveau, sortie).
 
 ### Migration (last: MIG3)
 

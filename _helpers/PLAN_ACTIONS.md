@@ -24,14 +24,20 @@ Chaque fois qu'une modification est teminée:
 ## Rattachement rapide des sprints aux TODO
 
 - Sprint P3 - MIG2, MIG3
-- Sprint P4 - FEAT1, AFF1, AFF2
+- Sprint P4 - AFF1, AFF2
 - Sprint P5 - INT1, INT2, INT3, INT4
+- Sprint P6 (FAM Parity) - REF3, REF4, API4
 
 ## TOP Priorités (pour les corrections immédiates)
 
 ### Gestion
 
 ### Refactoring
+
+- REF3: Centraliser la gestion des erreurs API (`errors.py`).
+  - unifier les retours d'erreurs en s'inspirant de FabAssetsManager (`AppError`, `ErrorCode`).
+- REF4: Améliorer le système de logging.
+  - intégrer `RotatingFileHandler` et la configuration via JSON (fichier `app.log`).
 
 ### Documentation
 
@@ -43,10 +49,6 @@ Chaque fois qu'une modification est teminée:
   - clarifier le contenu attendu et le périmètre de ce panneau.
 
 ### Features
-
-- FEAT1: traiter `MIGRATION STATE V1 to V2 .md` comme backlog de parité V1 restant.
-  - convertir le document de migration en liste de fonctionnalités à reprendre.
-  - document source: [MIGRATION STATE V1 to V2 .md](MIGRATION%20STATE%20V1%20to%20V2%20.md).
 
 ### Migration
 
@@ -71,12 +73,7 @@ Chaque fois qu'une modification est teminée:
 cete répartition est indicative et peut être ajustée en fonction des dépendances et de l'avancement.
 Elle n'est pas un classement par priorité mais plutôt une organisation thématique pour structurer les sprints.
 
-### Sprint P4 - Parite V1 restante (FEAT1, AFF1, AFF2)
-
-- Action: Ajouter endpoint `/api/batch-export`.
-- Action: Ajouter include/exclude dans filter builder.
-- Action: Ajouter tests API associes.
-- Definition of done: use-cases automation V1 couverts par V2.
+### Sprint P4 - Parite V1 restante (AFF1, AFF2)
 
 ### Sprint P3 - Validation finale (MIG2, MIG3)
 
@@ -92,3 +89,10 @@ Elle n'est pas un classement par priorité mais plutôt une organisation thémat
 - Action: Ajouter provider Fab depuis exports/cache consolides.
 - Action: Ajouter providers stores manuels (`raw_assets.md`).
 - Definition of done: generation pilotable de `raw_assets_normalized.json` pour Unity + Fab + stores manuels.
+
+### Sprint P6 - Parité d'architecture avec FAM (REF3, REF4, API4)
+
+- Action: Créer `errors.py` et refactoriser les retours d'erreurs dans `routes.py`.
+- Action: Configurer `RotatingFileHandler` pour les logs de production dans `app.py`.
+- Action: Ajouter les endpoints `/api/test` et `/api/config`.
+- Definition of done: UAM bénéficie de la même robustesse backend que FabAssetsManager.

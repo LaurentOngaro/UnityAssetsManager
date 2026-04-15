@@ -17,8 +17,6 @@ Application web locale pour la gestion rapide et efficace d'inventaires d'assets
 | **Scalabilité**     | Difficile            | Excellente               |
 | **Responsif**       | Limité               | Bootstrap 5 (responsive) |
 
-**📊 Migration V1→V2**: Voir `MIGRATION STATE V1 to V2.md` pour matrice complète, gaps fonctionnels et roadmap restante.
-
 ## 🚀 Installation
 
 ```powershell

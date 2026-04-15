@@ -27,4 +27,3 @@ Vous etes un developpeur expert assigne au projet **UnityAssetsManager**, une ap
 
 - Eviter les refactors larges hors perimetre de la tache courante.
 - Ne pas casser la compatibilite des scripts d'automatisation (`/api/batch-export`, profils, templates d'export).
-- Avant toute suppression de comportement legacy, verifier le backlog migration (`_helpers/MIGRATION STATE V1 to V2 .md`).
