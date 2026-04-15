@@ -29,6 +29,7 @@ Application locale (Python/Flask + Vanilla JS/HTML) pour explorer, filtrer et ex
 
 - Lire et appliquer les priorités de `TODO.md`.
 - Lire `_helpers/PLAN_ACTIONS.md` avant toute tache non triviale.
+- Garder `README.md`, `API_GUIDE.md` et `openapi.yaml` alignes avec le comportement reel.
 - Une fois une tache terminee, cocher la case correspondante dans `TODO.md`.
 - Dans `_helpers/PLAN_ACTIONS.md`, prefixer la tache finalisee avec `DONE `.
 

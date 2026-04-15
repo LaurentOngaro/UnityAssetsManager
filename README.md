@@ -1,6 +1,6 @@
 # 🚀 UnityAssetsManager - Flask Edition
 
-Version: 1.2.1
+Version: 1.2.5
 
 Application web locale pour la gestion rapide et efficace d'inventaires d'assets (3800+ lignes) avec support multi-source (CSV/SQLite), filtrage avancé, profils personnalisés et exports flexibles.
 
@@ -69,7 +69,7 @@ Configurer la source via la page `/setup` (recommandé) ou en éditant `config/c
   - Interface `/setup` pour choisir la table
   - Config persistante dans `config/config.json` (`data_path` + `db_table`)
   - Support multi-tables (dropdown automatique)
-  - **Guide complet**: Voir `_Helpers/SQLITE_SUPPORT.md` pour migration CSV→SQLite, API, troubleshooting et benchmarks
+  - **Guide complet**: Voir `./_helpers/SQLITE_SUPPORT.md` pour migration CSV→SQLite, API, troubleshooting et benchmarks
 
 ### Répertoires
 
@@ -190,16 +190,16 @@ profiles/
 
 - **Backlog principal**: [`TODO.md`](TODO.md) - Vue priorisée des tâches à faire
 - **Plan d'action**: [`_helpers/PLAN_ACTIONS.md`](./_helpers/PLAN_ACTIONS.md) - Vue détaillée et ordonnée des tâches
-- **Migration V1→V2**: [`_helpers/MIGRATION STATE V1 to V2 .md`](./_helpers/MIGRATION%20STATE%20V1%20to%20V2%20.md) - Matrice complète, gaps, roadmap
+- **Migration V1→V2**: [Migration V1→V2](./_helpers/MIGRATION%20STATE%20V1%20to%20V2%20.md) - Matrice complète, gaps, roadmap
 - **Support SQLite**: [`_helpers/SQLITE_SUPPORT.md`](./_helpers/SQLITE_SUPPORT.md) - Guide SQLite
 - **Test**: [`tests/test_manual_checklist.py`](./tests/test_manual_checklist.py)
 
 ### Validation rapide
 
 ```powershell
-python -m pytest _Helpers/04_Assets/UnityAssetsManager/tests/test_export_non_regression.py -v
-python -m pytest _Helpers/04_Assets/UnityAssetsManager/tests/test_manual_checklist.py -v
-python _Helpers/04_Assets/UnityAssetsManager/_helpers/bumpImportantVersion.py --scope patch --dry-run
+python -m pytest tests/test_export_non_regression.py -v
+python -m pytest tests/test_manual_checklist.py -v
+python _helpers/bumpImportantVersion.py --scope patch --dry-run
 ```
 
 ### Prochaines améliorations
@@ -216,6 +216,6 @@ Pour les bugs: Créer un issue dans le repo TerraBloom
 
 ---
 
-**Version**: 1.2.1
+**Version**: 1.2.5
 **Dernière mise à jour**: 2026-04-15
 **Status**: Production (Architecture modulaire, API stabilisée)
