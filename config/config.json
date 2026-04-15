@@ -1,0 +1,13 @@
+{
+  "show_parser_warnings": false,
+  "db_table": "assets",
+  "flask_host": "127.0.0.1",
+  "flask_port": 5003,
+  "flask_debug": true,
+  "flask_threaded": true,
+  "secret_key": "terrabloom-assets-v2",
+  "max_content_length_mb": 100,
+  "cache_ttl_seconds": 3600,
+  "default_page_size": 50,
+  "data_path": "H:\\Sync\\PKM_PROJECTS\\TerraBloom\\_Helpers\\data\\assetsExports\\Unity\\unity_assets_export.csv"
+}

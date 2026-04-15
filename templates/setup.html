@@ -9,12 +9,19 @@
                     <h4 class="mb-0">⚙️ Configuration - Fichier source manquant</h4>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-warning">
-                        <strong>⚠️ Fichier de données non trouvé</strong>
-                        <p class="mb-0">Le fichier <code>{{ filename }}</code> n'a pas été trouvé aux emplacements suivants:</p>
+                    <div id="startupStateBlock">
+                    <div id="startupStatus" class="alert {% if current_path_exists %}alert-info{% else %}alert-warning{% endif %}">
+                        {% if current_path_exists %}
+                        <strong>ℹ️ État au démarrage</strong>
+                        <p class="mb-0">Le chemin courant existe, mais les données n'étaient pas encore chargées dans l'application. Teste le chemin ci-dessous puis clique sur <strong>Sauvegarder et continuer</strong>.</p>
+                        {% else %}
+                        <strong>⚠️ État au démarrage: fichier non trouvé</strong>
+                        <p class="mb-0">Le fichier <code>{{ filename }}</code> n'a pas été trouvé dans les chemins candidats au démarrage.</p>
+                        {% endif %}
                     </div>
 
-                    <ul class="list-group mb-4">
+                    <p class="text-muted mb-2">Chemins recherchés au démarrage:</p>
+                    <ul class="list-group mb-4" id="startupPathsList">
                         {% for path in searched_paths %}
                         <li class="list-group-item">
                             <code>{{ path }}</code>
@@ -24,6 +31,7 @@
                         </li>
                         {% endfor %}
                     </ul>
+                    </div>
 
                     <h5>📂 Sélectionner un nouveau chemin</h5>
                     <form id="setupForm" method="POST" action="/api/setup">
@@ -68,7 +76,7 @@
                     <li>Utilise des <code>\</code> ou <code>/</code> pour les séparateurs de chemin</li>
                     <li><strong>Formats supportés</strong>: CSV (<code>.csv</code>) ou SQLite (<code>.db</code>, <code>.sqlite</code>)</li>
                     <li>Pour SQLite, tu pourras sélectionner la table après avoir testé le chemin</li>
-                    <li>La configuration sera sauvegardée dans <code>config.json</code></li>
+                    <li>La configuration sera sauvegardée dans <code>config/config.json</code></li>
                     <li>Tu peux changer le chemin plus tard via cette page (<code>/setup</code>)</li>
                 </ul>
             </div>
@@ -98,9 +106,14 @@ $(document).ready(function() {
                 if (response.exists) {
                     detectedType = response.type;
 
+                    $('#startupStateBlock').slideUp(150);
+
                     // Afficher résultat
                     let badge = `<span class="badge bg-success">✅ ${response.type.toUpperCase()} trouvé</span>`;
                     badge += ` <small class="text-muted">(${response.rows} lignes, ${response.cols} colonnes)</small>`;
+                    if (response.warning) {
+                        badge += ` <small class="text-warning">${response.warning}</small>`;
+                    }
                     $('#testResult').html(badge);
 
                     // Si SQLite, afficher sélecteur de tables
@@ -118,10 +131,19 @@ $(document).ready(function() {
                         $('#sqliteTableSelector').show();
                     }
                 } else {
-                    $('#testResult').html(`
-                        <span class="badge bg-danger">❌ Fichier introuvable</span>
-                        <small class="text-muted">${response.error || 'Vérifie le chemin'}</small>
-                    `);
+                    $('#startupStatus')
+                        .removeClass('alert-success alert-info')
+                        .addClass('alert-warning')
+                        .html('<strong>⚠️ État au démarrage / test courant</strong><p class="mb-0">Le chemin n\'est pas encore utilisable. Corrige le chemin puis reteste.</p>');
+
+                    const isNotFound = response.code === 'PATH_NOT_FOUND' || response.code === 'PATH_EMPTY';
+                    const badgeText = isNotFound ? '❌ Fichier introuvable' : '❌ Fichier non lisible';
+                    const detailText = response.message || 'Vérifie le chemin et le format du fichier';
+
+                    const $wrap = $('<span></span>');
+                    $wrap.append($('<span class="badge bg-danger me-1"></span>').text(badgeText));
+                    $wrap.append($('<small class="text-muted"></small>').text(detailText));
+                    $('#testResult').empty().append($wrap);
                 }
             },
             error: function() {

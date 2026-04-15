@@ -1,6 +1,6 @@
 # 🚀 UnityAssetsManager - Flask Edition
 
-Version: 1.1.1
+Version: 1.1.3
 
 Application web locale pour la gestion rapide et efficace d'inventaires d'assets (3800+ lignes) avec support multi-source (CSV/SQLite), filtrage avancé, profils personnalisés et exports flexibles.
 
@@ -54,10 +54,13 @@ REMARQUE : 5003 est le port par défaut de l'interface Web, mais il peut être 
 
 ### Chemin des données
 
-Éditer `app.py` ligne ~40:
+Configurer la source via la page `/setup` (recommandé) ou en éditant `config/config.json`:
 
-```python
-DATA_PATH = Path.home() / "Sync" / "PKM_PROJECTS" / "TerraBloom" / "_Fichiers" / "assets.csv"
+```json
+{
+  "data_path": "H:/path/to/unity_assets_export.csv",
+  "db_table": "assets"
+}
 ```
 
 **Sources supportées:**
@@ -66,7 +69,7 @@ DATA_PATH = Path.home() / "Sync" / "PKM_PROJECTS" / "TerraBloom" / "_Fichiers" /
 - ✅ **CSV avec encodage multiple** (UTF-8, latin-1, cp1252)
 - ✅ **SQLite** (`.db`, `.sqlite`, `.sqlite3`) avec **sélection de table**
   - Interface `/setup` pour choisir la table
-  - Config persistante dans `config.json` (DATA_PATH + DB_TABLE)
+  - Config persistante dans `config/config.json` (`data_path` + `db_table`)
   - Support multi-tables (dropdown automatique)
   - **Guide complet**: Voir `_Helpers/SQLITE_SUPPORT.md` pour migration CSV→SQLite, API, troubleshooting et benchmarks
 
@@ -140,7 +143,7 @@ pip install -r requirements.txt
 
 ### "Fichier source non trouvé"
 
-Éditer `DATA_PATH` dans `app.py`
+Configurer `data_path` via `/setup` ou dans `config/config.json`.
 
 ### Port 5003 déjà utilisé
 
@@ -148,11 +151,11 @@ pip install -r requirements.txt
 app.run(port=5004)  # Changer port
 ```
 
-ou bien modifier `FLASK_PORT` dans `config/config.json`
+ou bien modifier `flask_port` dans `config/config.json`
 
 ### Ne vois pas mes données
 
-1. Vérifier `DATA_PATH` pointe vers le bon fichier
+1. Vérifier `data_path` dans `config/config.json`
 2. Cliquer 🔄 Recharger (navbar)
 3. Vérifier la console (F12 → Console)
 
@@ -169,6 +172,7 @@ ou bien modifier `FLASK_PORT` dans `config/config.json`
 
 ```
 app.py (serveur Flask, 1214 lignes)
+├── app_settings.py (constantes applicatives centralisées)
 ├── /api/data → AssetDataManager.get_data()
 ├── /api/export → apply_export_template()
 ├── /api/profiles → load_profile() / save_profile()
@@ -232,6 +236,6 @@ Pour les bugs: Créer un issue dans le repo TerraBloom
 
 ---
 
-**Version**: 1.1.1
+**Version**: 1.1.3
 **Dernière mise à jour**: 2026-03-06
 **Status**: Production (69% features V2, 67% parité V1)

@@ -1,5 +1,43 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.1.3] - 2026-04-14
+
+### ❌ Retiré
+
+- Suppression du fallback legacy `config.json` (racine) dans le chargement de configuration.
+
+### 🔧 Modifié
+
+- `load_config()` lit désormais uniquement `config/config.json`.
+
+---
+
+## [1.1.2] - 2026-04-14
+
+### ➕ Ajouté
+
+- Fichiers de personnalisation agent projet:
+  - `.github/instructions/UnityAssetsManager.instructions.md`
+  - `.github/agents/UnityAssetsManager.agent.md`
+- Document temporaire de validation REF1: `_helpers/REF1_VALIDATION_TEMP.md`.
+
+### 🔧 Modifié
+
+- Migration de la configuration runtime de `config.json` (racine) vers `config/config.json`.
+- Ajout d'une compatibilité de lecture temporaire de l'ancien chemin `config.json` pour transition.
+- Externalisation des constantes applicatives de `app.py` vers `app_settings.py`:
+  - templates d'export par défaut
+  - réglages Flask (`host`, `port`, `debug`, `threaded`, `secret_key`, `max_content_length_mb`)
+  - cache TTL et pagination par défaut
+- Mise à jour de la documentation et des templates pour refléter le nouveau chemin de configuration.
+
+---
+
 ## [1.1.1] - 2026-03-05
 
 ### 🐛 Corrigé

@@ -4,7 +4,7 @@
 
 ## Corrections immédiates (last:CI1)
 
-- [ ] CI1: déplacer `config.json` en `config/config.json`
+- [x] CI1: déplacer `config.json` en `config/config.json`
 
 ## Améliorations du projet
 
@@ -14,9 +14,8 @@ Pour plus de détails sur l'implémentation de ces modifications, consulter le f
 
 classement simplifie des demandes par priorité de la plus urgente à la moins urgente, avec les mêmes identifiants que `PLAN_ACTIONS.md`:
 
+- GE1 (Créer instructions et agent spécifiques au projet)
 - CI1 (Déplacer `config.json` vers `config/config.json`)
-- GE2 (Créer instructions et agent spécifiques au projet)
-- GE1 (Ajouter une zone de maintenance dans l'UI)
 - REF1 (Isoler constantes et variables globales)
 - REF2 (Découper `app.py` en modules et optimiser SQLite)
 - API3 (Uniformiser le contrat d'erreur sur toutes les routes)
@@ -46,15 +45,14 @@ classement simplifie des demandes par priorité de la plus urgente à la moins u
 
 ### pagination (last: )
 
-### gestion (last: GE2)
+### gestion (last: GE1)
 
-- [ ] GE1: ajouter une zone avec des action de maintenance en bas de la colonne de gauche
-- [ ] GE2: créer des instructions et un agent spécifique à ce projet
+- [x] GE1: créer des instructions et un agent spécifique à ce projet
   - reprendre ce qui a été fait pour `FabAssetsManager` et l'adapter à `UnityAssetsManager` (voir le dossier "H:\Sync\Scripts\Python\03_apps\FabAssetsManager\.github" pour les exemples d'agents et d'instructions)
 
 ### refactoring (last: REF2)
 
-- [ ] REF1: Déplacer les constantes de configuration et magic numbers (ex: `DATA_PATH`, `DEFAULT_EXPORT_TEMPLATES`) codés en dur dans `app.py` vers le fichier de configuration dédié ou un module `config.py`. (Nécessite de générer un doc de validation temporaire avant d'appliquer).
+- [x] REF1: Déplacer les constantes de configuration et magic numbers (ex: `DATA_PATH`, `DEFAULT_EXPORT_TEMPLATES`) codés en dur dans `app.py` vers le fichier de configuration dédié ou un module `config.py`. (Nécessite de générer un doc de validation temporaire avant d'appliquer).
 - [ ] REF2: Modulariser l'application (découper le monolithe `app.py` en modules distincts, supprimer les dépendances legacy, optimiser SQLite). Voir [REFACTORING_MODULARIZATION.md](./_helpers/REFACTORING_MODULARIZATION.md).
 
 ### Affichage (last: AFF2)

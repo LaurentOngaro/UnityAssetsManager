@@ -38,7 +38,7 @@ Pour changer de table SQLite sans changer de fichier:
 
 ## 📝 Configuration
 
-La configuration est sauvegardée dans `config.json`:
+La configuration est sauvegardée dans `config/config.json`:
 
 ```json
 {

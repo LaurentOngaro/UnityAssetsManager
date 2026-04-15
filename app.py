@@ -27,7 +27,7 @@
 #   - PROFILES_DIR: répertoire des profils
 #   - EXPORTS_DIR: répertoire des exports
 #
-# Version: 1.1.1 (SQLite support ajouté)
+# Version: 1.1.3
 # ============================================================================
 
 import sys
@@ -46,6 +46,22 @@ from typing import Optional, Dict, List, Any
 from flask import Flask, render_template, request, jsonify, send_file, flash, redirect, url_for
 from flask_cors import CORS
 import logging
+
+from app_settings import (
+    ASSETS_CSV_FILE,
+    DEFAULT_CACHE_TTL_SECONDS,
+    DEFAULT_DB_TABLE,
+    DEFAULT_EXPORT_TEMPLATES,
+    DEFAULT_FLASK_DEBUG,
+    DEFAULT_FLASK_HOST,
+    DEFAULT_FLASK_PORT,
+    DEFAULT_FLASK_THREADED,
+    DEFAULT_MAX_CONTENT_LENGTH_MB,
+    DEFAULT_PAGE_SIZE,
+    DEFAULT_SECRET_KEY,
+    DEFAULT_SHOW_PARSER_WARNINGS,
+    build_possible_data_paths,
+)
 
 
 def api_error(code: str, message: str, http_status: int, details: dict | None = None):
@@ -81,13 +97,8 @@ except ImportError:
 # CONFIGURATION
 # =====================================
 
-ASSETS_CSV_FILE = "unity_assets_export.csv"
 # Déterminer DATA_PATH: Chercher assets.csv dans plusieurs emplacements
-POSSIBLE_PATHS = [
-    Path(f"H:/Sync/PKM_PROJECTS/TerraBloom/_Helpers/data/assetsExports/Unity/{ASSETS_CSV_FILE}"),  # Chemin absolu
-    SCRIPT_DIR.parent.parent.parent / f"_Helpers/data/assetsExports/Unity/{ASSETS_CSV_FILE}",  # Relative to UnityAssetsManager/
-    Path.home() / f"Sync/PKM_PROJECTS/TerraBloom/_Helpers/data/assetsExports/Unity/{ASSETS_CSV_FILE}",  # Home
-]
+POSSIBLE_PATHS = build_possible_data_paths(SCRIPT_DIR)
 
 DATA_PATH = None
 for path in POSSIBLE_PATHS:
@@ -106,59 +117,10 @@ if DATA_PATH is None:
 PROFILES_DIR = SCRIPT_DIR / "profiles"
 EXPORTS_DIR = SCRIPT_DIR / "exports"
 CACHE_DIR = SCRIPT_DIR / ".cache"
-CONFIG_FILE = SCRIPT_DIR / "config.json"
+CONFIG_FILE = SCRIPT_DIR / "config" / "config.json"
 TEMPLATES_FILE = SCRIPT_DIR / "data" / "export_templates.jsonc"
 
-# =====================================
-# TEMPLATES D'EXPORT PAR DÉFAUT
-# =====================================
-
-DEFAULT_EXPORT_TEMPLATES = {
-    "texte simple sans URL": {
-        "description": "Texte simple - une ligne par asset : NOM - ÉDITEUR - VERSION",
-        "pattern": "%DisplayName% - %DisplayPublisher% - %Version%"
-    },
-    "CSV sans URL": {
-        "description": "CSV - une ligne par asset : NOM,ÉDITEUR,VERSION",
-        "pattern": "%DisplayName%,%DisplayPublisher%,%Version%"
-    },
-    "table markdown sans URL": {
-        "description": "Tableau Markdown : NOM | ÉDITEUR | VERSION",
-        "pattern": "| %DisplayName% | %DisplayPublisher% | %Version% |"
-    },
-    "liste markdown sans URL": {
-        "description": "Liste Markdown à puces (sans liens) : NOM - ÉDITEUR (VERSION)",
-        "pattern": "- %DisplayName% - %DisplayPublisher% (%Version%)"
-    },
-    "texte simple avec URL": {
-        "description": "Texte simple avec URL ajoutée : NOM - URL",
-        "pattern": "%DisplayName% - %Url%"
-    },
-    "CSV avec URL": {
-        "description": "CSV incluant la colonne Url : NOM,URL,VERSION",
-        "pattern": "%DisplayName%,%Url%,%Version%"
-    },
-    "table markdown avec URL": {
-        "description": "Tableau Markdown avec lien sur le nom : NOM(URL) | ÉDITEUR | CATÉGORIE | TAGS",
-        "pattern": "| [%DisplayName%](%Url%) | %DisplayPublisher% | %DisplayCategory% | %PackageTags% |"
-    },
-    "liste markdown avec URL": {
-        "description": "Liste Markdown à puces avec lien sur le nom : NOM(URL) - ÉDITEUR - CATÉGORIE - TAGS",
-        "pattern": "- [%DisplayName%](%Url%) - %DisplayPublisher% - %DisplayCategory% - %PackageTags%"
-    },
-    "Issue tracker - liste markdown": {
-        "description": "Modèle pour tracker d'issues : NOM(URL) - ÉDITEUR - VERSION - CATÉGORIE - TAGS - AVIS",
-        "pattern": "- [%DisplayName%](%Url%) - **%DisplayPublisher%** - %DisplayCategory% - Tags: %PackageTags% - Avis: %AssetRating%"
-    },
-    "Unity AssetStore - liste Markdown": {
-        "description": "Liste optimisée pour Asset Store : NOM(URL) - ÉDITEUR - vVERSION - Source: SOURCE",
-        "pattern": "- [%DisplayName%](%Url%) - %DisplayPublisher% - v%Version% - Source: %PackageSource%"
-    },
-    "CSV ÉDITEUR (catalogue éditeur)": {
-        "description": "CSV pour catalogue éditeur : NOM,SLUG,URL,VERSION,CATÉGORIE,ÉDITEUR",
-        "pattern": "%DisplayName%,%Slug%,%Url%,%Version%,%DisplayCategory%,%DisplayPublisher%"
-    }
-}
+CONFIG_FILE.parent.mkdir(exist_ok=True)
 
 # Créer les répertoires
 PROFILES_DIR.mkdir(exist_ok=True)
@@ -272,24 +234,57 @@ def apply_export_template(df: pd.DataFrame, template_name: str, url_pattern: str
     result_lines = header_lines + lines
     return "\n".join(result_lines)
 
+
+def _parse_bool(value: Any, default: bool) -> bool:
+    """Convertir une valeur potentiellement typée en booléen."""
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return default
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes", "on"}
+    return bool(value)
+
+
+def _parse_int(value: Any, default: int) -> int:
+    """Convertir une valeur potentiellement typée en entier."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
 def load_config():
-    """Charger la configuration depuis config.json"""
+    """Charger la configuration depuis config/config.json."""
     if CONFIG_FILE.exists():
         try:
-            return read_json(CONFIG_FILE)  # Passer le Path object, pas la string
-        except:
+            return read_json(CONFIG_FILE)
+        except Exception:
             return {}
+
     return {}
 
+
 def save_config(config_data):
-    """Sauvegarder la configuration"""
+    """Sauvegarder la configuration dans config/config.json."""
+    CONFIG_FILE.parent.mkdir(exist_ok=True)
     write_json_normalized(CONFIG_FILE, config_data)
+
 
 # Charger config et override DATA_PATH si défini
 config = load_config()
-DB_TABLE = config.get('db_table', 'assets')  # Table par défaut si SQLite
+DB_TABLE = config.get('db_table', DEFAULT_DB_TABLE)
 # flag pour afficher ou non les warnings de parsing CSV
-show_parser_warnings = config.get('show_parser_warnings', False)
+show_parser_warnings = _parse_bool(config.get('show_parser_warnings'), DEFAULT_SHOW_PARSER_WARNINGS)
+
+FLASK_HOST = config.get('flask_host', DEFAULT_FLASK_HOST)
+FLASK_PORT = _parse_int(config.get('flask_port'), DEFAULT_FLASK_PORT)
+FLASK_DEBUG = _parse_bool(config.get('flask_debug'), DEFAULT_FLASK_DEBUG)
+FLASK_THREADED = _parse_bool(config.get('flask_threaded'), DEFAULT_FLASK_THREADED)
+SECRET_KEY = config.get('secret_key', DEFAULT_SECRET_KEY)
+MAX_CONTENT_LENGTH_MB = _parse_int(config.get('max_content_length_mb'), DEFAULT_MAX_CONTENT_LENGTH_MB)
+CACHE_TTL_SECONDS = _parse_int(config.get('cache_ttl_seconds'), DEFAULT_CACHE_TTL_SECONDS)
+DEFAULT_PAGE_SIZE_VALUE = _parse_int(config.get('default_page_size'), DEFAULT_PAGE_SIZE)
 
 if config.get('data_path'):
     config_path = Path(config['data_path'])
@@ -302,8 +297,8 @@ if config.get('data_path'):
 
 # Configuration Flask
 app = Flask(__name__, template_folder=str(SCRIPT_DIR / "templates"), static_folder=str(SCRIPT_DIR / "static"))
-app.config['SECRET_KEY'] = 'terrabloom-assets-v2'
-app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max upload
+app.config['SECRET_KEY'] = SECRET_KEY
+app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH_MB * 1024 * 1024
 CORS(app)
 
 # Logger
@@ -362,7 +357,7 @@ class AssetDataManager:
 
         if not force_reload and instance._df is not None:
             age = (datetime.now() - instance._loaded_at).total_seconds()
-            if age < 3600:  # Cache 1h
+            if age < CACHE_TTL_SECONDS:
                 return instance._df
 
         try:
@@ -827,7 +822,7 @@ def api_data():
     # Récupérer parameters DataTables
     draw = request.args.get('draw', 1, type=int)
     start = request.args.get('start', 0, type=int)
-    length = request.args.get('length', 50, type=int)
+    length = request.args.get('length', DEFAULT_PAGE_SIZE_VALUE, type=int)
     search_value = request.args.get('search[value]', '')
     # DataTables envoie aussi un flag regex
     is_regex = request.args.get('search[regex]', 'false').lower() == 'true'
@@ -1188,10 +1183,25 @@ def api_reload():
 @app.route('/setup')
 def setup():
     """Page de configuration du chemin de données"""
+    current_path = str(DATA_PATH)
+    current_path_exists = Path(current_path).exists()
+
+    # Eviter les doublons visuels quand plusieurs chemins candidats resolvent vers
+    # la meme destination (ex: absolu + relatif pointant au meme fichier).
+    unique_searched_paths = []
+    seen_paths = set()
+    for candidate in POSSIBLE_PATHS:
+        resolved = str(candidate.resolve())
+        if resolved in seen_paths:
+            continue
+        seen_paths.add(resolved)
+        unique_searched_paths.append(candidate)
+
     return render_template('setup.html',
                           filename=ASSETS_CSV_FILE,
-                          searched_paths=POSSIBLE_PATHS,
-                          current_path=str(DATA_PATH))
+                          searched_paths=unique_searched_paths,
+                          current_path=current_path,
+                          current_path_exists=current_path_exists)
 
 @app.route('/api/setup', methods=['POST'])
 def api_setup():
@@ -1199,7 +1209,7 @@ def api_setup():
     try:
         data = request.get_json()
         new_path = data.get('data_path')
-        db_table = data.get('db_table', 'assets')
+        db_table = data.get('db_table', DEFAULT_DB_TABLE)
 
         if not new_path:
             return api_error("MISSING_DATA_PATH", "Chemin requis", 400)
@@ -1258,11 +1268,19 @@ def api_test_path():
     test_path = data.get('path')
 
     if not test_path:
-        return jsonify({"exists": False})
+        return jsonify({
+            "exists": False,
+            "code": "PATH_EMPTY",
+            "message": "Chemin requis"
+        })
 
     path_obj = Path(test_path)
     if not path_obj.exists():
-        return jsonify({"exists": False})
+        return jsonify({
+            "exists": False,
+            "code": "PATH_NOT_FOUND",
+            "message": "Chemin introuvable"
+        })
 
     # Détecter le type
     source_type = AssetDataManager.detect_source_type(path_obj)
@@ -1272,7 +1290,11 @@ def api_test_path():
         try:
             tables = AssetDataManager.list_sqlite_tables(path_obj)
             if not tables:
-                return jsonify({"exists": False, "error": "Aucune table trouvee"})
+                return jsonify({
+                    "exists": False,
+                    "code": "SQLITE_NO_TABLE",
+                    "message": "Aucune table detectee dans la base SQLite"
+                })
 
             # Lire la première table pour avoir stats
             conn = sqlite3.connect(str(path_obj))
@@ -1289,22 +1311,80 @@ def api_test_path():
                 "cols": len(test_df.columns)
             })
         except Exception as e:
-            return jsonify({"exists": False, "error": str(e)})
+            logger.warning(f"Test chemin SQLite invalide: {e}")
+            return jsonify({
+                "exists": False,
+                "code": "SQLITE_READ_ERROR",
+                "message": "Fichier SQLite invalide ou non lisible"
+            })
 
     # === CSV ===
     else:
-        try:
-            # Détection automatique du séparateur
-            test_df = pd.read_csv(path_obj, sep=None, engine='python', nrows=5)
-            full_df_rows = len(pd.read_csv(path_obj, sep=None, engine='python'))
+        encodings_to_try = ["utf-8", "latin-1"]
+        last_error: Exception | None = None
+
+        for encoding in encodings_to_try:
+            try:
+                # Vérifier rapidement l'entête/structure sur un petit échantillon.
+                test_df = pd.read_csv(path_obj, sep=None, engine='python', nrows=5, encoding=encoding)
+
+                warning_message = None
+                try:
+                    # Compter les lignes en mode strict quand possible.
+                    full_df_rows = len(pd.read_csv(path_obj, sep=None, engine='python', encoding=encoding))
+                except pd.errors.ParserError as parse_error:
+                    # Si quelques lignes sont malformées, rester compatible avec le chargement réel.
+                    logger.info(f"Test chemin CSV parse warning ({encoding}): {parse_error}")
+                    full_df_rows = len(
+                        pd.read_csv(
+                            path_obj,
+                            sep=None,
+                            engine='python',
+                            encoding=encoding,
+                            on_bad_lines='skip'
+                        )
+                    )
+                    warning_message = "Certaines lignes CSV sont malformees et seront ignorees"
+
+                payload = {
+                    "exists": True,
+                    "type": "csv",
+                    "rows": int(full_df_rows),
+                    "cols": len(test_df.columns)
+                }
+                if warning_message:
+                    payload["warning"] = warning_message
+                return jsonify(payload)
+
+            except UnicodeDecodeError as e:
+                last_error = e
+                continue
+            except Exception as e:
+                last_error = e
+                continue
+
+        if isinstance(last_error, UnicodeDecodeError):
+            logger.warning(f"Test chemin CSV encodage invalide: {last_error}")
             return jsonify({
-                "exists": True,
-                "type": "csv",
-                "rows": full_df_rows,
-                "cols": len(test_df.columns)
+                "exists": False,
+                "code": "CSV_ENCODING_ERROR",
+                "message": "CSV illisible (encodage non supporte)"
             })
-        except Exception as e:
-            return jsonify({"exists": False, "error": str(e)})
+
+        if isinstance(last_error, pd.errors.ParserError):
+            logger.warning(f"Test chemin CSV parse error: {last_error}")
+            return jsonify({
+                "exists": False,
+                "code": "CSV_PARSE_ERROR",
+                "message": "CSV invalide (format ou guillemets)"
+            })
+
+        logger.warning(f"Test chemin CSV invalide: {last_error}")
+        return jsonify({
+            "exists": False,
+            "code": "CSV_READ_ERROR",
+            "message": "Impossible de lire le fichier CSV"
+        })
 
 # =====================================
 # GESTION ERREURS
@@ -1332,4 +1412,4 @@ if __name__ == '__main__':
     # Précharger données
     dm.load_data()
 
-    app.run(debug=True, host='127.0.0.1', port=5003, threaded=True)
+    app.run(debug=FLASK_DEBUG, host=FLASK_HOST, port=FLASK_PORT, threaded=FLASK_THREADED)

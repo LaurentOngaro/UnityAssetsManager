@@ -229,3 +229,34 @@ def test_batch_export_applies_include_exclude_stack(monkeypatch, tmp_path):
     exported_df = pd.read_csv(exported_path)
     assert len(exported_df) == 1
     assert exported_df.iloc[0]["DisplayName"] == "Tree Pack"
+
+
+def test_api_test_path_accepts_csv_with_late_malformed_lines(tmp_path):
+    """Setup path check must accept CSV even if some later rows are malformed."""
+    mod = import_unity_assets_manager_module()
+
+    csv_path = tmp_path / "late_bad_rows.csv"
+    csv_path.write_text(
+        "A;B\n"
+        "1;ok\n"
+        "2;ok\n"
+        "3;ok\n"
+        "4;ok\n"
+        "5;ok\n"
+        "6;ok\n"
+        "\"bad;line\n"
+        "7;ok\n",
+        encoding="utf-8",
+    )
+
+    client = mod.app.test_client()
+    response = client.post("/api/test-path", json={"path": str(csv_path)})
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload is not None
+    assert payload.get("exists") is True
+    assert payload.get("type") == "csv"
+    assert payload.get("cols") == 2
+    assert int(payload.get("rows", 0)) >= 1
+    assert "warning" in payload

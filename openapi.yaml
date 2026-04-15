@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: UnityAssetsManager API
-  version: 1.1.1
+  version: 1.1.3
   description: API locale pour exploration et export d'assets Unity (CSV/SQLite). 5003 is the default port and can be changed in the config.
 servers:
   - url: http://localhost:5003

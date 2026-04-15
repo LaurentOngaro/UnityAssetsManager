@@ -10,7 +10,7 @@ Ce bloc détaille chaque ID du `TODO.md`. Les sprints plus bas servent uniquemen
 
 ### Rattachement rapide des sprints aux TODO
 
-- Pré-sprints - CI1, GE1, GE2, CI2
+- Pré-sprints - CI1, GE1, CI2
 - Sprint P0 - MIG1
 - Sprint P1 - REF1, REF2
 - Sprint P2 - API1, API2, API3, DOC1, DOC2, DOC3
@@ -20,24 +20,10 @@ Ce bloc détaille chaque ID du `TODO.md`. Les sprints plus bas servent uniquemen
 
 ### Corrections immédiates
 
-- CI1: déplacer `config.json` en `config/config.json`.
-  - rendre la configuration explicite et alignée avec le dossier `config/`.
-  - mettre à jour les chargements de configuration pour ne plus dépendre d'un fichier racine.
-
 ### Gestion
-
-- GE1: ajouter une zone de maintenance en bas de la colonne de gauche.
-  - centraliser les actions courantes de maintenance dans l'UI.
-  - regrouper les opérations de rechargement, diagnostic et gestion rapide.
-- GE2: créer des instructions et un agent spécifique au projet.
-  - reprendre la structure de `FabAssetsManager`.
-  - fournir un agent et des instructions adaptés à `UnityAssetsManager`.
 
 ### Refactoring
 
-- REF1: isoler les constantes de configuration et les valeurs codées en dur.
-  - déplacer les chemins, ports, templates et magic numbers vers `config.py` ou `config.json`.
-  - réduire les valeurs disséminées dans `app.py`.
 - REF2: découper `app.py` en modules et optimiser SQLite.
   - séparer routes, données, filtres, configuration et utilitaires.
   - éviter le chargement complet SQLite en mémoire lorsque la source est volumineuse.
@@ -101,12 +87,8 @@ Ce bloc détaille chaque ID du `TODO.md`. Les sprints plus bas servent uniquemen
 - INT4: ajouter un provider boutiques manuelles via `raw_assets.md`.
   - permettre une saisie manuelle ponctuelle hors flux automatisé.
 
-## Pré-sprints - Alignement de base (CI1, GE1, GE2, CI2)
+## Pré-sprints - Alignement de base (CI1, GE1, CI2)
 
-- Action: CI1 - déplacer `config.json` en `config/config.json` pour mettre la configuration au bon niveau applicatif.
-- Action: GE1 - ajouter une zone de maintenance en bas de la colonne de gauche pour les opérations courantes.
-- Action: GE2 - créer les instructions et l'agent spécifiques au projet sur le modèle de `FabAssetsManager`.
-- DONE CI2 - les dépôts UnityAssetsManager et FabAssetsManager sont validés comme submodules Git dans leurs dépôts parents respectifs.
 - Definition of done: la base de travail, l'outillage et la structure Git sont alignés avant le refactoring fonctionnel.
 
 ## Sprint P0 - Stabilisation (MIG1)
