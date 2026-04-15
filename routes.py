@@ -2,7 +2,7 @@
 # UnityAssetsManager - routes.py
 # ============================================================================
 # Description: Définition des routes web et des endpoints API.
-# Version: 1.2.5
+# Version: 1.2.6
 # ============================================================================
 
 import logging
@@ -13,29 +13,73 @@ from pathlib import Path
 from flask import render_template, request, jsonify, send_file, redirect, url_for, Blueprint
 from io import BytesIO
 
-from config import config, PROFILES_DIR, EXPORTS_DIR
-from utils import read_json, write_json_normalized
+from config import config, PROFILES_DIR, EXPORTS_DIR, SCRIPT_DIR
+from utils import read_json, write_json_normalized, _parse_bool, _parse_int
 from data_manager import dm
 from filters import apply_filter_stack, _build_alias_map_from_profile
+from errors import AppError, ErrorCode
+from logging_setup import configure_logging
 
 logger = logging.getLogger(__name__)
 
 bp = Blueprint('main', __name__)
 
+_ALLOWED_LOG_LEVELS = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
+_ALLOWED_LOG_OUTPUTS = {"console", "file", "both"}
+_ALLOWED_CONFIG_UPDATE_FIELDS = {"db_table", "show_parser_warnings", "log_level", "log_output", "log_max_bytes", "log_backup_count", }
 
-def api_error(code: str, message: str, http_status: int, details: dict | None = None):
-    """Build a consistent API error payload across all routes."""
-    payload = {
-        "error": {
-            "code": code,
-            "message": message,
-            "http_status": http_status,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "path": request.path,
-            "details": details or {}
-        }
-    }
-    return jsonify(payload), http_status
+
+def _read_version() -> str:
+    version_file = SCRIPT_DIR / "VERSION.txt"
+    if version_file.exists():
+        return version_file.read_text(encoding="utf-8").strip()
+    return "unknown"
+
+
+def _validate_config_patch(payload: dict) -> dict:
+    unknown_fields = sorted(set(payload.keys()) - _ALLOWED_CONFIG_UPDATE_FIELDS)
+    if unknown_fields:
+        raise AppError(ErrorCode.INVALID_PAYLOAD, "Parametres non autorises", 400, details={"unknown_fields": unknown_fields}, )
+
+    patch = {}
+
+    if "db_table" in payload:
+        db_table = str(payload.get("db_table") or "").strip()
+        if not db_table:
+            raise AppError(ErrorCode.INVALID_CONFIG, "db_table ne peut pas etre vide", 400)
+        patch["db_table"] = db_table
+
+    if "show_parser_warnings" in payload:
+        patch["show_parser_warnings"] = _parse_bool(payload.get("show_parser_warnings"), config.show_parser_warnings)
+
+    if "log_level" in payload:
+        log_level = str(payload.get("log_level") or "").strip().upper()
+        if log_level not in _ALLOWED_LOG_LEVELS:
+            raise AppError(ErrorCode.INVALID_CONFIG, "log_level invalide", 400, details={"allowed": sorted(_ALLOWED_LOG_LEVELS)}, )
+        patch["log_level"] = log_level
+
+    if "log_output" in payload:
+        log_output = str(payload.get("log_output") or "").strip().lower()
+        if log_output not in _ALLOWED_LOG_OUTPUTS:
+            raise AppError(ErrorCode.INVALID_CONFIG, "log_output invalide", 400, details={"allowed": sorted(_ALLOWED_LOG_OUTPUTS)}, )
+        patch["log_output"] = log_output
+
+    if "log_max_bytes" in payload:
+        log_max_bytes = _parse_int(payload.get("log_max_bytes"), -1)
+        if log_max_bytes <= 0:
+            raise AppError(ErrorCode.INVALID_CONFIG, "log_max_bytes doit etre > 0", 400)
+        patch["log_max_bytes"] = log_max_bytes
+
+    if "log_backup_count" in payload:
+        log_backup_count = _parse_int(payload.get("log_backup_count"), -1)
+        if log_backup_count <= 0:
+            raise AppError(ErrorCode.INVALID_CONFIG, "log_backup_count doit etre > 0", 400)
+        patch["log_backup_count"] = log_backup_count
+
+    if not patch:
+        raise AppError(ErrorCode.INVALID_PAYLOAD, "Aucun parametre a mettre a jour", 400)
+
+    return patch
 
 
 # --- Profiles Management ---
@@ -125,7 +169,7 @@ def setup():
 def api_data():
     df = dm.get_data()
     if df is None or df.empty:
-        return api_error("DATA_NOT_FOUND", "Aucune donnée n'est chargée.", 404)
+        raise AppError(ErrorCode.DATA_NOT_FOUND, "Aucune donnee n'est chargee.", 404)
 
     draw = int(request.args.get('draw', 1))
     start = int(request.args.get('start', 0))
@@ -166,14 +210,14 @@ def api_get_profile(name):
     profile = load_profile(name)
     if profile:
         return jsonify(profile)
-    return api_error("PROFILE_NOT_FOUND", f"Profil '{name}' non trouvé", 404)
+    raise AppError(ErrorCode.PROFILE_NOT_FOUND, f"Profil '{name}' non trouve", 404)
 
 
 @bp.route('/api/profiles', methods=['POST'])
 def api_save_profile():
     data = request.get_json(silent=True)
     if not data or 'name' not in data:
-        return api_error("INVALID_PAYLOAD", "Nom de profil manquant", 400)
+        raise AppError(ErrorCode.INVALID_PAYLOAD, "Nom de profil manquant", 400)
     save_profile(data['name'], data)
     return jsonify({"status": "success", "message": f"Profil '{data['name']}' sauvegardé"})
 
@@ -189,21 +233,21 @@ def api_delete_profile(name):
     if profile_file.exists():
         profile_file.unlink()
         return jsonify({"status": "success", "message": f"Profil '{name}' supprimé"})
-    return api_error("PROFILE_NOT_FOUND", f"Profil '{name}' non trouvé", 404)
+    raise AppError(ErrorCode.PROFILE_NOT_FOUND, f"Profil '{name}' non trouve", 404)
 
 
 @bp.route('/api/export', methods=['POST'])
 def api_export():
     data = request.get_json(silent=True)
     if not data:
-        return api_error("INVALID_PAYLOAD", "Données manquantes pour l'export", 400)
+        raise AppError(ErrorCode.INVALID_PAYLOAD, "Donnees manquantes pour l'export", 400)
 
     template_name = data.get('template')
     profile_name = data.get('profile')
 
     df = dm.get_data()
     if df is None or df.empty:
-        return api_error("DATA_NOT_FOUND", "Aucune donnée à exporter", 404)
+        raise AppError(ErrorCode.DATA_NOT_FOUND, "Aucune donnee a exporter", 404)
 
     filtered_df = df
     if profile_name:
@@ -226,7 +270,7 @@ def api_export():
             output.seek(0)
             return send_file(output, mimetype='text/csv', as_attachment=True, download_name=f"export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
     except Exception as e:
-        return api_error("EXPORT_ERROR", str(e), 500)
+        raise AppError(ErrorCode.EXPORT_ERROR, str(e), 500) from e
 
 
 @bp.route('/api/reload', methods=['POST'])
@@ -239,36 +283,81 @@ def api_reload():
 def api_stats():
     df = dm.get_data()
     if df is None or df.empty:
-        return api_error("DATA_NOT_FOUND", "Aucune donnée n'est chargée.", 404)
+        raise AppError(ErrorCode.DATA_NOT_FOUND, "Aucune donnee n'est chargee.", 404)
     sample = df.head(5).astype(str).values.tolist()
     stats = {"total_rows": len(df), "total_columns": len(df.columns), "columns": list(df.columns), "sample": sample}
     return jsonify(stats)
+
+
+@bp.route('/api/test', methods=['GET'])
+def api_test():
+    data_path = config.data_path
+    source_type = None
+    if data_path and data_path.exists() and not data_path.is_dir():
+        source_type = dm.detect_source_type(data_path)
+
+    df = dm.get_data()
+    return jsonify(
+        {
+            "status": "ok",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "version": _read_version(),
+            "data_path": str(data_path) if data_path else None,
+            "source_type": source_type,
+            "has_data": df is not None and not df.empty,
+        }
+    )
 
 
 @bp.route('/api/setup', methods=['POST'])
 def api_setup_save():
     data = request.get_json(silent=True)
     if not data:
-        return api_error("INVALID_PAYLOAD", "Config manquante", 400)
+        raise AppError(ErrorCode.INVALID_PAYLOAD, "Config manquante", 400)
 
     new_config = {
         "data_path": data.get('data_path'),
         "db_table": data.get('db_table'),
-        "show_parser_warnings": data.get('show_parser_warnings', True)
+        "show_parser_warnings": data.get('show_parser_warnings', config.show_parser_warnings),
     }
     config.save(new_config)
     dm.reload()
     return jsonify({"status": "success", "message": "Configuration mise à jour et données rechargées"})
 
 
+@bp.route('/api/config', methods=['GET'])
+def api_get_config():
+    return jsonify({"status": "success", "config": config.to_public_runtime_config()})
+
+
+@bp.route('/api/config', methods=['POST'])
+def api_update_config():
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict) or not data:
+        raise AppError(ErrorCode.INVALID_PAYLOAD, "Config manquante", 400)
+
+    config_patch = _validate_config_patch(data)
+    config.save(config_patch)
+
+    configure_logging(
+        log_level=config.log_level,
+        log_output=config.log_output,
+        log_max_bytes=config.log_max_bytes,
+        log_backup_count=config.log_backup_count,
+        log_file_path=SCRIPT_DIR / "app.log",
+    )
+
+    return jsonify({"status": "success", "message": "Configuration mise a jour", "config": config.to_public_runtime_config(), })
+
+
 @bp.route('/api/test-path', methods=['POST'])
 def api_test_path():
     data = request.get_json(silent=True)
     if not data:
-        return api_error("INVALID_PAYLOAD", "Payload JSON manquant", 400)
+        raise AppError(ErrorCode.INVALID_PAYLOAD, "Payload JSON manquant", 400)
     path_str = data.get('path')
     if not path_str:
-        return api_error("INVALID_PAYLOAD", "Path vide", 400)
+        raise AppError(ErrorCode.INVALID_PAYLOAD, "Path vide", 400)
 
     path = Path(path_str)
     exists = path.exists()
@@ -348,7 +437,7 @@ def api_batch_export():
     """Headless export for automation."""
     data = request.get_json(silent=True)
     if not data:
-        return api_error("INVALID_PAYLOAD", "Payload manquant", 400)
+        raise AppError(ErrorCode.INVALID_PAYLOAD, "Payload manquant", 400)
 
     profile_name = data.get('profile')
     template_name = data.get('template')
@@ -361,14 +450,16 @@ def api_batch_export():
     file_name = data.get('file_name')
 
     if not template_name:
-        return api_error("MISSING_PARAMS", "template is required", 400)
+        raise AppError(ErrorCode.MISSING_PARAMS, "template is required", 400)
 
     df = dm.get_data()
+    if df is None or df.empty:
+        raise AppError(ErrorCode.DATA_NOT_FOUND, "Aucune donnee a exporter", 404)
 
     if profile_name:
         profile = load_profile(profile_name)
         if not profile:
-            return api_error("PROFILE_NOT_FOUND", f"Profile {profile_name} not found", 404)
+            raise AppError(ErrorCode.PROFILE_NOT_FOUND, f"Profile {profile_name} not found", 404)
         filter_stack = profile.get('filter_stack', [])
         alias_map = _build_alias_map_from_profile(profile)
 
@@ -391,4 +482,4 @@ def api_batch_export():
         return jsonify({"status": "success", "file": str(out_file), "format": ext, "count": len(filtered_df)})
     except Exception as e:
         logger.error(f"Batch export error: {e}")
-        return api_error("BATCH_EXPORT_ERROR", str(e), 500)
+        raise AppError(ErrorCode.BATCH_EXPORT_ERROR, str(e), 500) from e

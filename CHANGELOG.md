@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.6] - 2026-04-15
+
+### 🚀 Ajouté
+
+- Module central d'erreurs API `errors.py` avec `ErrorCode`, `AppError` et construction uniforme des payloads d'erreur.
+- Endpoints API4:
+  - `GET /api/test` (healthcheck JSON)
+  - `GET /api/config` (lecture config runtime publique)
+  - `POST /api/config` (mise a jour controlee des parametres autorises)
+- Configuration logging runtime dans `config/config.json`:
+  - `log_level`, `log_output`, `log_max_bytes`, `log_backup_count`
+
+### 🔧 Modifié
+
+- Migration de `routes.py` vers la couche d'erreurs centralisee (`AppError`) en remplacement de la fonction locale `api_error`.
+- `app.py` configure maintenant le logging via `RotatingFileHandler` (console/fichier/both), avec rotation configurable.
+- `config.py` conserve les cles existantes lors de `save()` (merge au lieu d'ecrasement complet).
+- Alignement documentation/API contract:
+  - `openapi.yaml`
+  - `API_GUIDE.md`
+  - `README.md`
+- Renforcement des tests API sur le contrat d'erreur et les endpoints API4.
+
 ## [1.2.5] - 2026-04-15
 
 ### 🔧 Modifié

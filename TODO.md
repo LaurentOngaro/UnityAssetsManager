@@ -12,9 +12,6 @@ Pour plus de détails sur l'implémentation de ces modifications, consulter le f
 
 classement des demandes par priorité de la plus urgente à la moins urgente:
 
-- REF3 (Centralisation erreurs API)
-- REF4 (Amélioration du logging)
-- API4 (Endpoints de diagnostic)
 - AFF1 (Redimensionner les colonnes)
 - AFF2 (Popup détail de ligne)
 - MIG2 (Déprécier les flux legacy)
@@ -39,12 +36,9 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Renforcement du contrat API (last: API4)
 
-- [ ] API4: Ajouter des endpoints de diagnostic et de configuration (ex: `/api/test`, `/api/config`) pour faciliter l'automatisation.
-
 ### Refactoring (last: REF4)
 
-- [ ] REF3: Centraliser la gestion des erreurs API via un module `errors.py` (classes et Enum), sur le modèle de FAM.
-- [ ] REF4: Améliorer le système de logging avec un `RotatingFileHandler` et des paramètres dynamiques (niveau, sortie).
+### API (last: API4)
 
 ### Migration (last: MIG3)
 
@@ -65,6 +59,9 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] API4: Ajouter des endpoints de diagnostic et de configuration (ex: `/api/test`, `/api/config`) pour faciliter l'automatisation.
+- [x] REF4: Améliorer le système de logging avec un `RotatingFileHandler` et des paramètres dynamiques (niveau, sortie).
+- [x] REF3: Centraliser la gestion des erreurs API via un module `errors.py` (classes et Enum), sur le modèle de FAM.
 - [x] API1: Vérifier la cohérence entre implémentation Flask et `openapi.yaml`.
 - [x] API2: Ajouter des tests API pour les cas d'erreurs standards.
 - [x] API3: Finaliser le contrat d'erreur uniforme sur toutes les routes.

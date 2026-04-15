@@ -26,7 +26,6 @@ Chaque fois qu'une modification est teminée:
 - Sprint P3 - MIG2, MIG3
 - Sprint P4 - AFF1, AFF2
 - Sprint P5 - INT1, INT2, INT3, INT4
-- Sprint P6 (FAM Parity) - REF3, REF4, API4
 
 ## TOP Priorités (pour les corrections immédiates)
 
@@ -34,10 +33,7 @@ Chaque fois qu'une modification est teminée:
 
 ### Refactoring
 
-- REF3: Centraliser la gestion des erreurs API (`errors.py`).
-  - unifier les retours d'erreurs en s'inspirant de FabAssetsManager (`AppError`, `ErrorCode`).
-- REF4: Améliorer le système de logging.
-  - intégrer `RotatingFileHandler` et la configuration via JSON (fichier `app.log`).
+### API
 
 ### Documentation
 
@@ -89,10 +85,3 @@ Elle n'est pas un classement par priorité mais plutôt une organisation thémat
 - Action: Ajouter provider Fab depuis exports/cache consolides.
 - Action: Ajouter providers stores manuels (`raw_assets.md`).
 - Definition of done: generation pilotable de `raw_assets_normalized.json` pour Unity + Fab + stores manuels.
-
-### Sprint P6 - Parité d'architecture avec FAM (REF3, REF4, API4)
-
-- Action: Créer `errors.py` et refactoriser les retours d'erreurs dans `routes.py`.
-- Action: Configurer `RotatingFileHandler` pour les logs de production dans `app.py`.
-- Action: Ajouter les endpoints `/api/test` et `/api/config`.
-- Definition of done: UAM bénéficie de la même robustesse backend que FabAssetsManager.

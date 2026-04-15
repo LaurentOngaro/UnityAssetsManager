@@ -1,6 +1,6 @@
 # API Guide - UnityAssetsManager
 
-**Version:** 1.2.5
+**Version:** 1.2.6
 
 ## Overview
 
@@ -39,10 +39,28 @@ Champs:
 
 ## Endpoints principaux
 
-### Health (implicite)
+### Health UI (implicite)
 
 - `GET /`
 - Retour: page HTML principale.
+
+### Health API (automation)
+
+- `GET /api/test`
+- But: healthcheck JSON pour scripts et CI locale.
+
+Exemple de retour:
+
+```json
+{
+  "status": "ok",
+  "timestamp": "2026-04-15T11:15:00.000000+00:00",
+  "version": "1.2.5",
+  "data_path": "H:/.../unity_assets_export.csv",
+  "source_type": "csv",
+  "has_data": true
+}
+```
 
 ### Donnees
 
@@ -135,13 +153,10 @@ Retour success:
 
 ```json
 {
-  "success": true,
-  "path": "H:/.../UnityAssetsManager/exports/unity_assets_filtered.csv",
-  "filename": "unity_assets_filtered.csv",
-  "rows": 120,
-  "columns": 3,
-  "template": "CSV avec URL",
-  "bytes": 18342
+  "status": "success",
+  "file": "H:/.../UnityAssetsManager/exports/unity_assets_filtered.csv",
+  "format": "csv",
+  "count": 120
 }
 ```
 
@@ -168,10 +183,36 @@ Retour success:
 
 ```json
 {
-  "success": true,
-  "data_path": "H:/path/to/assets.db",
-  "source_type": "sqlite",
-  "db_table": "assets"
+  "status": "success",
+  "message": "Configuration mise à jour et données rechargées"
+}
+```
+
+### Configuration runtime
+
+- `GET /api/config`
+- But: lire la configuration runtime publique (sans secret).
+
+- `POST /api/config`
+- But: mettre a jour des champs autorises a chaud.
+
+Champs acceptes pour `POST /api/config`:
+
+- `db_table`
+- `show_parser_warnings`
+- `log_level` (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`)
+- `log_output` (`console`, `file`, `both`)
+- `log_max_bytes`
+- `log_backup_count`
+
+Exemple:
+
+```json
+{
+  "log_level": "DEBUG",
+  "log_output": "both",
+  "log_max_bytes": 1048576,
+  "log_backup_count": 3
 }
 ```
 

@@ -2,7 +2,7 @@
 # UnityAssetsManager - config.py
 # ============================================================================
 # Description: Gestion de la configuration runtime et des templates d'export.
-# Version: 1.2.5
+# Version: 1.2.6
 # ============================================================================
 
 import logging
@@ -13,8 +13,8 @@ import json
 from utils import read_json, write_json_normalized, _parse_bool, _parse_int
 from app_settings import (
     DEFAULT_DB_TABLE, DEFAULT_EXPORT_TEMPLATES, DEFAULT_FLASK_DEBUG, DEFAULT_FLASK_HOST, DEFAULT_FLASK_PORT, DEFAULT_FLASK_THREADED,
-    DEFAULT_MAX_CONTENT_LENGTH_MB, DEFAULT_SECRET_KEY, DEFAULT_SHOW_PARSER_WARNINGS, DEFAULT_CACHE_TTL_SECONDS, DEFAULT_PAGE_SIZE,
-    build_possible_data_paths
+    DEFAULT_MAX_CONTENT_LENGTH_MB, DEFAULT_SECRET_KEY, DEFAULT_SHOW_PARSER_WARNINGS, DEFAULT_CACHE_TTL_SECONDS, DEFAULT_PAGE_SIZE, DEFAULT_LOG_LEVEL,
+    DEFAULT_LOG_OUTPUT, DEFAULT_LOG_MAX_BYTES, DEFAULT_LOG_BACKUP_COUNT, build_possible_data_paths
 )
 
 logger = logging.getLogger(__name__)
@@ -31,6 +31,15 @@ PROFILES_DIR.mkdir(exist_ok=True)
 EXPORTS_DIR.mkdir(exist_ok=True)
 CACHE_DIR.mkdir(exist_ok=True)
 CONFIG_FILE.parent.mkdir(exist_ok=True)
+
+_ALLOWED_LOG_OUTPUTS = {"console", "file", "both"}
+
+
+def _normalize_log_output(value, default_value: str = DEFAULT_LOG_OUTPUT) -> str:
+    normalized = str(value or default_value).strip().lower()
+    if normalized not in _ALLOWED_LOG_OUTPUTS:
+        return default_value
+    return normalized
 
 
 class AppConfig:
@@ -57,6 +66,10 @@ class AppConfig:
         self.max_content_length_mb = _parse_int(config_data.get('max_content_length_mb'), DEFAULT_MAX_CONTENT_LENGTH_MB)
         self.cache_ttl_seconds = _parse_int(config_data.get('cache_ttl_seconds'), DEFAULT_CACHE_TTL_SECONDS)
         self.default_page_size = _parse_int(config_data.get('default_page_size'), DEFAULT_PAGE_SIZE)
+        self.log_level = str(config_data.get('log_level', DEFAULT_LOG_LEVEL)).upper()
+        self.log_output = _normalize_log_output(config_data.get('log_output', DEFAULT_LOG_OUTPUT), DEFAULT_LOG_OUTPUT)
+        self.log_max_bytes = _parse_int(config_data.get('log_max_bytes'), DEFAULT_LOG_MAX_BYTES)
+        self.log_backup_count = _parse_int(config_data.get('log_backup_count'), DEFAULT_LOG_BACKUP_COUNT)
 
         # Determine data_path
         self.data_path = None
@@ -76,8 +89,36 @@ class AppConfig:
             self.data_path = build_possible_data_paths(SCRIPT_DIR)[0]
 
     def save(self, config_data):
-        write_json_normalized(CONFIG_FILE, config_data)
+        existing_config = {}
+        if CONFIG_FILE.exists():
+            try:
+                existing_config = read_json(CONFIG_FILE)
+                if not isinstance(existing_config, dict):
+                    existing_config = {}
+            except Exception:
+                existing_config = {}
+
+        merged_config = {**existing_config, **(config_data or {})}
+        write_json_normalized(CONFIG_FILE, merged_config)
         self.load()
+
+    def to_public_runtime_config(self) -> dict:
+        return {
+            "data_path": str(self.data_path) if self.data_path else None,
+            "db_table": self.db_table,
+            "show_parser_warnings": self.show_parser_warnings,
+            "flask_host": self.flask_host,
+            "flask_port": self.flask_port,
+            "flask_debug": self.flask_debug,
+            "flask_threaded": self.flask_threaded,
+            "max_content_length_mb": self.max_content_length_mb,
+            "cache_ttl_seconds": self.cache_ttl_seconds,
+            "default_page_size": self.default_page_size,
+            "log_level": self.log_level,
+            "log_output": self.log_output,
+            "log_max_bytes": self.log_max_bytes,
+            "log_backup_count": self.log_backup_count,
+        }
 
     def load_export_templates(self):
         if TEMPLATES_FILE.exists():

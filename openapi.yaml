@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: UnityAssetsManager API
-  version: 1.2.5
+  version: 1.2.6
   description: API locale pour explorer et exporter des assets Unity (CSV/SQLite). Le port HTTP par défaut est 5003 et peut être modifié dans config/config.json.
 servers:
   - url: http://localhost:5003
@@ -220,19 +220,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                  path:
+                  status:
                     type: string
-                  filename:
+                  file:
                     type: string
-                  rows:
-                    type: integer
-                  columns:
-                    type: integer
-                  template:
+                  format:
                     type: string
-                  bytes:
+                  count:
                     type: integer
         '400':
           description: Requête batch invalide
@@ -271,12 +265,38 @@ paths:
             application/json:
               schema:
                 type: object
-        '400':
+        '404':
           description: Aucune donnee chargee
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/test:
+    get:
+      summary: Healthcheck backend pour automatisation
+      responses:
+        '200':
+          description: Etat backend
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+                  version:
+                    type: string
+                  data_path:
+                    type: string
+                    nullable: true
+                  source_type:
+                    type: string
+                    nullable: true
+                  has_data:
+                    type: boolean
   /api/setup:
     post:
       summary: Configurer la source de données
@@ -310,6 +330,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiErrorEnvelope'
+  /api/config:
+    get:
+      summary: Lire la configuration runtime publique
+      responses:
+        '200':
+          description: Configuration courante
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  config:
+                    $ref: '#/components/schemas/PublicRuntimeConfig'
+    post:
+      summary: Mettre a jour la configuration runtime autorisee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigUpdateRequest'
+      responses:
+        '200':
+          description: Configuration mise a jour
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  config:
+                    $ref: '#/components/schemas/PublicRuntimeConfig'
+        '400':
+          description: Payload de configuration invalide
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
+        '500':
+          description: Erreur interne
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorEnvelope'
   /api/test-path:
     post:
       summary: Vérifier un chemin source CSV/SQLite
@@ -332,7 +401,11 @@ paths:
                 properties:
                   exists:
                     type: boolean
+                  is_dir:
+                    type: boolean
                   type:
+                    type: string
+                  source_type:
                     type: string
                   rows:
                     type: integer
@@ -342,7 +415,7 @@ paths:
                     type: array
                     items:
                       type: string
-                  error:
+                  warning:
                     type: string
 components:
   schemas:
@@ -437,3 +510,59 @@ components:
               type: string
             file_name:
               type: string
+            output_path:
+              type: string
+            profile:
+              type: string
+    PublicRuntimeConfig:
+      type: object
+      properties:
+        data_path:
+          type: string
+          nullable: true
+        db_table:
+          type: string
+        show_parser_warnings:
+          type: boolean
+        flask_host:
+          type: string
+        flask_port:
+          type: integer
+        flask_debug:
+          type: boolean
+        flask_threaded:
+          type: boolean
+        max_content_length_mb:
+          type: integer
+        cache_ttl_seconds:
+          type: integer
+        default_page_size:
+          type: integer
+        log_level:
+          type: string
+        log_output:
+          type: string
+          enum: [console, file, both]
+        log_max_bytes:
+          type: integer
+        log_backup_count:
+          type: integer
+    ConfigUpdateRequest:
+      type: object
+      properties:
+        db_table:
+          type: string
+        show_parser_warnings:
+          type: boolean
+        log_level:
+          type: string
+          enum: [DEBUG, INFO, WARNING, ERROR, CRITICAL]
+        log_output:
+          type: string
+          enum: [console, file, both]
+        log_max_bytes:
+          type: integer
+          minimum: 1
+        log_backup_count:
+          type: integer
+          minimum: 1

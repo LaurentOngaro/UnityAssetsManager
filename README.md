@@ -57,9 +57,20 @@ Configurer la source via la page `/setup` (recommandé) ou en éditant `config/c
 ```json
 {
   "data_path": "H:/path/to/unity_assets_export.csv",
-  "db_table": "assets"
+  "db_table": "assets",
+  "log_level": "INFO",
+  "log_output": "console",
+  "log_max_bytes": 1048576,
+  "log_backup_count": 3
 }
 ```
+
+Parametres logging runtime:
+
+- `log_level`: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`
+- `log_output`: `console`, `file`, `both`
+- `log_max_bytes`: taille max d'un fichier log avant rotation
+- `log_backup_count`: nombre de fichiers archives gardes
 
 **Sources supportées:**
 
@@ -80,6 +91,7 @@ Configurer la source via la page `/setup` (recommandé) ou en éditant `config/c
 ## 📊 API & Documentation technique
 
 - **Guide API Complet**: [API_GUIDE.md](./API_GUIDE.md) (Endpoints, format JSON, payloads, batch-export).
+- Endpoints API4 disponibles: `GET /api/test`, `GET /api/config`, `POST /api/config`.
 - **Setup SQLite & Migration**: [SQLITE_SUPPORT.md](./_helpers/SQLITE_SUPPORT.md).
 - **Test Qualité**: [tests/test_manual_checklist.py](./tests/test_manual_checklist.py).
 
@@ -216,6 +228,6 @@ Pour les bugs: Créer un issue dans le repo TerraBloom
 
 ---
 
-**Version**: 1.2.5
+**Version**: 1.2.6
 **Dernière mise à jour**: 2026-04-15
 **Status**: Production (Architecture modulaire, API stabilisée)
