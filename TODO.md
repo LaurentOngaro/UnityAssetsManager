@@ -14,6 +14,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 - AFF1 (Redimensionner les colonnes)
 - AFF2 (Popup détail de ligne)
+- AFF3 (Theme de couleur "sombre")
 - MIG2 (Déprécier les flux legacy)
 - MIG3 (Archiver V1 après validation)
 - INT1 (Service de normalisation raw multi-boutiques)
@@ -27,10 +28,9 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Pagination (last: )
 
-### Affichage (last: AFF2)
+### Affichage (last: AFF3)
 
-- [ ] AFF1: pouvoir Redimensionner les colonnes (au mieux par drag-and-drop sinon via un menu de configuration de l'affichage)
-- [ ] AFF2: Popup détail ligne ( manque d'info, qu'est ce que cela signifie ?)
+- [ ] AFF3: Reprendre le theme de couleur "sombre" de FabAssetsManager"
 
 ### Features (last: FEAT1)
 
@@ -59,6 +59,8 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] AFF1: pouvoir Redimensionner les colonnes (au mieux par drag-and-drop sinon via un menu de configuration de l'affichage)
+- [x] AFF2: Popup détail ligne ( manque d'info, qu'est ce que cela signifie ?)
 - [x] API4: Ajouter des endpoints de diagnostic et de configuration (ex: `/api/test`, `/api/config`) pour faciliter l'automatisation.
 - [x] REF4: Améliorer le système de logging avec un `RotatingFileHandler` et des paramètres dynamiques (niveau, sortie).
 - [x] REF3: Centraliser la gestion des erreurs API via un module `errors.py` (classes et Enum), sur le modèle de FAM.

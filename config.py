@@ -2,7 +2,7 @@
 # UnityAssetsManager - config.py
 # ============================================================================
 # Description: Gestion de la configuration runtime et des templates d'export.
-# Version: 1.2.6
+# Version: 1.2.7
 # ============================================================================
 
 import logging
@@ -14,7 +14,7 @@ from utils import read_json, write_json_normalized, _parse_bool, _parse_int
 from app_settings import (
     DEFAULT_DB_TABLE, DEFAULT_EXPORT_TEMPLATES, DEFAULT_FLASK_DEBUG, DEFAULT_FLASK_HOST, DEFAULT_FLASK_PORT, DEFAULT_FLASK_THREADED,
     DEFAULT_MAX_CONTENT_LENGTH_MB, DEFAULT_SECRET_KEY, DEFAULT_SHOW_PARSER_WARNINGS, DEFAULT_CACHE_TTL_SECONDS, DEFAULT_PAGE_SIZE, DEFAULT_LOG_LEVEL,
-    DEFAULT_LOG_OUTPUT, DEFAULT_LOG_MAX_BYTES, DEFAULT_LOG_BACKUP_COUNT, build_possible_data_paths
+    DEFAULT_LOG_FILE, DEFAULT_LOG_OUTPUT, DEFAULT_LOG_MAX_BYTES, DEFAULT_LOG_BACKUP_COUNT, build_possible_data_paths
 )
 
 logger = logging.getLogger(__name__)
@@ -67,6 +67,7 @@ class AppConfig:
         self.cache_ttl_seconds = _parse_int(config_data.get('cache_ttl_seconds'), DEFAULT_CACHE_TTL_SECONDS)
         self.default_page_size = _parse_int(config_data.get('default_page_size'), DEFAULT_PAGE_SIZE)
         self.log_level = str(config_data.get('log_level', DEFAULT_LOG_LEVEL)).upper()
+        self.log_file = str(config_data.get('log_file', DEFAULT_LOG_FILE))
         self.log_output = _normalize_log_output(config_data.get('log_output', DEFAULT_LOG_OUTPUT), DEFAULT_LOG_OUTPUT)
         self.log_max_bytes = _parse_int(config_data.get('log_max_bytes'), DEFAULT_LOG_MAX_BYTES)
         self.log_backup_count = _parse_int(config_data.get('log_backup_count'), DEFAULT_LOG_BACKUP_COUNT)

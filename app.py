@@ -2,7 +2,7 @@
 # UnityAssetsManager - app.py
 # ============================================================================
 # Description: Point d'entrée de l'application Flask et initialisation.
-# Version: 1.2.6
+# Version: 1.2.7
 # ============================================================================
 
 import logging
@@ -32,7 +32,7 @@ def create_app():
         log_output=config.log_output,
         log_max_bytes=config.log_max_bytes,
         log_backup_count=config.log_backup_count,
-        log_file_path=SCRIPT_DIR / "app.log",
+        log_file_path=SCRIPT_DIR / config.log_file,
     )
 
     # Register routes

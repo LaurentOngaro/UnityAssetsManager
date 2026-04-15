@@ -228,6 +228,6 @@ Pour les bugs: Créer un issue dans le repo TerraBloom
 
 ---
 
-**Version**: 1.2.6
+**Version**: 1.2.7
 **Dernière mise à jour**: 2026-04-15
 **Status**: Production (Architecture modulaire, API stabilisée)

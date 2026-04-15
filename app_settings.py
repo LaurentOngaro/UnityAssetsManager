@@ -2,7 +2,7 @@
 # UnityAssetsManager - app_settings.py
 # ============================================================================
 # Description: Constantes de configuration et chemins par défaut.
-# Version: 1.2.6
+# Version: 1.2.7
 # ============================================================================
 
 from __future__ import annotations
@@ -24,6 +24,7 @@ DEFAULT_SECRET_KEY = "terrabloom-assets-v2"
 DEFAULT_MAX_CONTENT_LENGTH_MB = 100
 DEFAULT_PAGE_SIZE = 50
 DEFAULT_LOG_LEVEL = "INFO"
+DEFAULT_LOG_FILE = "app.log"
 DEFAULT_LOG_OUTPUT = "console"
 DEFAULT_LOG_MAX_BYTES = 1048576
 DEFAULT_LOG_BACKUP_COUNT = 3

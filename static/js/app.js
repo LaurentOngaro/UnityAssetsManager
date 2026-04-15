@@ -9,6 +9,7 @@
 const MIN_COL_WIDTH = 150;  // Largeur minimum en pixels pour chaque colonne
 
 let dataTable;
+let assetDetailModal;
 let currentColumns = [];
 let currentFilterColumns = [];
 let currentFilterStack = [];
@@ -90,6 +91,7 @@ $(document).ready(function() {
 
     exportModal = new bootstrap.Modal(document.getElementById('exportModal'));
     profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
+    assetDetailModal = new bootstrap.Modal(document.getElementById('assetDetailModal'));
 
     initializeTable();
     setupEventHandlers();
@@ -179,7 +181,14 @@ function initializeTable() {
 
         initComplete: function() {
             console.log('[Table] Prête à l\'affichage');
+            setupRowClickHandlers();
+            setupColumnResizing(); // AFF1
         }
+    });
+
+    // Re-attacher les handlers après chaque dessin (pour la pagination)
+    dataTable.on('draw', function() {
+        setupRowClickHandlers();
     });
 }
 
@@ -1211,15 +1220,13 @@ function showModal(title, content) {
 }
 
 function escapeHtml(text) {
-    if (!text) return '';
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return text.toString().replace(/[&<>"']/g, m => map[m]);
+    if (text === null || text === undefined) return '';
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 // Logging helper

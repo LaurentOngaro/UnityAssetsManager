@@ -3,7 +3,7 @@
 UnityAssetsManager - templates/index.html
 ============================================================================
 Description: Template principal de l'interface de gestion d'assets.
-Version: 1.2.6
+Version: 1.2.7
 ============================================================================
 -->
 {% extends "base.html" %}
@@ -227,6 +227,29 @@ Version: 1.2.6
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-primary" id="btnSaveProfile">Enregistrer profil</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Détails Asset -->
+<div class="modal fade" id="assetDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">📄 Détails de l'asset</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="assetDetailContent" class="table-responsive">
+                    <!-- Contenu généré par JS -->
+                    <table class="table table-striped table-sm">
+                        <tbody id="assetDetailTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
             </div>
         </div>
     </div>
