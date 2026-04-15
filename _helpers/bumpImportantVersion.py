@@ -8,7 +8,7 @@ Behavior:
 
 Maintenance note:
 - Keep this helper aligned with the FabAssetsManager counterpart at
-    `H:\Sync\Scripts\Python/03_apps/FabAssetsManager/_helpers/bumpImportantVersion.py`.
+    `H:/Sync/Scripts/Python/03_apps/FabAssetsManager/_helpers/bumpImportantVersion.py`.
 - Any agent change to one file should be mirrored in the other unless the repository-specific paths differ.
 """
 
@@ -20,18 +20,13 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 SCRIPT_DIR = Path(__file__).resolve().parent
 APP_ROOT = SCRIPT_DIR.parent
 VERSION_FILE = APP_ROOT / "VERSION.txt"
 
 IMPORTANT_FILES = [
-    APP_ROOT / "app.py",
-    APP_ROOT / "static" / "js" / "app.js",
-    APP_ROOT / "templates" / "index.html",
-    APP_ROOT / "openapi.yaml",
-    APP_ROOT / "README.md",
-    APP_ROOT / "start_UnityAssetsManager.bat",
+    APP_ROOT / "app.py", APP_ROOT / "static" / "js" / "app.js", APP_ROOT / "templates" / "index.html", APP_ROOT / "openapi.yaml",
+    APP_ROOT / "README.md", APP_ROOT / "start_UnityAssetsManager.bat",
 ]
 
 VERSION_TAG_EXTENSIONS = {".py", ".md", ".html", ".htm", ".js", ".yaml", ".yml"}
@@ -143,10 +138,10 @@ def sync_version_tag(file_path: Path, new_version: str) -> bool:
         return False
     text = file_path.read_text(encoding="utf-8")
     patterns = [
-        r"^(\s*#\s*Version:\s*)\d+\.\d+\.\d+(\s*)$",
-        r"^(\s*\*\*Version:\*\*\s*)\d+\.\d+\.\d+(\s*)$",
-        r"^(\s*Version:\s*)\d+\.\d+\.\d+(\s*)$",
-        r"^(\s*version:\s*)\d+\.\d+\.\d+(\s*)$",
+        r"^(\s*#\s*Version:\s*)\d+\.\d+\.\d+(\s*)$",  #
+        r"^(\s*\*\*Version:\*\*\s*)\d+\.\d+\.\d+(\s*)$",  #
+        r"^(\s*Version:\s*)\d+\.\d+\.\d+(\s*)$",  #
+        r"^(\s*version:\s*)\d+\.\d+\.\d+(\s*)$",  #
     ]
 
     for pattern in patterns:

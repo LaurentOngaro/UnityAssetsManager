@@ -36,30 +36,17 @@ import sqlite3
 from pathlib import Path
 from datetime import datetime, timezone
 import pandas as pd
-import numpy as np
-from io import StringIO, BytesIO
+from io import BytesIO
 import re
-import hashlib
-from urllib.parse import urljoin
-from typing import Optional, Dict, List, Any
-
-from flask import Flask, render_template, request, jsonify, send_file, flash, redirect, url_for
+import warnings
+from typing import Any
+from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for
 from flask_cors import CORS
 import logging
 
 from app_settings import (
-    ASSETS_CSV_FILE,
-    DEFAULT_CACHE_TTL_SECONDS,
-    DEFAULT_DB_TABLE,
-    DEFAULT_EXPORT_TEMPLATES,
-    DEFAULT_FLASK_DEBUG,
-    DEFAULT_FLASK_HOST,
-    DEFAULT_FLASK_PORT,
-    DEFAULT_FLASK_THREADED,
-    DEFAULT_MAX_CONTENT_LENGTH_MB,
-    DEFAULT_PAGE_SIZE,
-    DEFAULT_SECRET_KEY,
-    DEFAULT_SHOW_PARSER_WARNINGS,
+    ASSETS_CSV_FILE, DEFAULT_CACHE_TTL_SECONDS, DEFAULT_DB_TABLE, DEFAULT_EXPORT_TEMPLATES, DEFAULT_FLASK_DEBUG, DEFAULT_FLASK_HOST,
+    DEFAULT_FLASK_PORT, DEFAULT_FLASK_THREADED, DEFAULT_MAX_CONTENT_LENGTH_MB, DEFAULT_PAGE_SIZE, DEFAULT_SECRET_KEY, DEFAULT_SHOW_PARSER_WARNINGS,
     build_possible_data_paths,
 )
 
@@ -78,6 +65,7 @@ def api_error(code: str, message: str, http_status: int, details: dict | None = 
     }
     return jsonify(payload), http_status
 
+
 # =====================================
 # SETUP CHEMINS ET IMPORTS
 # =====================================
@@ -89,9 +77,9 @@ sys.path.insert(0, str(HELPERS_DIR))
 
 # Réutiliser les utilitaires du V1
 try:
-    from lib.jsoncUtils import read_json, write_json_normalized
+    from lib.jsoncUtils import read_json, write_json_normalized  # type: ignore[reportMissingImports]
 except ImportError:
-    from _Helpers.lib.jsoncUtils import read_json, write_json_normalized
+    from _Helpers.lib.jsoncUtils import read_json, write_json_normalized  # type: ignore[reportMissingImports]
 
 # =====================================
 # CONFIGURATION
@@ -111,7 +99,7 @@ if DATA_PATH is None:
     print(f"⚠️  ATTENTION: Aucun fichier contenant {ASSETS_CSV_FILE} trouvé. Chemins vérifiés:")
     for path in POSSIBLE_PATHS:
         print(f"  - {path}")
-    print(f"Utilisant le premier chemin comme default (créera une erreur si fichier absent)")
+    print("Utilisant le premier chemin comme default (créera une erreur si fichier absent)")
     DATA_PATH = POSSIBLE_PATHS[0]
 
 PROFILES_DIR = SCRIPT_DIR / "profiles"
@@ -131,6 +119,7 @@ CACHE_DIR.mkdir(exist_ok=True)
 # GESTION DES TEMPLATES D'EXPORT
 # =====================================
 
+
 def load_export_templates():
     """Charger les templates d'export depuis le fichier JSONC ou utiliser les defaults"""
     global export_templates
@@ -146,6 +135,7 @@ def load_export_templates():
     else:
         logger.info(f"📋 Fichier templates.jsonc absent, utilisant {len(DEFAULT_EXPORT_TEMPLATES)} templates par défaut")
         return DEFAULT_EXPORT_TEMPLATES
+
 
 def apply_export_template(df: pd.DataFrame, template_name: str, url_pattern: str | None = None) -> str:
     """Appliquer un template d'export à un DataFrame.
@@ -179,8 +169,6 @@ def apply_export_template(df: pd.DataFrame, template_name: str, url_pattern: str
 
     # Déterminer le format et créer l'en-tête
     header_lines = []
-    pattern_lower = pattern.lower()
-    template_name_lower = template_name.lower()
 
     # Déterminer si c'est un format Markdown table (pour échapper les pipes)
     is_markdown_table = '|' in pattern and '{' not in pattern
@@ -315,13 +303,14 @@ export_templates = load_export_templates()
 # GESTION DES DONNÉES
 # =====================================
 
+
 class AssetDataManager:
     """Gestionnaire de données assets avec cache et filtrage côté serveur"""
 
-    _instance = None
-    _df = None
-    _loaded_at = None
-    _source_type = None  # 'csv' ou 'sqlite'
+    _instance: "AssetDataManager | None" = None
+    _df: pd.DataFrame | None = None
+    _loaded_at: datetime | None = None
+    _source_type: str | None = None  # 'csv' ou 'sqlite'
 
     def __new__(cls):
         if cls._instance is None:
@@ -329,7 +318,7 @@ class AssetDataManager:
         return cls._instance
 
     @staticmethod
-    def detect_source_type(path):
+    def detect_source_type(path: Path) -> str:
         """Détecter si source est CSV ou SQLite"""
         suffix = path.suffix.lower()
         if suffix in ['.db', '.sqlite', '.sqlite3']:
@@ -337,7 +326,7 @@ class AssetDataManager:
         return 'csv'
 
     @staticmethod
-    def list_sqlite_tables(db_path):
+    def list_sqlite_tables(db_path: Path) -> list[str]:
         """Lister les tables dans une base SQLite"""
         try:
             conn = sqlite3.connect(str(db_path))
@@ -351,18 +340,22 @@ class AssetDataManager:
             return []
 
     @classmethod
-    def load_data(cls, force_reload=False):
+    def load_data(cls, force_reload: bool = False) -> pd.DataFrame:
         """Charger données depuis CSV ou SQLite avec cache (1h)"""
         instance = cls()
 
-        if not force_reload and instance._df is not None:
+        if not force_reload and instance._df is not None and instance._loaded_at is not None:
             age = (datetime.now() - instance._loaded_at).total_seconds()
             if age < CACHE_TTL_SECONDS:
                 return instance._df
 
         try:
             # S'assurer que DATA_PATH est un Path object
-            data_path = DATA_PATH if isinstance(DATA_PATH, Path) else Path(DATA_PATH)
+            if DATA_PATH is None:
+                logger.error("DATA_PATH est None")
+                return pd.DataFrame()
+
+            data_path = DATA_PATH if isinstance(DATA_PATH, Path) else Path(str(DATA_PATH))
 
             logger.info(f"Chargement données: {data_path}")
             if not data_path.exists():
@@ -406,7 +399,6 @@ class AssetDataManager:
                 try:
                     # pendant la lecture on peut choisir d'ignorer les ParserWarning
                     # lorsque l'application tourne en production
-                    import warnings
                     with warnings.catch_warnings():
                         if not show_parser_warnings:
                             warnings.simplefilter('ignore', pd.errors.ParserWarning)
@@ -426,26 +418,14 @@ class AssetDataManager:
                         if not show_parser_warnings:
                             warnings.simplefilter('ignore', pd.errors.ParserWarning)
                         df = pd.read_csv(
-                            data_path,
-                            sep=None,
-                            engine='python',
-                            dtype_backend='numpy_nullable',
-                            on_bad_lines='warn',
-                            encoding='latin-1'
+                            data_path, sep=None, engine='python', dtype_backend='numpy_nullable', on_bad_lines='warn', encoding='latin-1'
                         )
                     logger.info(f"Données chargées (latin-1, séparateur auto): {len(df)} lignes, {len(df.columns)} colonnes")
                 except Exception as parse_error:
                     # Tentative 3: Mode permissif (skip bad lines)
                     logger.warning(f"Erreur parsing standard: {parse_error}")
                     logger.warning("Tentative avec skip bad lines...")
-                    df = pd.read_csv(
-                        data_path,
-                        sep=None,
-                        engine='python',
-                        dtype_backend='numpy_nullable',
-                        on_bad_lines='skip',
-                        encoding='utf-8'
-                    )
+                    df = pd.read_csv(data_path, sep=None, engine='python', dtype_backend='numpy_nullable', on_bad_lines='skip', encoding='utf-8')
                     logger.warning(f"⚠️ Données chargées (lignes malformées ignorées): {len(df)} lignes, {len(df.columns)} colonnes")
 
             instance._df = df
@@ -458,11 +438,11 @@ class AssetDataManager:
             return pd.DataFrame()
 
     @classmethod
-    def get_data(cls):
+    def get_data(cls) -> pd.DataFrame:
         """Retourner données (charger si nécessaire)"""
         instance = cls()
         if instance._df is None:
-            instance.load_data()
+            return instance.load_data()
         return instance._df
 
     @classmethod
@@ -471,11 +451,13 @@ class AssetDataManager:
         instance = cls()
         instance.load_data(force_reload=True)
 
+
 dm = AssetDataManager()
 
 # =====================================
 # UTILITAIRES DE FILTRAGE
 # =====================================
+
 
 def is_tag_column(name: str) -> bool:
     """Déterminer si une colonne doit être traitée comme une colonne de tags.
@@ -641,9 +623,8 @@ def apply_filter_stack(df: pd.DataFrame, filter_stack: list | None, alias_map: d
                             lambda row: row.str.contains(item_search_term, case=False, na=False, regex=True).any(), axis=1
                         )
                     else:
-                        search_mask = filtered_df.astype(str).apply(
-                            lambda row: row.str.contains(item_search_term, case=False, na=False).any(), axis=1
-                        )
+                        search_mask = filtered_df.astype(str
+                                                        ).apply(lambda row: row.str.contains(item_search_term, case=False, na=False).any(), axis=1)
                 item_mask &= search_mask
             except re.error:
                 pass
@@ -656,9 +637,11 @@ def apply_filter_stack(df: pd.DataFrame, filter_stack: list | None, alias_map: d
 
     return filtered_df
 
+
 # =====================================
 # PROFILS
 # =====================================
+
 
 def save_profile(profile_name, profile_data):
     """Écrire un profil sur disque (JSONC)."""
@@ -681,10 +664,10 @@ def load_profile(profile_name):
     base = profile_name
     candidates = []
     if base.endswith('.profile'):
-        candidates.append(f"{base}.jsonc")      # nom.profile.jsonc
-        candidates.append(f"{base}")             # nom.profile
+        candidates.append(f"{base}.jsonc")  # nom.profile.jsonc
+        candidates.append(f"{base}")  # nom.profile
     else:
-        candidates.append(f"{base}.jsonc")       # nom.jsonc (éventuel)
+        candidates.append(f"{base}.jsonc")  # nom.jsonc (éventuel)
         candidates.append(f"{base}.profile.jsonc")
         candidates.append(f"{base}.profile")
 
@@ -705,10 +688,7 @@ def load_profile(profile_name):
 
     # normaliser
     if isinstance(profile_data, dict):
-        normalized = {
-            "name": profile_data.get("name", profile_name),
-            "columns": []
-        }
+        normalized = {"name": profile_data.get("name", profile_name), "columns": []}
         if "columns" in profile_data and isinstance(profile_data["columns"], list):
             normalized["columns"] = profile_data["columns"]
         elif "column_profile" in profile_data and isinstance(profile_data["column_profile"], dict):
@@ -725,6 +705,7 @@ def load_profile(profile_name):
         return normalized
 
     return profile_data
+
 
 def list_profiles():
     """Lister tous les profils"""
@@ -782,9 +763,11 @@ def detect_export_format(template_name: str) -> tuple[str, str]:
 
     return ext, mimetype
 
+
 # =====================================
 # ROUTES API
 # =====================================
+
 
 @app.route('/')
 def index():
@@ -799,12 +782,15 @@ def index():
     columns = list(df.columns)
     profiles = list_profiles()
 
-    return render_template('index.html',
-                          columns=columns,
-                          profiles=profiles,
-                          templates=list(export_templates.keys()),
-                          row_count=len(df),
-                          show_parser_warnings=show_parser_warnings)
+    return render_template(
+        'index.html',
+        columns=columns,
+        profiles=profiles,
+        templates=list(export_templates.keys()),
+        row_count=len(df),
+        show_parser_warnings=show_parser_warnings
+    )
+
 
 @app.route('/api/data', methods=['GET'])
 def api_data():
@@ -812,12 +798,7 @@ def api_data():
     df = dm.get_data()
 
     if df.empty:
-        return jsonify({
-            "draw": request.args.get('draw', 1, type=int),
-            "recordsTotal": 0,
-            "recordsFiltered": 0,
-            "data": []
-        })
+        return jsonify({"draw": request.args.get('draw', 1, type=int), "recordsTotal": 0, "recordsFiltered": 0, "data": []})
 
     # Récupérer parameters DataTables
     draw = request.args.get('draw', 1, type=int)
@@ -835,22 +816,16 @@ def api_data():
         logger.debug(f"🔍 Recherche globale: '{search_value}' (regex={is_regex})")
         # Conversion en string pour la recherche, puis application du masque
         # On utilise une approche plus robuste pour éviter les erreurs de type
-        mask = filtered_df.astype(str).apply(
-            lambda x: x.str.contains(search_value, case=False, na=False, regex=is_regex)
-        ).any(axis=1)
+        mask = filtered_df.astype(str).apply(lambda x: x.str.contains(search_value, case=False, na=False, regex=is_regex)).any(axis=1)
         filtered_df = filtered_df[mask]
         logger.debug(f"🔍 Résultats après recherche globale: {len(filtered_df)} lignes")
 
     # paramètres de filtre avancés (profil)
-    raw_filter_columns = request.args.get('filter_columns')
     raw_filter_stack = request.args.get('filter_stack')
     raw_alias_map = request.args.get('alias_map')
-    filter_columns = []
     filter_stack = []
     alias_map = {}
     try:
-        if raw_filter_columns:
-            filter_columns = json.loads(raw_filter_columns)
         if raw_filter_stack:
             filter_stack = json.loads(raw_filter_stack)
         if raw_alias_map:
@@ -864,26 +839,20 @@ def api_data():
 
     # Pagination
     records_filtered = len(filtered_df)
-    paginated_df = filtered_df.iloc[start:start+length]
+    paginated_df = filtered_df.iloc[start:start + length]
 
     # Convertir en JSON-safe (remplacer NaN/Nat) - Retourner comme objets
     data = paginated_df.fillna('').astype(str).to_dict('records')
 
-    return jsonify({
-        "draw": draw,
-        "recordsTotal": len(df),
-        "recordsFiltered": records_filtered,
-        "data": data
-    })
+    return jsonify({"draw": draw, "recordsTotal": len(df), "recordsFiltered": records_filtered, "data": data})
+
 
 @app.route('/api/columns', methods=['GET'])
 def api_columns():
     """API: lister les colonnes disponibles"""
     df = dm.get_data()
-    return jsonify({
-        "columns": list(df.columns),
-        "count": len(df.columns)
-    })
+    return jsonify({"columns": list(df.columns), "count": len(df.columns)})
+
 
 @app.route('/api/profiles', methods=['GET'])
 def api_profiles():
@@ -891,6 +860,7 @@ def api_profiles():
     profiles = list_profiles()
     logger.debug(f"📋 Profils trouvés: {profiles} (dossier: {PROFILES_DIR})")
     return jsonify({"profiles": profiles})
+
 
 @app.route('/api/templates', methods=['GET'])
 def api_templates():
@@ -900,11 +870,11 @@ def api_templates():
             "name": name,
             "description": obj.get('description', ''),
             "pattern": obj.get('pattern', '')
-        }
-        for name, obj in export_templates.items()
+        } for name, obj in export_templates.items()
     ]
     logger.debug(f"📋 Templates retournés: {len(templates_list)} disponibles")
     return jsonify({"templates": templates_list})
+
 
 @app.route('/api/config', methods=['POST'])
 def api_update_config():
@@ -926,6 +896,7 @@ def api_update_config():
         logger.error(f"❌ Erreur mise à jour config: {e}")
         return api_error("CONFIG_UPDATE_FAILED", "Impossible de mettre a jour la configuration", 400, {"exception": str(e)})
 
+
 @app.route('/api/profiles/<name>', methods=['GET'])
 def api_profile_detail(name):
     """API: détail d'un profil"""
@@ -933,7 +904,7 @@ def api_profile_detail(name):
     profile = load_profile(name)
 
     if profile:
-        logger.info(f"[API] Profil trouvé")
+        logger.info("[API] Profil trouvé")
         logger.info(f"   Type: {type(profile)}")
 
         if isinstance(profile, dict):
@@ -944,7 +915,7 @@ def api_profile_detail(name):
                 if cols:
                     logger.debug(f"      Colonnes: {cols[:3]}..." if len(cols) > 3 else f"      Colonnes: {cols}")
             else:
-                logger.warning(f"   ⚠️ Profil sans colonne explicite")
+                logger.warning("   ⚠️ Profil sans colonne explicite")
 
         return jsonify(profile)
 
@@ -968,6 +939,7 @@ def api_delete_profile(name):
     logger.warning(f"❌ Profil non trouvé pour suppression: {name}")
     return api_error("PROFILE_NOT_FOUND", "Profil non trouve", 404, {"profile": name})
 
+
 @app.route('/api/profiles', methods=['POST'])
 def api_save_profile():
     """API: sauvegarder un profil"""
@@ -987,6 +959,7 @@ def api_save_profile():
         logger.error(f"❌ Erreur sauvegarde profil: {e}", exc_info=True)
         return api_error("PROFILE_SAVE_FAILED", "Erreur lors de la sauvegarde du profil", 500, {"exception": str(e)})
 
+
 @app.route('/api/export', methods=['POST'])
 def api_export():
     """API: exporter les données avec filtres appliqués"""
@@ -999,12 +972,12 @@ def api_export():
             return api_error("INVALID_PAYLOAD", "JSON invalide ou manquant", 400)
 
         template_name = data.get('template', 'CSV standard')
-        format_type = data.get('format', 'csv')
+        # format_type = data.get('format', 'csv')
         columns = data.get('columns', [])
         search_value = data.get('search', '')
 
         # lire paramètres avancés de filtrage
-        filter_columns = data.get('filter_columns', [])
+        # filter_columns = data.get('filter_columns', [])
         filter_stack = data.get('filter_stack', [])
         alias_map = data.get('alias_map', {})
 
@@ -1043,7 +1016,12 @@ def api_export():
             output = apply_export_template(export_df, template_name, url_pattern)
         except Exception as e:
             logger.error(f"Erreur génération template '{template_name}': {e}", exc_info=True)
-            return api_error("EXPORT_TEMPLATE_ERROR", "Erreur de generation du template d'export", 400, {"template": template_name, "exception": str(e)})
+            return api_error(
+                "EXPORT_TEMPLATE_ERROR", "Erreur de generation du template d'export", 400, {
+                    "template": template_name,
+                    "exception": str(e)
+                }
+            )
 
         # Déterminer l'extension et le MIME type en analysant le template
         ext, mimetype = detect_export_format(template_name)
@@ -1053,12 +1031,7 @@ def api_export():
 
         logger.info(f"Export: génération fichier {filename} ({len(output)} caractères)")
 
-        return send_file(
-            BytesIO(output.encode('utf-8')),
-            mimetype=mimetype,
-            as_attachment=True,
-            download_name=filename
-        )
+        return send_file(BytesIO(output.encode('utf-8')), mimetype=mimetype, as_attachment=True, download_name=filename)
 
     except Exception as e:
         logger.error(f"Erreur glob export: {e}", exc_info=True)
@@ -1110,7 +1083,12 @@ def api_batch_export():
             output = apply_export_template(export_df, template_name, url_pattern)
         except Exception as e:
             logger.error(f"Erreur génération template batch '{template_name}': {e}", exc_info=True)
-            return api_error("EXPORT_TEMPLATE_ERROR", "Erreur de generation du template d'export", 400, {"template": template_name, "exception": str(e)})
+            return api_error(
+                "EXPORT_TEMPLATE_ERROR", "Erreur de generation du template d'export", 400, {
+                    "template": template_name,
+                    "exception": str(e)
+                }
+            )
 
         ext, _ = detect_export_format(template_name)
 
@@ -1138,19 +1116,22 @@ def api_batch_export():
 
         logger.info(f"Batch export écrit: {output_path}")
 
-        return jsonify({
-            "success": True,
-            "path": str(output_path),
-            "filename": filename,
-            "rows": len(export_df),
-            "columns": len(export_df.columns),
-            "template": template_name,
-            "bytes": len(output.encode('utf-8'))
-        })
+        return jsonify(
+            {
+                "success": True,
+                "path": str(output_path),
+                "filename": filename,
+                "rows": len(export_df),
+                "columns": len(export_df.columns),
+                "template": template_name,
+                "bytes": len(output.encode('utf-8'))
+            }
+        )
 
     except Exception as e:
         logger.error(f"Erreur batch export: {e}", exc_info=True)
         return api_error("BATCH_EXPORT_FAILED", "Erreur lors du batch export", 500, {"exception": str(e)})
+
 
 @app.route('/api/stats', methods=['GET'])
 def api_stats():
@@ -1169,16 +1150,14 @@ def api_stats():
 
     return jsonify(stats)
 
+
 @app.route('/api/reload', methods=['POST'])
 def api_reload():
     """API: recharger les données depuis le fichier"""
     dm.reload()
     df = dm.get_data()
-    return jsonify({
-        "success": True,
-        "rows": len(df),
-        "columns": len(df.columns)
-    })
+    return jsonify({"success": True, "rows": len(df), "columns": len(df.columns)})
+
 
 @app.route('/setup')
 def setup():
@@ -1197,11 +1176,14 @@ def setup():
         seen_paths.add(resolved)
         unique_searched_paths.append(candidate)
 
-    return render_template('setup.html',
-                          filename=ASSETS_CSV_FILE,
-                          searched_paths=unique_searched_paths,
-                          current_path=current_path,
-                          current_path_exists=current_path_exists)
+    return render_template(
+        'setup.html',
+        filename=ASSETS_CSV_FILE,
+        searched_paths=unique_searched_paths,
+        current_path=current_path,
+        current_path_exists=current_path_exists
+    )
+
 
 @app.route('/api/setup', methods=['POST'])
 def api_setup():
@@ -1248,16 +1230,19 @@ def api_setup():
             logger.error(f"⚠️ Vérification du rechargement: {reload_error}")
             # Continuer en cas d'erreur, ça va se charger à la première requête
 
-        return jsonify({
-            "success": True,
-            "data_path": str(DATA_PATH),
-            "source_type": source_type,
-            "db_table": DB_TABLE if source_type == 'sqlite' else None
-        })
+        return jsonify(
+            {
+                "success": True,
+                "data_path": str(DATA_PATH),
+                "source_type": source_type,
+                "db_table": DB_TABLE if source_type == 'sqlite' else None
+            }
+        )
 
     except Exception as e:
         logger.error(f"❌ Erreur /api/setup: {str(e)}", exc_info=True)
         return api_error("SETUP_FAILED", "Erreur lors de la sauvegarde de la configuration", 500, {"exception": str(e)})
+
 
 @app.route('/api/test-path', methods=['POST'])
 def api_test_path():
@@ -1268,19 +1253,11 @@ def api_test_path():
     test_path = data.get('path')
 
     if not test_path:
-        return jsonify({
-            "exists": False,
-            "code": "PATH_EMPTY",
-            "message": "Chemin requis"
-        })
+        return jsonify({"exists": False, "code": "PATH_EMPTY", "message": "Chemin requis"})
 
     path_obj = Path(test_path)
     if not path_obj.exists():
-        return jsonify({
-            "exists": False,
-            "code": "PATH_NOT_FOUND",
-            "message": "Chemin introuvable"
-        })
+        return jsonify({"exists": False, "code": "PATH_NOT_FOUND", "message": "Chemin introuvable"})
 
     # Détecter le type
     source_type = AssetDataManager.detect_source_type(path_obj)
@@ -1290,11 +1267,7 @@ def api_test_path():
         try:
             tables = AssetDataManager.list_sqlite_tables(path_obj)
             if not tables:
-                return jsonify({
-                    "exists": False,
-                    "code": "SQLITE_NO_TABLE",
-                    "message": "Aucune table detectee dans la base SQLite"
-                })
+                return jsonify({"exists": False, "code": "SQLITE_NO_TABLE", "message": "Aucune table detectee dans la base SQLite"})
 
             # Lire la première table pour avoir stats
             conn = sqlite3.connect(str(path_obj))
@@ -1303,20 +1276,10 @@ def api_test_path():
             row_count = pd.read_sql_query(f"SELECT COUNT(*) as cnt FROM {first_table}", conn).iloc[0]['cnt']
             conn.close()
 
-            return jsonify({
-                "exists": True,
-                "type": "sqlite",
-                "tables": tables,
-                "rows": int(row_count),
-                "cols": len(test_df.columns)
-            })
+            return jsonify({"exists": True, "type": "sqlite", "tables": tables, "rows": int(row_count), "cols": len(test_df.columns)})
         except Exception as e:
             logger.warning(f"Test chemin SQLite invalide: {e}")
-            return jsonify({
-                "exists": False,
-                "code": "SQLITE_READ_ERROR",
-                "message": "Fichier SQLite invalide ou non lisible"
-            })
+            return jsonify({"exists": False, "code": "SQLITE_READ_ERROR", "message": "Fichier SQLite invalide ou non lisible"})
 
     # === CSV ===
     else:
@@ -1335,23 +1298,10 @@ def api_test_path():
                 except pd.errors.ParserError as parse_error:
                     # Si quelques lignes sont malformées, rester compatible avec le chargement réel.
                     logger.info(f"Test chemin CSV parse warning ({encoding}): {parse_error}")
-                    full_df_rows = len(
-                        pd.read_csv(
-                            path_obj,
-                            sep=None,
-                            engine='python',
-                            encoding=encoding,
-                            on_bad_lines='skip'
-                        )
-                    )
+                    full_df_rows = len(pd.read_csv(path_obj, sep=None, engine='python', encoding=encoding, on_bad_lines='skip'))
                     warning_message = "Certaines lignes CSV sont malformees et seront ignorees"
 
-                payload = {
-                    "exists": True,
-                    "type": "csv",
-                    "rows": int(full_df_rows),
-                    "cols": len(test_df.columns)
-                }
+                payload = {"exists": True, "type": "csv", "rows": int(full_df_rows), "cols": len(test_df.columns)}
                 if warning_message:
                     payload["warning"] = warning_message
                 return jsonify(payload)
@@ -1365,39 +1315,31 @@ def api_test_path():
 
         if isinstance(last_error, UnicodeDecodeError):
             logger.warning(f"Test chemin CSV encodage invalide: {last_error}")
-            return jsonify({
-                "exists": False,
-                "code": "CSV_ENCODING_ERROR",
-                "message": "CSV illisible (encodage non supporte)"
-            })
+            return jsonify({"exists": False, "code": "CSV_ENCODING_ERROR", "message": "CSV illisible (encodage non supporte)"})
 
         if isinstance(last_error, pd.errors.ParserError):
             logger.warning(f"Test chemin CSV parse error: {last_error}")
-            return jsonify({
-                "exists": False,
-                "code": "CSV_PARSE_ERROR",
-                "message": "CSV invalide (format ou guillemets)"
-            })
+            return jsonify({"exists": False, "code": "CSV_PARSE_ERROR", "message": "CSV invalide (format ou guillemets)"})
 
         logger.warning(f"Test chemin CSV invalide: {last_error}")
-        return jsonify({
-            "exists": False,
-            "code": "CSV_READ_ERROR",
-            "message": "Impossible de lire le fichier CSV"
-        })
+        return jsonify({"exists": False, "code": "CSV_READ_ERROR", "message": "Impossible de lire le fichier CSV"})
+
 
 # =====================================
 # GESTION ERREURS
 # =====================================
 
+
 @app.errorhandler(404)
 def not_found(error):
     return api_error("NOT_FOUND", "Page non trouvee", 404)
+
 
 @app.errorhandler(500)
 def server_error(error):
     logger.error(f"Erreur serveur: {error}")
     return api_error("SERVER_ERROR", "Erreur serveur", 500)
+
 
 # =====================================
 # MAIN

@@ -1,10 +1,12 @@
 import importlib.util
 import sys
+import types
 import uuid
 from pathlib import Path
 
 
 class _FlaskCorsStub:
+
     @staticmethod
     def CORS(app, *args, **kwargs):
         return app
@@ -18,7 +20,9 @@ def import_unity_assets_manager_module():
     assert spec is not None and spec.loader is not None
 
     if "flask_cors" not in sys.modules:
-        sys.modules["flask_cors"] = _FlaskCorsStub
+        flask_cors_stub = types.ModuleType("flask_cors")
+        setattr(flask_cors_stub, "CORS", _FlaskCorsStub.CORS)
+        sys.modules["flask_cors"] = flask_cors_stub
 
     module = importlib.util.module_from_spec(spec)
     sys.modules[module_name] = module

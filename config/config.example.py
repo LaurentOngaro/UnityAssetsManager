@@ -32,10 +32,19 @@ MAX_PAGE_SIZE = 500
 # Export
 EXPORT_MAX_ROWS = None  # None = pas de limite
 EXPORT_TEMPLATES = {
-    "CSV standard": {"separator": ","},
-    "CSV with URL": {"separator": ",", "include_url": True},
-    "JSON": {"format": "json"},
-    "Markdown": {"format": "markdown"}
+    "CSV standard": {
+        "separator": ","
+    },
+    "CSV with URL": {
+        "separator": ",",
+        "include_url": True
+    },
+    "JSON": {
+        "format": "json"
+    },
+    "Markdown": {
+        "format": "markdown"
+    }
 }
 
 # Sécurité

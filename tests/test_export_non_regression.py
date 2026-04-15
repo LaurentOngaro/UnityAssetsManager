@@ -5,7 +5,6 @@ import pytest
 
 from .test_unity_assets_manager_helpers import import_unity_assets_manager_module
 
-
 SAMPLE_DF = pd.DataFrame(
     [
         {
@@ -14,15 +13,13 @@ SAMPLE_DF = pd.DataFrame(
             "DisplayCategory": "Tools",
             "Version": "1.0",
             "Url": "https://example.com/tree-pack",
-        },
-        {
+        }, {
             "DisplayName": "Rock Pack",
             "DisplayPublisher": "PublisherB",
             "DisplayCategory": "Tools",
             "Version": "2.0",
             "Url": "https://example.com/rock-pack",
-        },
-        {
+        }, {
             "DisplayName": "Music Pack",
             "DisplayPublisher": "PublisherC",
             "DisplayCategory": "Audio",
@@ -34,61 +31,20 @@ SAMPLE_DF = pd.DataFrame(
 
 
 @pytest.mark.parametrize(
-    "template_name,pattern,expected_ext,expected_mime,expected_fragment",
-    [
-        (
-            "CSV regression",
-            "%DisplayName%,%Version%",
-            "csv",
-            "text/csv",
-            "DisplayName,Version",
-        ),
-        (
-            "Markdown regression",
-            "| %DisplayName% | %Version% |",
-            "md",
-            "text/markdown",
-            "| DisplayName | Version |",
-        ),
-        (
-            "JSON regression",
-            "%DisplayName%",
-            "json",
-            "application/json",
-            '"assets"',
-        ),
-        (
-            "TXT regression",
-            "%DisplayName% - %Version%",
-            "txt",
-            "text/plain",
-            "Tree Pack - 1.0",
-        ),
+    "template_name,pattern,expected_ext,expected_mime,expected_fragment", [
+        ("CSV regression", "%DisplayName%,%Version%", "csv", "text/csv", "DisplayName,Version",
+        ), ("Markdown regression", "| %DisplayName% | %Version% |", "md", "text/markdown", "| DisplayName | Version |",
+           ), ("JSON regression", "%DisplayName%", "json", "application/json", '"assets"',
+              ), ("TXT regression", "%DisplayName% - %Version%", "txt", "text/plain", "Tree Pack - 1.0",
+                 ),
     ],
 )
-def test_api_export_template_non_regression(
-    monkeypatch,
-    template_name,
-    pattern,
-    expected_ext,
-    expected_mime,
-    expected_fragment,
-):
+def test_api_export_template_non_regression(monkeypatch, template_name, pattern, expected_ext, expected_mime, expected_fragment, ):
     """Ensure each export family keeps expected extension/mime/content contract."""
     mod = import_unity_assets_manager_module()
 
     monkeypatch.setattr(mod.dm, "get_data", lambda: SAMPLE_DF.copy())
-    monkeypatch.setattr(
-        mod,
-        "export_templates",
-        {
-            template_name: {
-                "description": "Template de test",
-                "pattern": pattern,
-            }
-        },
-        raising=False,
-    )
+    monkeypatch.setattr(mod, "export_templates", {template_name: {"description": "Template de test", "pattern": pattern, }}, raising=False, )
 
     client = mod.app.test_client()
     response = client.post(
@@ -115,36 +71,17 @@ def test_api_export_template_non_regression(
 
 
 @pytest.mark.parametrize(
-    "template_name,pattern,expected_ext",
-    [
-        ("CSV batch", "%DisplayName%,%Version%", "csv"),
-        ("Markdown batch", "| %DisplayName% | %Version% |", "md"),
-        ("JSON batch", "%DisplayName%", "json"),
-        ("TXT batch", "%DisplayName% - %Version%", "txt"),
+    "template_name,pattern,expected_ext", [
+        ("CSV batch", "%DisplayName%,%Version%", "csv"), ("Markdown batch", "| %DisplayName% | %Version% |", "md"),
+        ("JSON batch", "%DisplayName%", "json"), ("TXT batch", "%DisplayName% - %Version%", "txt"),
     ],
 )
-def test_api_batch_export_writes_expected_extension(
-    monkeypatch,
-    tmp_path,
-    template_name,
-    pattern,
-    expected_ext,
-):
+def test_api_batch_export_writes_expected_extension(monkeypatch, tmp_path, template_name, pattern, expected_ext, ):
     """Headless export must keep extension inference stable for automation flows."""
     mod = import_unity_assets_manager_module()
 
     monkeypatch.setattr(mod.dm, "get_data", lambda: SAMPLE_DF.copy())
-    monkeypatch.setattr(
-        mod,
-        "export_templates",
-        {
-            template_name: {
-                "description": "Template de test",
-                "pattern": pattern,
-            }
-        },
-        raising=False,
-    )
+    monkeypatch.setattr(mod, "export_templates", {template_name: {"description": "Template de test", "pattern": pattern, }}, raising=False, )
 
     client = mod.app.test_client()
     response = client.post(
@@ -175,13 +112,10 @@ def test_batch_export_applies_include_exclude_stack(monkeypatch, tmp_path):
     monkeypatch.setattr(mod.dm, "get_data", lambda: SAMPLE_DF.copy())
     monkeypatch.setattr(
         mod,
-        "export_templates",
-        {
-            "CSV stack": {
-                "description": "Template CSV de test",
-                "pattern": "%DisplayName%,%DisplayPublisher%,%DisplayCategory%",
-            }
-        },
+        "export_templates", {"CSV stack": {
+            "description": "Template CSV de test",
+            "pattern": "%DisplayName%,%DisplayPublisher%,%DisplayCategory%",
+        }},
         raising=False,
     )
 
@@ -194,8 +128,7 @@ def test_batch_export_applies_include_exclude_stack(monkeypatch, tmp_path):
                 }
             },
             "search_term": "",
-        },
-        {
+        }, {
             "mode": "exclude",
             "filters": {
                 "DisplayPublisher": {
@@ -236,18 +169,16 @@ def test_api_test_path_accepts_csv_with_late_malformed_lines(tmp_path):
     mod = import_unity_assets_manager_module()
 
     csv_path = tmp_path / "late_bad_rows.csv"
-    csv_path.write_text(
-        "A;B\n"
-        "1;ok\n"
-        "2;ok\n"
-        "3;ok\n"
-        "4;ok\n"
-        "5;ok\n"
-        "6;ok\n"
-        "\"bad;line\n"
-        "7;ok\n",
-        encoding="utf-8",
-    )
+    csv_path.write_text("A;B\n"
+                        "1;ok\n"
+                        "2;ok\n"
+                        "3;ok\n"
+                        "4;ok\n"
+                        "5;ok\n"
+                        "6;ok\n"
+                        "\"bad;line\n"
+                        "7;ok\n", encoding="utf-8",
+                       )
 
     client = mod.app.test_client()
     response = client.post("/api/test-path", json={"path": str(csv_path)})
