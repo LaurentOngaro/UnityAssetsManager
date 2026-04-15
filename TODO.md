@@ -12,7 +12,6 @@ Pour plus de détails sur l'implémentation de ces modifications, consulter le f
 
 classement des demandes par priorité de la plus urgente à la moins urgente:
 
-- MIG1 (Mettre à jour la nomenclature)
 - API1 (Vérifier la cohérence OpenAPI)
 - API2 (Ajouter des tests API d'erreurs standards)
 - API3 (Uniformiser le contrat d'erreur sur toutes les routes)
@@ -57,7 +56,6 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Migration (last: MIG3)
 
-- [ ] MIG1: Mettre à jour prompts/docs restants vers la nomenclature `UnityAssetsManager`.
 - [ ] MIG2: Finaliser la dépréciation des flux legacy `assetsCuration/85X_A00_*.json` après migration complète.
 - [ ] MIG3: Archiver V1 (`AssetsManager/assetManager.py`) après validation de la chaîne complète V2.
 
@@ -75,6 +73,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] MIG1: Mettre à jour prompts/docs restants vers la nomenclature `UnityAssetsManager`.
 - [x] REF2: Modulariser l'application (découper le monolithe `app.py` en modules distincts, supprimer les dépendances legacy, optimiser SQLite). Voir [REFACTORING_MODULARIZATION.md](./_helpers/REFACTORING_MODULARIZATION.md).
 - [x] CI1: déplacer `config.json` en `config/config.json`
 - [x] CI2: Initialiser des dépôts Git locaux dédiés pour UnityAssetsManager et FabAssetsManager (commit initial effectué).

@@ -6,7 +6,9 @@ Ce document ordonne et détaille les étapes d'implémentation selon les Groupes
 
 Chaque fois qu'une modification est teminée:
 
-- dans ce document: ajouter "DONE " en début du titre de la section correspondante (ex: `### 1. [FIL1] Sections de filtres collapsables` devient `### 1. DONE [FIL1] Sections de filtres collapsables`)
+- dans ce document:
+  - ajouter "DONE " en début du titre de la section correspondante (ex: `### 1. [FIL1] Sections de filtres collapsables` devient `### 1. DONE [FIL1] Sections de filtres collapsables`)
+  - les sections terminées sont régulièrement effacées de ce document pour ne conserver que les tâches en cours ou à venir
 - dans `TODO.md`:
   - cocher la case associée
   - supprimer la tache de la liste des Groupes
@@ -14,7 +16,6 @@ Chaque fois qu'une modification est teminée:
 
 ## Rattachement rapide des sprints aux TODO
 
-- Sprint P1 - MIG1
 - Sprint P2 - API1, API2, API3, DOC1, DOC2, DOC3
 - Sprint P3 - MIG2, MIG3
 - Sprint P4 - FEAT1, AFF1, AFF2
@@ -66,8 +67,6 @@ Chaque fois qu'une modification est teminée:
 
 ### Migration
 
-- MIG1: mettre à jour les prompts et docs restants vers la nomenclature `UnityAssetsManager`.
-  - supprimer les reliquats de nommage legacy.
 - MIG2: finaliser la dépréciation des flux legacy `assetsCuration/85X_A00_*.json`.
   - ne conserver ces flux que tant que la migration n'est pas complètement terminée.
 - MIG3: archiver V1 (`AssetsManager/assetManager.py`) après validation de la chaîne complète V2.
@@ -84,14 +83,12 @@ Chaque fois qu'une modification est teminée:
 - INT4: ajouter un provider boutiques manuelles via `raw_assets.md`.
   - permettre une saisie manuelle ponctuelle hors flux automatisé.
 
-## Sprint P1 - Stabilisation (MIG1)
+## Regroupement des taches par Sprints
 
-- Action: Verifier nomenclature `UnityAssetsManager` dans le code actif.
-- Action: Verifier que les routes critiques renvoient un contrat d'erreur uniforme.
-- Livrable: rapport de recherche + correction des references actives legacy.
-- Definition of done: aucune reference active legacy dans le scope applicatif (hors docs historiques de migration).
+cete répartition est indicative et peut être ajustée en fonction des dépendances et de l'avancement.
+Elle n'est pas un classement par priorité mais plutôt une organisation thématique pour structurer les sprints.
 
-## Sprint P2 - Contrat API & Documentation (API1, API2, API3, DOC1, DOC2, DOC3)
+### Sprint P2 - Contrat API & Documentation (API1, API2, API3, DOC1, DOC2, DOC3)
 
 - Action: Maintenir `openapi.yaml` en source de verite des endpoints.
 - Action: Ajouter exemples de payloads succes/erreur dans `API_GUIDE.md`.
@@ -108,21 +105,21 @@ Chaque fois qu'une modification est teminée:
   - `POST /api/test-path`
 - Definition of done: alignement implementation/API_GUIDE/OpenAPI sans divergence fonctionnelle.
 
-## Sprint P4 - Parite V1 restante (FEAT1, AFF1, AFF2)
+### Sprint P4 - Parite V1 restante (FEAT1, AFF1, AFF2)
 
 - Action: Ajouter endpoint `/api/batch-export`.
 - Action: Ajouter include/exclude dans filter builder.
 - Action: Ajouter tests API associes.
 - Definition of done: use-cases automation V1 couverts par V2.
 
-## Sprint P3 - Validation finale (MIG2, MIG3)
+### Sprint P3 - Validation finale (MIG2, MIG3)
 
 - Action: rejouer pipeline complet (Unity + Fab minimum).
 - Action: valider exports et docs de bascule.
 - Action: preparer deprecation/archivage V1 selon preconditions projet.
 - Definition of done: migration V2 operationnelle, documentee, et exploitable en routine.
 
-## Sprint P5 - Raw-First Providers (INT1, INT2, INT3, INT4)
+### Sprint P5 - Raw-First Providers (INT1, INT2, INT3, INT4)
 
 - Action: Integrer service de normalisation raw multi-boutiques.
 - Action: Prioriser provider Unity (SQLite, fallback CSV).
