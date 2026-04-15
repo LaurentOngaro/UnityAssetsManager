@@ -1,14 +1,18 @@
 # PLAN_ACTIONS - UnityAssetsManager
 
-## Objectif
+Ce document ordonne et détaille les étapes d'implémentation selon les Groupes définies dans le fichier `TODO.md`.
 
-Converger vers une structure et un contrat API de niveau FabAssetsManager, tout en restant oriente Unity/TerraBloom et pipeline raw-first.
+**REGLE D'OR : Toujours proposer d'effectuer les corrections de bugs et les corrections immédiates en premier. Elles sont listées dans les section "Corrections immédiates" et "Bugs" du fichier `TODO.md`.**
 
-## Référentiel des tâches TODO
+Chaque fois qu'une modification est teminée:
 
-Ce bloc détaille chaque ID du `TODO.md`. Les sprints plus bas servent uniquement à ordonner l'exécution.
+- dans ce document: ajouter "DONE " en début du titre de la section correspondante (ex: `### 1. [FIL1] Sections de filtres collapsables` devient `### 1. DONE [FIL1] Sections de filtres collapsables`)
+- dans `TODO.md`:
+  - cocher la case associée
+  - supprimer la tache de la liste des Groupes
+  - déplacer la tache au début de la section "Terminés" à la fin du fichier (ex: `### Terminés`)
 
-### Rattachement rapide des sprints aux TODO
+## Rattachement rapide des sprints aux TODO
 
 - Pré-sprints - CI1, GE1, CI2
 - Sprint P0 - MIG1
@@ -18,13 +22,13 @@ Ce bloc détaille chaque ID du `TODO.md`. Les sprints plus bas servent uniquemen
 - Sprint P4 - FEAT1, AFF1, AFF2
 - Sprint P5 - MIG2, MIG3
 
-### Corrections immédiates
+## TOP Priorités (pour les corrections immédiates)
 
 ### Gestion
 
 ### Refactoring
 
-- REF2: découper `app.py` en modules et optimiser SQLite.
+- DONE REF2: découper `app.py` en modules et optimiser SQLite.
   - séparer routes, données, filtres, configuration et utilitaires.
   - éviter le chargement complet SQLite en mémoire lorsque la source est volumineuse.
   - doc détaillée: [REFACTORING_MODULARIZATION.md](REFACTORING_MODULARIZATION.md).
@@ -100,8 +104,8 @@ Ce bloc détaille chaque ID du `TODO.md`. Les sprints plus bas servent uniquemen
 
 ## Sprint P1 - Modularisation & Optimisation (REF1, REF2)
 
-- Action: Découper le monolithe `app.py` en modules séparés (routes, data_manager, config, filters).
-- Action: Supprimer la dépendance legacy à la V1 (`lib.jsoncUtils`) en migrant les utilitaires.
+- DONE Action: Découper le monolithe `app.py` en modules séparés (routes, data_manager, config, filters).
+- DONE Action: Supprimer la dépendance legacy à la V1 (`lib.jsoncUtils`) en migrant les utilitaires.
 - Action: Optimiser le chargement SQLite (éviter le `SELECT *` total dans la RAM).
 - Livrable: Code refactorisé, robuste et plus maintenable, détaillé dans `REFACTORING_MODULARIZATION.md`.
 - Definition of done: Les tests, l'interface et l'API fonctionnent à l'identique avec la nouvelle architecture.

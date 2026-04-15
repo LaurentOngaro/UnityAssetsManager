@@ -10,13 +10,12 @@ Pour plus de détails sur l'implémentation de ces modifications, consulter le f
 
 ### Priorités d'implémentation
 
-classement simplifie des demandes par priorité de la plus urgente à la moins urgente, avec les mêmes identifiants que `PLAN_ACTIONS.md`:
+classement des demandes par priorité de la plus urgente à la moins urgente:
 
-- REF2 (Découper `app.py` en modules et optimiser SQLite)
-- API3 (Uniformiser le contrat d'erreur sur toutes les routes)
-- API1 (Vérifier la cohérence OpenAPI)
 - API2 (Ajouter des tests API d'erreurs standards)
-- DOC1 (Fusionner les documents de suivi et migration)
+- API1 (Vérifier la cohérence OpenAPI)
+- API3 (Uniformiser le contrat d'erreur sur toutes les routes)
+- DOC1 (Consolider les documents de suivi et migration)
 - DOC2 (Consolider `README.md` et `API_GUIDE.md`)
 - DOC3 (Garder `SQLITE_SUPPORT.md` orienté setup SQLite)
 - AFF1 (Redimensionner les colonnes)
@@ -32,15 +31,13 @@ classement simplifie des demandes par priorité de la plus urgente à la moins u
 
 ### Documentation (last: DOC3)
 
-- [ ] DOC1: Analyse et prioriser ou Fusionner les docs "MIGRATION STATE V1 to V2" ([source backlog](./_helpers/MIGRATION%20STATE%20V1%20to%20V2%20.md)), [plan_action_UnityAssetsManager](./_helpers/plan_action_UnityAssetsManager.md) et [PLAN_ACTIONS](./_helpers/PLAN_ACTIONS.md).
+- [ ] DOC1: Analyse et prioriser ou Consolider les docs "MIGRATION STATE V1 to V2" ([source backlog](./_helpers/MIGRATION%20STATE%20V1%20to%20V2%20.md)), [plan_action_UnityAssetsManager](./_helpers/plan_action_UnityAssetsManager.md) et [PLAN_ACTIONS](./_helpers/PLAN_ACTIONS.md).
 - [ ] DOC2: Consolider les redondances entre `README.md` ([README](./README.md)), `API_GUIDE.md` ([API guide](./API_GUIDE.md)) et docs techniques.
 - [ ] DOC3: Garder `SQLITE_SUPPORT.md` ([support SQLite](./_helpers/SQLITE_SUPPORT.md)) orienté setup SQLite uniquement.
 
-### filtrage (last: )
+### Filtrage (last: )
 
-### pagination (last: )
-
-- [ ] REF2: Modulariser l'application (découper le monolithe `app.py` en modules distincts, supprimer les dépendances legacy, optimiser SQLite). Voir [REFACTORING_MODULARIZATION.md](./_helpers/REFACTORING_MODULARIZATION.md).
+### Pagination (last: )
 
 ### Affichage (last: AFF2)
 
@@ -58,7 +55,7 @@ classement simplifie des demandes par priorité de la plus urgente à la moins u
 - [ ] API3: Finaliser le contrat d'erreur uniforme sur toutes les routes (`error.code`, `error.message`, `error.http_status`, `error.timestamp`, `error.path`, `error.details`).
   - reprendre ce qui a été fait pour `FabAssetsManager` et l'adapter à `UnityAssetsManager`.
 
-### migration (last: MIG3)
+### Migration (last: MIG3)
 
 - [ ] MIG1: Mettre à jour prompts/docs restants vers la nomenclature `UnityAssetsManager`.
 - [ ] MIG2: Finaliser la dépréciation des flux legacy `assetsCuration/85X_A00_*.json` après migration complète.
@@ -71,13 +68,14 @@ classement simplifie des demandes par priorité de la plus urgente à la moins u
 - [ ] INT3: Ajouter provider Fab à partir des exports/cache consolidés (sans rapatrier FabAssetsManager).
 - [ ] INT4: Ajouter provider boutiques manuelles via `raw_assets.md`.
 
-### idées à creuser (last: IDEA1) - utilité à questionner
+### Idées à creuser (last: IDEA1) - utilité à questionner
 
 - [ ] Filtres avancés (date ranges, etc)
 - [ ] Import depuis URL
 
 ## Terminés
 
+- [x] REF2: Modulariser l'application (découper le monolithe `app.py` en modules distincts, supprimer les dépendances legacy, optimiser SQLite). Voir [REFACTORING_MODULARIZATION.md](./_helpers/REFACTORING_MODULARIZATION.md).
 - [x] CI1: déplacer `config.json` en `config/config.json`
 - [x] CI2: Initialiser des dépôts Git locaux dédiés pour UnityAssetsManager et FabAssetsManager (commit initial effectué).
 - [x] Implémenter `/api/batch-export` pour usage headless/automation.
