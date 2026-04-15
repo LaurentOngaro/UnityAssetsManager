@@ -2,6 +2,8 @@
 
 Ce module regroupe les constantes applicatives extraites de `app.py`
 (REF1) pour limiter les valeurs en dur et faciliter la maintenance.
+
+# Version: 1.2.3
 """
 
 from __future__ import annotations

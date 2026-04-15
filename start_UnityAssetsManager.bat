@@ -1,4 +1,5 @@
 @echo off
+REM Version: 1.2.0
 setlocal
 
 cd /d "%~dp0"

@@ -1,3 +1,4 @@
+# Version: 1.2.3
 import logging
 from pathlib import Path
 import pandas as pd

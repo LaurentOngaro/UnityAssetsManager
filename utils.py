@@ -1,3 +1,4 @@
+# Version: 1.2.3
 import json
 from pathlib import Path
 from typing import Any

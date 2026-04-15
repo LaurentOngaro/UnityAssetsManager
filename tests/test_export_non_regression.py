@@ -1,3 +1,4 @@
+# Version: 1.2.0
 from pathlib import Path
 
 import pandas as pd
@@ -31,12 +32,12 @@ SAMPLE_DF = pd.DataFrame(
 
 
 @pytest.mark.parametrize(
-    "template_name,pattern,expected_ext,expected_mime,expected_fragment", [
-        ("CSV regression", "%DisplayName%,%Version%", "csv", "text/csv", "DisplayName,Version",
-        ), ("Markdown regression", "| %DisplayName% | %Version% |", "md", "text/markdown", "| DisplayName | Version |",
-           ), ("JSON regression", "%DisplayName%", "json", "application/json", '"assets"',
-              ), ("TXT regression", "%DisplayName% - %Version%", "txt", "text/plain", "Tree Pack - 1.0",
-                 ),
+    "template_name,pattern,expected_ext,expected_mime,expected_fragment",
+    [
+        ("CSV regression", "%DisplayName%,%Version%", "csv", "text/csv", "DisplayName,Version"),  #
+        ("Markdown regression", "| %DisplayName% | %Version% |", "md", "text/markdown", "| DisplayName | Version |"),  #
+        ("JSON regression", "%DisplayName%", "json", "application/json", '"assets"'),  #
+        ("TXT regression", "%DisplayName% - %Version%", "txt", "text/plain", "Tree Pack - 1.0"),
     ],
 )
 def test_api_export_template_non_regression(monkeypatch, template_name, pattern, expected_ext, expected_mime, expected_fragment, ):
@@ -177,8 +178,7 @@ def test_api_test_path_accepts_csv_with_late_malformed_lines(tmp_path):
                         "5;ok\n"
                         "6;ok\n"
                         "\"bad;line\n"
-                        "7;ok\n", encoding="utf-8",
-                       )
+                        "7;ok\n", encoding="utf-8")
 
     client = mod.app.test_client()
     response = client.post("/api/test-path", json={"path": str(csv_path)})

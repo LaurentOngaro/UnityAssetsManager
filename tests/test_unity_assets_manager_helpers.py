@@ -1,3 +1,4 @@
+# Version: 1.2.3
 import importlib.util
 import sys
 import types

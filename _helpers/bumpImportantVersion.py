@@ -25,13 +25,13 @@ APP_ROOT = SCRIPT_DIR.parent
 VERSION_FILE = APP_ROOT / "VERSION.txt"
 
 IMPORTANT_FILES = [
-    APP_ROOT / "app.py", APP_ROOT / "static" / "js" / "app.js", APP_ROOT / "templates" / "index.html", APP_ROOT / "openapi.yaml",
-    APP_ROOT / "README.md", APP_ROOT / "start_UnityAssetsManager.bat",
+    APP_ROOT / "app.py", APP_ROOT / "routes.py", APP_ROOT / "data_manager.py", APP_ROOT / "filters.py", APP_ROOT / "config.py", APP_ROOT / "utils.py",
+    APP_ROOT / "app_settings.py", APP_ROOT / "static" / "js" / "app.js", APP_ROOT / "templates" / "index.html", APP_ROOT / "openapi.yaml",
 ]
 
 VERSION_TAG_EXTENSIONS = {".py", ".md", ".html", ".htm", ".js", ".yaml", ".yml"}
 
-VERSION_MARKER_RE = re.compile(r"(?m)^\s*(?:#\s*)?(?:\*\*Version:\*\*|Version:|version:)\s*\d+\.\d+\.\d+")
+VERSION_MARKER_RE = re.compile(r"(?m)^\s*(?:#|//|::|REM|<!--)\s*(?:\*\*Version:\*\*|Version:|version:)\s*\d+\.\d+\.\d+")
 
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 
@@ -138,14 +138,16 @@ def sync_version_tag(file_path: Path, new_version: str) -> bool:
         return False
     text = file_path.read_text(encoding="utf-8")
     patterns = [
-        r"^(\s*#\s*Version:\s*)\d+\.\d+\.\d+(\s*)$",  #
-        r"^(\s*\*\*Version:\*\*\s*)\d+\.\d+\.\d+(\s*)$",  #
-        r"^(\s*Version:\s*)\d+\.\d+\.\d+(\s*)$",  #
-        r"^(\s*version:\s*)\d+\.\d+\.\d+(\s*)$",  #
+        r"(?m)^(\s*(?:#|//|::|REM)\s*Version:\s*)\d+\.\d+\.\d+",  # Scripts
+        r"(?m)^(\s*<!--\s*Version:\s*)\d+\.\d+\.\d+(\s*-->)",  # HTML
+        r"(?m)^(\s*\*\*Version:\*\*\s*)\d+\.\d+\.\d+",  # Markdown
+        r"(?m)^(\s*Version:\s*)\d+\.\d+\.\d+",  # Plain text
+        r"(?m)^(\s*version:\s*)\d+\.\d+\.\d+",  # YAML
     ]
 
     for pattern in patterns:
-        new_text, changed = replace_first(pattern, rf"\g<1>{new_version}\g<2>", text)
+        compiled = re.compile(pattern)
+        new_text, changed = compiled.subn(rf"\g<1>{new_version}\g<2>" if "-->" in pattern else rf"\g<1>{new_version}", text, count=1)
         if changed:
             if new_text != text:
                 file_path.write_text(new_text, encoding="utf-8")

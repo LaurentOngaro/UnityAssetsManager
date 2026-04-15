@@ -1,3 +1,4 @@
+# Version: 1.2.3
 import logging
 from datetime import datetime, timezone
 from pathlib import Path

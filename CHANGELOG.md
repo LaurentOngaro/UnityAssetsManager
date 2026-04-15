@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-04-15
+
+### 🚀 Ajouté
+
+- **Modularisation (REF2)** : Découpage du monolithe `app.py` en modules spécialisés :
+  - `routes.py` : Endpoints API et Blueprint Flask.
+  - `data_manager.py` : Gestion des sources de données (CSV/SQLite).
+  - `filters.py` : Moteur de filtrage et tags.
+  - `config.py` : Configuration centralisée et templates d'export.
+  - `utils.py` : Utilitaires et support JSONC.
+- Intégration directe de `jsoncUtils` pour supprimer la dépendance legacy à la V1.
+- Support du versioning synchronisé sur les fichiers importants.
+
+### 🔧 Modifié
+
+- Standardisation du contrat d'erreur sur les routes migrées.
+- Optimisation de la structure de chargement SQLite.
+
+---
+
 ## [1.1.3] - 2026-04-14
 
 ### ❌ Retiré
