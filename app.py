@@ -623,8 +623,9 @@ def apply_filter_stack(df: pd.DataFrame, filter_stack: list | None, alias_map: d
                             lambda row: row.str.contains(item_search_term, case=False, na=False, regex=True).any(), axis=1
                         )
                     else:
-                        search_mask = filtered_df.astype(str
-                                                        ).apply(lambda row: row.str.contains(item_search_term, case=False, na=False).any(), axis=1)
+                        search_mask = filtered_df.astype(str).apply(
+                            lambda row: row.str.contains(item_search_term, case=False, na=False).any(), axis=1
+                        )  #
                 item_mask &= search_mask
             except re.error:
                 pass
