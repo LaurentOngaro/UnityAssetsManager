@@ -23,15 +23,13 @@ SAMPLE_DF = pd.DataFrame(
             "DisplayCategory": "Tools",
             "Version": "1.0",
             "Url": "https://example.com/tree-pack",
-        },
-        {
+        }, {
             "DisplayName": "Rock Pack",
             "DisplayPublisher": "PublisherB",
             "DisplayCategory": "Tools",
             "Version": "2.0",
             "Url": "https://example.com/rock-pack",
-        },
-        {
+        }, {
             "DisplayName": "Music Pack",
             "DisplayPublisher": "PublisherC",
             "DisplayCategory": "Audio",
@@ -41,12 +39,7 @@ SAMPLE_DF = pd.DataFrame(
     ]
 )
 
-EXPORT_CASES = (
-    ("CSV sans URL", "csv"),
-    ("table markdown sans URL", "md"),
-    ("liste markdown sans URL", "md"),
-    ("texte simple sans URL", "txt"),
-)
+EXPORT_CASES = (("CSV sans URL", "csv"), ("table markdown sans URL", "md"), ("liste markdown sans URL", "md"), ("texte simple sans URL", "txt"), )
 
 
 def _assert_export_content(exported_path: Path, expected_ext: str) -> None:
@@ -75,7 +68,8 @@ def test_manual_checklist_api_flow(monkeypatch, tmp_path):
     client = mod.app.test_client()
     profile_name = f"manual_checklist_{uuid.uuid4().hex}"
     profile_payload = {
-        "name": profile_name,
+        "name":
+        profile_name,
         "columns": ["DisplayName", "DisplayPublisher", "DisplayCategory", "Version"],
         "filter_columns": ["DisplayCategory", "DisplayPublisher"],
         "filter_stack": [
@@ -87,8 +81,7 @@ def test_manual_checklist_api_flow(monkeypatch, tmp_path):
                     }
                 },
                 "search_term": "",
-            },
-            {
+            }, {
                 "mode": "exclude",
                 "filters": {
                     "DisplayPublisher": {
@@ -107,10 +100,7 @@ def test_manual_checklist_api_flow(monkeypatch, tmp_path):
 
         save_response = client.post("/api/profiles", json=profile_payload)
         assert save_response.status_code == 200
-        assert save_response.get_json() == {
-            "status": "success",
-            "message": f"Profil '{profile_name}' sauvegardé",
-        }
+        assert save_response.get_json() == {"status": "success", "message": f"Profil '{profile_name}' sauvegardé", }
 
         loaded_response = client.get(f"/api/profiles/{profile_name}")
         assert loaded_response.status_code == 200
@@ -125,8 +115,7 @@ def test_manual_checklist_api_flow(monkeypatch, tmp_path):
             export_name = f"manual_checklist_{expected_ext}_{uuid.uuid4().hex}.{expected_ext}"
             output_path = tmp_path / export_name
             batch_response = client.post(
-                "/api/batch-export",
-                json={
+                "/api/batch-export", json={
                     "profile": profile_name,
                     "template": template_name,
                     "output_path": str(output_path),

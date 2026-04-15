@@ -4,12 +4,12 @@
 
 ## Overview
 
-UnityAssetsManager expose une API Flask locale pour explorer des assets Unity (CSV/SQLite), appliquer des filtres, gerer des profils et exporter des resultats.
+UnityAssetsManager propose une API Flask locale pour explorer des assets Unity (CSV/SQLite), appliquer des filtres, gérer des profils et exporter des résultats.
 
 - Base URL: `http://localhost:5003`
 - Format principal: JSON
 - Authentification: aucune (usage local)
-NOTE: 5003 is the default port for the web interface, but the it can be changed in `config/config.json`
+Remarque: 5003 est le port HTTP par défaut de l'interface web. Il peut être modifié dans `config/config.json`.
 
 ## Contrat d'erreur standard
 
@@ -47,8 +47,8 @@ Champs:
 ### Donnees
 
 - `GET /api/data`
-- But: donnees paginees + filtrees (DataTables server-side).
-- Parametres usuels:
+- But: données paginées + filtrées (DataTables côté serveur).
+- Paramètres courants:
   - `draw`, `start`, `length`
   - `search[value]`, `search[regex]`
   - `filter_stack` (JSON string)
@@ -85,7 +85,7 @@ Payload de sauvegarde profil (`POST /api/profiles`):
 ### Export
 
 - `POST /api/export`
-- But: exporter les donnees apres filtres (csv/md/json/txt selon template).
+- But: exporter les données filtrées (CSV/MD/JSON/TXT selon le template).
 
 Payload type:
 
@@ -109,7 +109,7 @@ Retour:
 
 - `POST /api/batch-export`
 - But: exporter en mode automation (sans UI) vers un fichier local.
-- Cas d'usage: scripts PowerShell/Python, integration pipeline, generation recurrente.
+- Cas d'usage: scripts PowerShell/Python, intégration de pipeline, génération récurrente.
 
 Payload type:
 
@@ -127,9 +127,9 @@ Payload type:
 
 Notes:
 
-- `output_dir` est optionnel (defaut: dossier `exports` de l'application).
-- si `file_name` n'a pas d'extension, l'extension est deduite du template.
-- si `output_dir` est relatif, il est resolu depuis le dossier de l'application.
+- `output_dir` est optionnel (défaut: dossier `exports` de l'application).
+- si `file_name` n'a pas d'extension, l'extension est déduite du template.
+- si `output_dir` est relatif, il est résolu depuis le dossier de l'application.
 
 Retour success:
 
@@ -153,7 +153,7 @@ Retour success:
 ### Setup source data
 
 - `POST /api/setup`
-- But: definir la source de donnees (CSV/SQLite) et table SQLite.
+- But: définir la source de données (CSV/SQLite) et la table SQLite.
 
 Payload:
 
@@ -178,7 +178,7 @@ Retour success:
 ### Test de chemin
 
 - `POST /api/test-path`
-- But: verifier qu'un chemin existe et identifier son type (csv/sqlite).
+- But: vérifier qu'un chemin existe et identifier son type (CSV/SQLite).
 
 Payload:
 

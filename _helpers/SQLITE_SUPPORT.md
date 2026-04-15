@@ -159,6 +159,6 @@ Pas de changement de code nécessaire - le système s'adapte automatiquement! �
 
 ---
 
-**Version**: 1.1.0
+**Version**: 1.2.5
 **Date**: 2026-03-05
 **Feature**: SQLite support

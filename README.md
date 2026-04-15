@@ -26,22 +26,22 @@ Application web locale pour la gestion rapide et efficace d'inventaires d'assets
 
 Les lanceurs utilisent Python global et installent les dépendances depuis `requirements.txt` avant de démarrer le serveur.
 
-Le serveur démarre sur **http://localhost:5003** par défaut.
-REMARQUE : 5003 est le port par défaut de l'interface Web, mais il peut être modifié dans `config/config.json`
+Le serveur démarre par défaut sur **http://localhost:5003**. Ce port peut être modifié dans `config/config.json`.
 
 ## 📖 Utilisation
 
 ### Interface principale
 
 1. **Recherche** 🔍: Cherche dans tous les champs en temps réel (côté serveur)
-2. **Sélection colonnes** 📋: Choisir les colonnes à afficher (Ctrl+Click pour multiples)
+2. **Sélection colonnes** 📋: Choisir les colonnes à afficher (Ctrl+clic pour sélection multiple)
 3. **Pagination**: 25/50/100/250 lignes par page (DataTables)
-4. **Export** 💾:
-   - CSV standard/sémicolon
-   - CSV avec URL
-   - JSON
-   - Markdown table
-5. **Profils** 💽: Sauvegarder/charger vos réglages préférés
+4. **Profils** 💽: Sauvegarder/charger vos réglages préférés
+5. **Export** 💾:
+
+- CSV standard / séparateur point-virgule
+- CSV avec URL
+- JSON
+- Markdown table
 
 ### Clavier
 

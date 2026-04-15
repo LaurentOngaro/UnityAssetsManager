@@ -2,13 +2,13 @@ openapi: 3.0.3
 info:
   title: UnityAssetsManager API
   version: 1.2.5
-  description: API locale pour exploration et export d'assets Unity (CSV/SQLite). 5003 is the default port and can be changed in the config.
+  description: API locale pour explorer et exporter des assets Unity (CSV/SQLite). Le port HTTP par défaut est 5003 et peut être modifié dans config/config.json.
 servers:
   - url: http://localhost:5003
 paths:
   /api/data:
     get:
-      summary: Liste paginee des donnees assets
+      summary: Liste paginée des données assets
       parameters:
         - in: query
           name: draw
@@ -32,7 +32,7 @@ paths:
             type: boolean
       responses:
         '200':
-          description: Donnees paginees
+          description: Données paginées
           content:
             application/json:
               schema:
@@ -104,7 +104,7 @@ paths:
               $ref: '#/components/schemas/ProfileSaveRequest'
       responses:
         '200':
-          description: Profil sauvegarde
+          description: Profil sauvegardé
           content:
             application/json:
               schema:
@@ -158,7 +158,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Profil supprime
+          description: Profil supprimé
           content:
             application/json:
               schema:
@@ -176,7 +176,7 @@ paths:
                 $ref: '#/components/schemas/ApiErrorEnvelope'
   /api/export:
     post:
-      summary: Exporter les donnees filtrees
+      summary: Exporter les données filtrées
       requestBody:
         required: true
         content:
@@ -185,14 +185,14 @@ paths:
               $ref: '#/components/schemas/ExportRequest'
       responses:
         '200':
-          description: Fichier exporte (binaire)
+          description: Fichier exporté (binaire)
           content:
             application/octet-stream:
               schema:
                 type: string
                 format: binary
         '400':
-          description: Erreur de requete/template
+          description: Erreur de requête ou de template
           content:
             application/json:
               schema:
@@ -205,7 +205,7 @@ paths:
                 $ref: '#/components/schemas/ApiErrorEnvelope'
   /api/batch-export:
     post:
-      summary: Exporter les donnees en mode headless vers un fichier local
+      summary: Exporter les données en mode headless vers un fichier local
       requestBody:
         required: true
         content:
@@ -214,7 +214,7 @@ paths:
               $ref: '#/components/schemas/BatchExportRequest'
       responses:
         '200':
-          description: Export batch ecrit sur disque
+          description: Export batch écrit sur disque
           content:
             application/json:
               schema:
@@ -235,23 +235,23 @@ paths:
                   bytes:
                     type: integer
         '400':
-          description: Requete batch invalide
+          description: Requête batch invalide
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiErrorEnvelope'
         '500':
-          description: Erreur batch export
+          description: Erreur de batch export
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiErrorEnvelope'
   /api/reload:
     post:
-      summary: Recharger les donnees depuis la source
+      summary: Recharger les données depuis la source
       responses:
         '200':
-          description: Rechargement effectue
+          description: Rechargement effectué
           content:
             application/json:
               schema:
@@ -279,7 +279,7 @@ paths:
                 $ref: '#/components/schemas/ApiErrorEnvelope'
   /api/setup:
     post:
-      summary: Configurer la source de donnees
+      summary: Configurer la source de données
       requestBody:
         required: true
         content:
@@ -288,7 +288,7 @@ paths:
               $ref: '#/components/schemas/SetupRequest'
       responses:
         '200':
-          description: Setup applique
+          description: Configuration appliquée
           content:
             application/json:
               schema:
@@ -299,20 +299,20 @@ paths:
                   message:
                     type: string
         '400':
-          description: Parametres setup invalides
+          description: Paramètres de configuration invalides
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiErrorEnvelope'
         '500':
-          description: Erreur setup
+          description: Erreur de configuration
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiErrorEnvelope'
   /api/test-path:
     post:
-      summary: Tester un chemin source CSV/SQLite
+      summary: Vérifier un chemin source CSV/SQLite
       requestBody:
         required: true
         content:

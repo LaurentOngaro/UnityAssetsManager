@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.5] - 2026-04-15
+
+### 🔧 Modifié
+
+- Synchronisation du helper `_helpers/bumpImportantVersion.py` avec le modèle UAM/Fab: configuration locale, scan récursif des balises `Version:` et mise à jour automatique des fichiers tagués.
+- Harmonisation des formulations dans `README.md`, `API_GUIDE.md` et `openapi.yaml` pour garder la documentation alignée avec le comportement réel.
+
 ## [1.2.4] - 2026-04-15
 
 ### 🚀 Ajouté
