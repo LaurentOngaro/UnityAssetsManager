@@ -12,16 +12,16 @@ Pour plus de détails sur l'implémentation de ces modifications, consulter le f
 
 classement des demandes par priorité de la plus urgente à la moins urgente:
 
-- API2 (Ajouter des tests API d'erreurs standards)
+- MIG1 (Mettre à jour la nomenclature)
 - API1 (Vérifier la cohérence OpenAPI)
+- API2 (Ajouter des tests API d'erreurs standards)
 - API3 (Uniformiser le contrat d'erreur sur toutes les routes)
 - DOC1 (Consolider les documents de suivi et migration)
 - DOC2 (Consolider `README.md` et `API_GUIDE.md`)
 - DOC3 (Garder `SQLITE_SUPPORT.md` orienté setup SQLite)
+- FEAT1 (Parité V1 restante)
 - AFF1 (Redimensionner les colonnes)
 - AFF2 (Popup détail de ligne)
-- FEAT1 (Parité V1 restante)
-- MIG1 (Mettre à jour la nomenclature)
 - MIG2 (Déprécier les flux legacy)
 - MIG3 (Archiver V1 après validation)
 - INT1 (Service de normalisation raw multi-boutiques)

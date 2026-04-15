@@ -14,24 +14,17 @@ Chaque fois qu'une modification est teminée:
 
 ## Rattachement rapide des sprints aux TODO
 
-- Pré-sprints - CI1, GE1, CI2
-- Sprint P0 - MIG1
-- Sprint P1 - REF1, REF2
+- Sprint P1 - MIG1
 - Sprint P2 - API1, API2, API3, DOC1, DOC2, DOC3
-- Sprint P3 - INT1, INT2, INT3, INT4
+- Sprint P3 - MIG2, MIG3
 - Sprint P4 - FEAT1, AFF1, AFF2
-- Sprint P5 - MIG2, MIG3
+- Sprint P5 - INT1, INT2, INT3, INT4
 
 ## TOP Priorités (pour les corrections immédiates)
 
 ### Gestion
 
 ### Refactoring
-
-- DONE REF2: découper `app.py` en modules et optimiser SQLite.
-  - séparer routes, données, filtres, configuration et utilitaires.
-  - éviter le chargement complet SQLite en mémoire lorsque la source est volumineuse.
-  - doc détaillée: [REFACTORING_MODULARIZATION.md](REFACTORING_MODULARIZATION.md).
 
 ### Contrat API
 
@@ -91,24 +84,12 @@ Chaque fois qu'une modification est teminée:
 - INT4: ajouter un provider boutiques manuelles via `raw_assets.md`.
   - permettre une saisie manuelle ponctuelle hors flux automatisé.
 
-## Pré-sprints - Alignement de base (CI1, GE1, CI2)
-
-- Definition of done: la base de travail, l'outillage et la structure Git sont alignés avant le refactoring fonctionnel.
-
-## Sprint P0 - Stabilisation (MIG1)
+## Sprint P1 - Stabilisation (MIG1)
 
 - Action: Verifier nomenclature `UnityAssetsManager` dans le code actif.
 - Action: Verifier que les routes critiques renvoient un contrat d'erreur uniforme.
 - Livrable: rapport de recherche + correction des references actives legacy.
 - Definition of done: aucune reference active legacy dans le scope applicatif (hors docs historiques de migration).
-
-## Sprint P1 - Modularisation & Optimisation (REF1, REF2)
-
-- DONE Action: Découper le monolithe `app.py` en modules séparés (routes, data_manager, config, filters).
-- DONE Action: Supprimer la dépendance legacy à la V1 (`lib.jsoncUtils`) en migrant les utilitaires.
-- Action: Optimiser le chargement SQLite (éviter le `SELECT *` total dans la RAM).
-- Livrable: Code refactorisé, robuste et plus maintenable, détaillé dans `REFACTORING_MODULARIZATION.md`.
-- Definition of done: Les tests, l'interface et l'API fonctionnent à l'identique avec la nouvelle architecture.
 
 ## Sprint P2 - Contrat API & Documentation (API1, API2, API3, DOC1, DOC2, DOC3)
 
@@ -127,14 +108,6 @@ Chaque fois qu'une modification est teminée:
   - `POST /api/test-path`
 - Definition of done: alignement implementation/API_GUIDE/OpenAPI sans divergence fonctionnelle.
 
-## Sprint P3 - Raw-First Providers (INT1, INT2, INT3, INT4)
-
-- Action: Integrer service de normalisation raw multi-boutiques.
-- Action: Prioriser provider Unity (SQLite, fallback CSV).
-- Action: Ajouter provider Fab depuis exports/cache consolides.
-- Action: Ajouter providers stores manuels (`raw_assets.md`).
-- Definition of done: generation pilotable de `raw_assets_normalized.json` pour Unity + Fab + stores manuels.
-
 ## Sprint P4 - Parite V1 restante (FEAT1, AFF1, AFF2)
 
 - Action: Ajouter endpoint `/api/batch-export`.
@@ -142,9 +115,17 @@ Chaque fois qu'une modification est teminée:
 - Action: Ajouter tests API associes.
 - Definition of done: use-cases automation V1 couverts par V2.
 
-## Sprint P5 - Validation finale (MIG2, MIG3)
+## Sprint P3 - Validation finale (MIG2, MIG3)
 
 - Action: rejouer pipeline complet (Unity + Fab minimum).
 - Action: valider exports et docs de bascule.
 - Action: preparer deprecation/archivage V1 selon preconditions projet.
 - Definition of done: migration V2 operationnelle, documentee, et exploitable en routine.
+
+## Sprint P5 - Raw-First Providers (INT1, INT2, INT3, INT4)
+
+- Action: Integrer service de normalisation raw multi-boutiques.
+- Action: Prioriser provider Unity (SQLite, fallback CSV).
+- Action: Ajouter provider Fab depuis exports/cache consolides.
+- Action: Ajouter providers stores manuels (`raw_assets.md`).
+- Definition of done: generation pilotable de `raw_assets_normalized.json` pour Unity + Fab + stores manuels.
