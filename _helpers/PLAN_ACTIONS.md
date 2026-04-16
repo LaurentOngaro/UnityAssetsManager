@@ -41,11 +41,10 @@ Chaque fois qu'une modification est teminée:
 
 ### Migration
 
-- MIG2: finaliser la dépréciation des flux legacy `assetsCuration/85X_A00_*.json`.
-  - ne conserver ces flux que tant que la migration n'est pas complètement terminée.
-- MIG3: archiver V1 (`AssetsManager/assetManager.py`) après validation de la chaîne complète V2.
-  - l'équivalence des fonctionnalités a été validée par IA, il rester à tester la chaîne complète de bout en bout pour valider la bascule.
-  - ne fermer V1 qu'une fois la chaîne V2 validée de bout en bout.
+ MIG3: archiver V1 (`AssetsManager/assetManager.py`) après validation de la chaîne complète V2.
+
+- l'équivalence des fonctionnalités a été validée par IA, il rester à tester la chaîne complète de bout en bout pour valider la bascule.
+- ne fermer V1 qu'une fois la chaîne V2 validée de bout en bout.
 
 ### Intégration future
 

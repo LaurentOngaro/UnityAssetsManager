@@ -32,7 +32,6 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Migration (last: MIG3)
 
-- [ ] MIG2: Finaliser la dépréciation des flux legacy `assetsCuration/85X_A00_*.json` après migration complète.
 - [ ] MIG3: Archiver V1 (`AssetsManager/assetManager.py`) après validation de la chaîne complète V2.
 
 ### Intégration future (last: INT4) - utilité à questionner
@@ -49,7 +48,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
-- [x] AFF3: Reprendre le theme de couleur "sombre" de FabAssetsManager"
+- [x] MIG2: Finaliser la dépréciation des flux legacy `assetsCuration/85X_A00_*.json` après migration complète.- [x] AFF3: Reprendre le theme de couleur "sombre" de FabAssetsManager"
 - [x] AFF1: pouvoir Redimensionner les colonnes (au mieux par drag-and-drop sinon via un menu de configuration de l'affichage)
 - [x] AFF2: Popup détail ligne ( manque d'info, qu'est ce que cela signifie ?)
 - [x] API4: Ajouter des endpoints de diagnostic et de configuration (ex: `/api/test`, `/api/config`) pour faciliter l'automatisation.
