@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_unity_assets_manager_helpers.py
 # ============================================================================
 # Description: Tests unitaires pour les utilitaires et le moteur de filtrage.
-# Version: 1.2.10
+# Version: 1.2.11
 # ============================================================================
 
 import importlib.util

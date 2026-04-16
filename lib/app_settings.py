@@ -2,7 +2,7 @@
 # UnityAssetsManager - app_settings.py
 # ============================================================================
 # Description: Configuration constants and default application paths.
-# Version: 1.2.10
+# Version: 1.2.11
 # ============================================================================
 
 from __future__ import annotations
@@ -15,8 +15,8 @@ DEFAULT_DB_TABLE = "assets"
 DEFAULT_SHOW_PARSER_WARNINGS = False
 DEFAULT_CACHE_TTL_SECONDS = 3600
 
-DEFAULT_FLASK_HOST = "127.0.0.1"
-DEFAULT_FLASK_PORT = 5003
+DEFAULT_SERVER_HOST = "127.0.0.1"
+DEFAULT_SERVER_PORT = 5003
 DEFAULT_FLASK_DEBUG = True
 DEFAULT_FLASK_THREADED = True
 

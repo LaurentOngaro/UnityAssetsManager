@@ -13,8 +13,8 @@ DATA_PATH = "H:/Sync/PKM_PROJECTS/TerraBloom/_Fichiers/assets.csv"
 
 # Configuration serveur Flask
 FLASK_DEBUG = True
-FLASK_HOST = "127.0.0.1"
-FLASK_PORT = 5003
+SERVER_HOST = "127.0.0.1"
+SERVER_PORT = 5003
 
 # Répertoires
 PROFILES_DIR = "profiles"
