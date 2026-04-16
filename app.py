@@ -2,17 +2,17 @@
 # UnityAssetsManager - app.py
 # ============================================================================
 # Description: Point d'entrée de l'application Flask et initialisation.
-# Version: 1.2.7
+# Version: 1.2.8
 # ============================================================================
 
 import logging
 from flask import Flask
 from flask import request
 from flask_cors import CORS
-from config import config, SCRIPT_DIR
-from routes import bp as main_bp
-from errors import AppError, ErrorCode, create_error_response
-from logging_setup import configure_logging
+from lib.config import config, SCRIPT_DIR
+from lib.routes import bp as main_bp
+from lib.errors import AppError, ErrorCode, create_error_response
+from lib.logging_setup import configure_logging
 from werkzeug.exceptions import HTTPException
 
 logger = logging.getLogger(__name__)

@@ -1,5 +1,5 @@
 import sqlite3
-from data_manager import AssetDataManager
+from lib.data_manager import AssetDataManager
 from pathlib import Path
 
 # Fix path

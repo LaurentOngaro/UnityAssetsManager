@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.8] - 2026-04-16
+
+### 🔧 Modifié
+
+- Refonte de la structure du projet : déplacement des modules Python vers le dossier `lib/` pour une meilleure organisation.
+- Mise à jour de la documentation technique : création de `_helpers/SPECS.md` et mise à jour de `README.md` et `API_GUIDE.md`.
+- Synchronisation des versions dans tous les fichiers de documentation.
+
 ## [1.2.7] - 2026-04-15
 
 ### 🔧 Modifié

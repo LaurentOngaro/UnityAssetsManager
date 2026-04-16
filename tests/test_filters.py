@@ -1,5 +1,5 @@
 import pandas as pd
-from filters import apply_filter_stack, vectorized_tag_filter, is_tag_column
+from lib.filters import apply_filter_stack, vectorized_tag_filter, is_tag_column
 
 # Fix path to import filters
 # import sys

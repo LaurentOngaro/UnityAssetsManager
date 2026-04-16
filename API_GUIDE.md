@@ -1,6 +1,6 @@
 # API Guide - UnityAssetsManager
 
-**Version:** 1.2.7
+**Version:** 1.2.8
 
 ## Overview
 
@@ -55,7 +55,7 @@ Exemple de retour:
 {
   "status": "ok",
   "timestamp": "2026-04-15T11:15:00.000000+00:00",
-  "version": "1.2.5",
+  "version": "1.2.8",
   "data_path": "H:/.../unity_assets_export.csv",
   "source_type": "csv",
   "has_data": true

@@ -2,7 +2,7 @@
 # UnityAssetsManager - errors.py
 # ============================================================================
 # Description: Contrat d'erreur API centralise.
-# Version: 1.2.7
+# Version: 1.2.8
 # ============================================================================
 
 from __future__ import annotations

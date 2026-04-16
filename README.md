@@ -1,6 +1,6 @@
 # 🚀 UnityAssetsManager - Flask Edition
 
-Version: 1.2.5
+Version: 1.2.8
 
 Application web locale pour la gestion rapide et efficace d'inventaires d'assets (3800+ lignes) avec support multi-source (CSV/SQLite), filtrage avancé, profils personnalisés et exports flexibles.
 
@@ -230,6 +230,6 @@ Pour les bugs: Créer un issue dans le repo TerraBloom
 
 ---
 
-**Version**: 1.2.7
+**Version**: 1.2.8
 **Dernière mise à jour**: 2026-04-15
 **Status**: Production (Architecture modulaire, API stabilisée)

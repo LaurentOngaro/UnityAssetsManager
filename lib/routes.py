@@ -2,7 +2,7 @@
 # UnityAssetsManager - routes.py
 # ============================================================================
 # Description: Définition des routes web et des endpoints API.
-# Version: 1.2.7
+# Version: 1.2.8
 # ============================================================================
 
 import logging
@@ -13,12 +13,12 @@ from pathlib import Path
 from flask import render_template, request, jsonify, send_file, redirect, url_for, Blueprint
 from io import BytesIO
 
-from config import config, PROFILES_DIR, EXPORTS_DIR, SCRIPT_DIR
-from utils import read_json, write_json_normalized, _parse_bool, _parse_int
-from data_manager import dm
-from filters import apply_filter_stack, _build_alias_map_from_profile
-from errors import AppError, ErrorCode
-from logging_setup import configure_logging
+from .config import config, PROFILES_DIR, EXPORTS_DIR, SCRIPT_DIR
+from .utils import read_json, write_json_normalized, _parse_bool, _parse_int
+from .data_manager import dm
+from .filters import apply_filter_stack, _build_alias_map_from_profile
+from .errors import AppError, ErrorCode
+from .logging_setup import configure_logging
 
 logger = logging.getLogger(__name__)
 
