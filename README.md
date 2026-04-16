@@ -2,7 +2,7 @@
 
 Version: 1.2.11
 
-Local web application for fast and efficient management of asset inventories (3800+ lines) with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
+Local web application for fast and efficient management of asset inventories (3900+ lines) with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
 
 ## 🚀 Installation
 
@@ -30,6 +30,7 @@ The server starts by default on **http://localhost:5003**. This port can be chan
    - CSV with URL
    - JSON
    - Markdown table
+8. **Dark Theme** 🌙: Modern and comfortable interface (aligned with FabAssetsManager).
 
 ### Keyboard Shortcuts
 

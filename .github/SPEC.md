@@ -6,7 +6,7 @@ Last reviewed: 2026-04-16
 ## Context
 
 Local application for exploring, filtering, and exporting a Unity asset catalog (CSV or SQLite).
-Optimized for performance (3800+ lines) with server-side filtering.
+Optimized for performance (3900+ lines) with server-side filtering.
 
 ---
 
@@ -14,6 +14,7 @@ Optimized for performance (3800+ lines) with server-side filtering.
 
 - **Multi-source**: Support for CSV (automatic separator detection) and SQLite (multi-table management via `/setup`).
 - **Responsive Web Interface**: Based on Vanilla JS and DataTables.js for pagination and column resizing.
+- **Dark Theme** 🌙: Modern and comfortable interface (aligned with FabAssetsManager style).
 - **Advanced Filtering**: Full-text search, column filters, and "tags" management.
 - **Profiles**: Save and load column and filter configurations (JSON) stored in `profiles/`.
 - **Flexible Exports**: Customizable templates (`data/export_templates.jsonc`) for CSV, JSON, Markdown, etc.
