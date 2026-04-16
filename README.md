@@ -1,6 +1,6 @@
 # 🚀 UnityAssetsManager - Flask Edition
 
-Version: 1.2.9
+Version: 1.2.10
 
 Local web application for fast and efficient management of asset inventories (3800+ lines) with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
 
