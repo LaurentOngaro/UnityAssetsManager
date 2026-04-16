@@ -3,6 +3,7 @@
 # ============================================================================
 # Description: Flask application entry point and initialization.
 # Version: 1.2.11
+# Version: 1.2.11
 # ============================================================================
 
 import logging
