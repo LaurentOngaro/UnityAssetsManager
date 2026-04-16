@@ -1,8 +1,8 @@
 {
   "show_parser_warnings": false,
   "db_table": "assets",
-  "flask_host": "127.0.0.1",
-  "flask_port": 5003,
+  "server_host": "127.0.0.1",
+  "server_port": 5003,
   "flask_debug": true,
   "flask_threaded": true,
   "secret_key": "terrabloom-assets-v2",

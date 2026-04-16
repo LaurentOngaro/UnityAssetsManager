@@ -2,7 +2,7 @@
 # UnityAssetsManager - config.py
 # ============================================================================
 # Description: Runtime configuration and export template management.
-# Version: 1.2.10
+# Version: 1.2.11
 # ============================================================================
 
 import logging
@@ -12,7 +12,7 @@ import re
 import json
 from .utils import read_json, write_json_normalized, _parse_bool, _parse_int
 from .app_settings import (
-    DEFAULT_DB_TABLE, DEFAULT_EXPORT_TEMPLATES, DEFAULT_FLASK_DEBUG, DEFAULT_FLASK_HOST, DEFAULT_FLASK_PORT, DEFAULT_FLASK_THREADED,
+    DEFAULT_DB_TABLE, DEFAULT_EXPORT_TEMPLATES, DEFAULT_FLASK_DEBUG, DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, DEFAULT_FLASK_THREADED,
     DEFAULT_MAX_CONTENT_LENGTH_MB, DEFAULT_SECRET_KEY, DEFAULT_SHOW_PARSER_WARNINGS, DEFAULT_CACHE_TTL_SECONDS, DEFAULT_PAGE_SIZE, DEFAULT_LOG_LEVEL,
     DEFAULT_LOG_FILE, DEFAULT_LOG_OUTPUT, DEFAULT_LOG_MAX_BYTES, DEFAULT_LOG_BACKUP_COUNT, build_possible_data_paths
 )
@@ -58,8 +58,8 @@ class AppConfig:
 
         self.db_table = config_data.get('db_table', DEFAULT_DB_TABLE)
         self.show_parser_warnings = _parse_bool(config_data.get('show_parser_warnings'), DEFAULT_SHOW_PARSER_WARNINGS)
-        self.flask_host = config_data.get('flask_host', DEFAULT_FLASK_HOST)
-        self.flask_port = _parse_int(config_data.get('flask_port'), DEFAULT_FLASK_PORT)
+        self.server_host = config_data.get('server_host', DEFAULT_SERVER_HOST)
+        self.server_port = _parse_int(config_data.get('server_port'), DEFAULT_SERVER_PORT)
         self.flask_debug = _parse_bool(config_data.get('flask_debug'), DEFAULT_FLASK_DEBUG)
         self.flask_threaded = _parse_bool(config_data.get('flask_threaded'), DEFAULT_FLASK_THREADED)
         self.secret_key = config_data.get('secret_key', DEFAULT_SECRET_KEY)
@@ -108,8 +108,8 @@ class AppConfig:
             "data_path": str(self.data_path) if self.data_path else None,
             "db_table": self.db_table,
             "show_parser_warnings": self.show_parser_warnings,
-            "flask_host": self.flask_host,
-            "flask_port": self.flask_port,
+            "server_host": self.server_host,
+            "server_port": self.server_port,
             "flask_debug": self.flask_debug,
             "flask_threaded": self.flask_threaded,
             "max_content_length_mb": self.max_content_length_mb,

@@ -4,9 +4,7 @@ Ce document ordonne et détaille les étapes d'implémentation selon les Groupes
 
 ## Contexte et Lignes Directrices (Héritées du plan de migration)
 
-- **Source d'inspiration** : S'aligner sur la structure et le contrat API de `FabAssetsManager` (TODO par blocs, actions exécutables, OpenAPI).
 - **Séparation des rôles** : Garder une séparation claire entre l'outil applicatif (`UnityAssetsManager`) et le pipeline de curation (`_Helpers/04_Assets/AssetsCuration/`).
-- **Règle de documentation** : Ne pas supprimer une documentation sans avoir créé son équivalent consolidé. Les redondances doivent être fusionnées proprement.
 - **Nomenclature** : Le nom officiel est `UnityAssetsManager`. Toute ancienne référence (AssetManagerV2, AssetsManagerV2) est dépréciée.
 
 **REGLE D'OR : Toujours proposer d'effectuer les corrections de bugs et les corrections immédiates en premier. Elles sont listées dans les section "Corrections immédiates" et "Bugs" du fichier `TODO.md`.**
@@ -39,8 +37,6 @@ Chaque fois qu'une modification est teminée:
 
 ### Affichage
 
-- AFF3: theme de couleur "sombre".
-
 ### Features
 
 ### Migration
@@ -65,10 +61,6 @@ Chaque fois qu'une modification est teminée:
 
 cete répartition est indicative et peut être ajustée en fonction des dépendances et de l'avancement.
 Elle n'est pas un classement par priorité mais plutôt une organisation thématique pour structurer les sprints.
-
-### Sprint P4 - Parite V1 restante (AFF3)
-
-- AFF3 : Reprendre le thème de couleur "sombre" de FabAssetsManager.
 
 ### Sprint P3 - Validation finale (MIG2, MIG3)
 

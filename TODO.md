@@ -12,25 +12,15 @@ Pour plus de détails sur l'implémentation de ces modifications, consulter le f
 
 classement des demandes par priorité de la plus urgente à la moins urgente:
 
-- AFF1 (Redimensionner les colonnes)
-- AFF2 (Popup détail de ligne)
-- AFF3 (Theme de couleur "sombre")
-- MIG2 (Déprécier les flux legacy)
-- MIG3 (Archiver V1 après validation)
-- INT1 (Service de normalisation raw multi-boutiques)
-- INT2 (Provider Unity)
-- INT3 (Provider Fab)
-- INT4 (Provider boutiques manuelles)
-
 ### Documentation (last: DOC3)
 
 ### Filtrage (last: )
 
 ### Pagination (last: )
 
-### Affichage (last: AFF3)
+### Affichage (last: AFF4)
 
-- [ ] AFF3: Reprendre le theme de couleur "sombre" de FabAssetsManager"
+- [ ] AFF4: mémoriser la dimension des colonnes et la rétablir à l'ouverture suivante
 
 ### Features (last: FEAT1)
 
@@ -58,6 +48,8 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 - [ ] Import depuis URL
 
 ## Terminés
+
+- [x] AFF3: Reprendre le theme de couleur "sombre" de FabAssetsManager"
 
 - [x] AFF1: pouvoir Redimensionner les colonnes (au mieux par drag-and-drop sinon via un menu de configuration de l'affichage)
 - [x] AFF2: Popup détail ligne ( manque d'info, qu'est ce que cela signifie ?)

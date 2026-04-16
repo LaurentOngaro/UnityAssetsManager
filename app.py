@@ -2,7 +2,7 @@
 # UnityAssetsManager - app.py
 # ============================================================================
 # Description: Flask application entry point and initialization.
-# Version: 1.2.10
+# Version: 1.2.11
 # ============================================================================
 
 import logging
@@ -47,7 +47,10 @@ def create_app():
         if isinstance(error, HTTPException):
             if request.path.startswith("/api/"):
                 return create_error_response(
-                    code=ErrorCode.HTTP_ERROR, message=error.description, http_status=error.code or 500, details={"name": error.name},
+                    code=ErrorCode.HTTP_ERROR,
+                    message=error.description or "Erreur HTTP",
+                    http_status=error.code or 500,
+                    details={"name": error.name},
                 )
             return error
 
@@ -64,5 +67,17 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    print(f"Lancement de UnityAssetsManager sur {config.flask_host}:{config.flask_port}")
-    app.run(host=config.flask_host, port=config.flask_port, debug=config.flask_debug, threaded=config.flask_threaded)
+    logger.info("🚀 UnityAssetsManager")
+    logger.info("=" * 40)
+
+    server_port = config.server_port
+    server_host = config.server_host
+    flask_debug = config.flask_debug
+    flask_threaded = config.flask_threaded
+
+    logger.info(f"\nOpen: http://{server_host}:{server_port}\n")
+    if flask_debug:
+        logger.info("\n✅ FLASK DEBUGGER ON\n")
+    if flask_threaded:
+        logger.info("\n✅ FLASK THREADING ON\n")
+    app.run(debug=flask_debug, host=server_host, port=server_port, threaded=flask_threaded)

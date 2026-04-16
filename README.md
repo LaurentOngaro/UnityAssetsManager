@@ -1,6 +1,6 @@
 # 🚀 UnityAssetsManager - Flask Edition
 
-Version: 1.2.10
+Version: 1.2.11
 
 Local web application for fast and efficient management of asset inventories (3800+ lines) with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
 
@@ -208,7 +208,7 @@ Configurer `data_path` via `/setup` ou dans `config/config.json`.
 app.run(port=5004)  # Changer port
 ```
 
-ou bien modifier `flask_port` dans `config/config.json`
+ou bien modifier `server_port` dans `config/config.json`
 
 ### Ne vois pas mes données
 

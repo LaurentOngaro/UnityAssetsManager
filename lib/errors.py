@@ -2,7 +2,7 @@
 # UnityAssetsManager - errors.py
 # ============================================================================
 # Description: Centralized API error contract and helpers.
-# Version: 1.2.10
+# Version: 1.2.11
 # ============================================================================
 
 from __future__ import annotations
