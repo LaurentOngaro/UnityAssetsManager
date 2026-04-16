@@ -1,8 +1,8 @@
 # ============================================================================
 # UnityAssetsManager - data_manager.py
 # ============================================================================
-# Description: Gestionnaire de données (AssetDataManager) pour CSV et SQLite.
-# Version: 1.2.8
+# Description: Data manager (AssetDataManager) for CSV and SQLite sources.
+# Version: 1.2.9
 # ============================================================================
 
 import sqlite3

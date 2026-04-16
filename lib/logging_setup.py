@@ -1,8 +1,8 @@
 # ============================================================================
 # UnityAssetsManager - logging_setup.py
 # ============================================================================
-# Description: Configuration du logging application (console + rotation fichier).
-# Version: 1.2.8
+# Description: Application logging configuration (console + file rotation).
+# Version: 1.2.9
 # ============================================================================
 
 from __future__ import annotations

@@ -4,22 +4,22 @@
 
 ## Overview
 
-UnityAssetsManager propose une API Flask locale pour explorer des assets Unity (CSV/SQLite), appliquer des filtres, gérer des profils et exporter des résultats.
+UnityAssetsManager provides a local Flask API to explore Unity assets (CSV/SQLite), apply filters, manage profiles, and export results.
 
 - Base URL: `http://localhost:5003`
-- Format principal: JSON
-- Authentification: aucune (usage local)
-Remarque: 5003 est le port HTTP par défaut de l'interface web. Il peut être modifié dans `config/config.json`.
+- Main Format: JSON
+- Authentication: None (Local use)
+Note: 5003 is the default HTTP port for the web interface. It can be changed in `config/config.json`.
 
-## Contrat d'erreur standard
+## Standard Error Contract
 
-Toutes les routes API critiques renvoient un format d'erreur homogene:
+All critical API routes return a consistent error format:
 
 ```json
 {
   "error": {
     "code": "INVALID_PAYLOAD",
-    "message": "JSON invalide ou manquant",
+    "message": "Invalid or missing JSON",
     "http_status": 400,
     "timestamp": "2026-04-12T10:22:11.000000+00:00",
     "path": "/api/export",
@@ -28,28 +28,28 @@ Toutes les routes API critiques renvoient un format d'erreur homogene:
 }
 ```
 
-Champs:
+Fields:
 
-- `error.code`: identifiant stable pour integration.
-- `error.message`: message lisible humain.
-- `error.http_status`: code HTTP associe.
-- `error.timestamp`: horodatage UTC ISO8601.
-- `error.path`: route API cible.
-- `error.details`: contexte supplementaire (optionnel).
+- `error.code`: Stable identifier for integration.
+- `error.message`: Human-readable message.
+- `error.http_status`: Associated HTTP code.
+- `error.timestamp`: ISO8601 UTC timestamp.
+- `error.path`: Targeted API route.
+- `error.details`: Additional context (optional).
 
-## Endpoints principaux
+## Main Endpoints
 
-### Health UI (implicite)
+### UI Health (Implicit)
 
 - `GET /`
-- Retour: page HTML principale.
+- Returns: Main HTML page.
 
-### Health API (automation)
+### API Health (Automation)
 
 - `GET /api/test`
-- But: healthcheck JSON pour scripts et CI locale.
+- Purpose: JSON healthcheck for scripts and local CI.
 
-Exemple de retour:
+Example response:
 
 ```json
 {
@@ -62,34 +62,34 @@ Exemple de retour:
 }
 ```
 
-### Donnees
+### Data
 
 - `GET /api/data`
-- But: données paginées + filtrées (DataTables côté serveur).
-- Paramètres courants:
+- Purpose: Paged + filtered data (Server-side DataTables).
+- Common parameters:
   - `draw`, `start`, `length`
   - `search[value]`, `search[regex]`
   - `filter_stack` (JSON string)
   - `alias_map` (JSON string)
 
-### Colonnes
+### Columns
 
 - `GET /api/columns`
-- Retour: colonnes disponibles.
+- Returns: Available columns.
 
 ### Templates
 
 - `GET /api/templates`
-- Retour: liste des templates d'export (nom, description, pattern).
+- Returns: List of export templates (name, description, pattern).
 
-### Profils
+### Profiles
 
 - `GET /api/profiles`
 - `GET /api/profiles/{name}`
 - `POST /api/profiles`
 - `DELETE /api/profiles/{name}`
 
-Payload de sauvegarde profil (`POST /api/profiles`):
+Save profile payload (`POST /api/profiles`):
 
 ```json
 {
@@ -103,9 +103,9 @@ Payload de sauvegarde profil (`POST /api/profiles`):
 ### Export
 
 - `POST /api/export`
-- But: exporter les données filtrées (CSV/MD/JSON/TXT selon le template).
+- Purpose: Export filtered data (CSV/MD/JSON/TXT depending on template).
 
-Payload type:
+Sample payload:
 
 ```json
 {
@@ -118,18 +118,18 @@ Payload type:
 }
 ```
 
-Retour:
+Returns:
 
-- Success: fichier binaire en telechargement.
-- Error: contrat d'erreur standard.
+- Success: Binary file for download.
+- Error: Standard error contract.
 
 ### Batch export headless
 
 - `POST /api/batch-export`
-- But: exporter en mode automation (sans UI) vers un fichier local.
-- Cas d'usage: scripts PowerShell/Python, intégration de pipeline, génération récurrente.
+- Purpose: Export in automation mode (without UI) to a local file.
+- Use cases: PowerShell/Python scripts, pipeline integration, recurring generation.
 
-Payload type:
+Sample payload:
 
 ```json
 {
@@ -145,9 +145,9 @@ Payload type:
 
 Notes:
 
-- `output_dir` est optionnel (défaut: dossier `exports` de l'application).
-- si `file_name` n'a pas d'extension, l'extension est déduite du template.
-- si `output_dir` est relatif, il est résolu depuis le dossier de l'application.
+- `output_dir` is optional (default: application `exports` folder).
+- If `file_name` has no extension, it's inferred from the template.
+- If `output_dir` is relative, it's resolved from the application folder.
 
 Retour success:
 

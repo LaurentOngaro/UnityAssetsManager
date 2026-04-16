@@ -7,147 +7,148 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.8] - 2026-04-16
 
-### 🔧 Modifié
+### 🔧 Changed
 
-- Refonte de la structure du projet : déplacement des modules Python vers le dossier `lib/` pour une meilleure organisation.
-- Mise à jour de la documentation technique : création de `_helpers/SPECS.md` et mise à jour de `README.md` et `API_GUIDE.md`.
-- Synchronisation des versions dans tous les fichiers de documentation.
+- Complete translation of documentation to English (README, API_GUIDE, SQLITE_SUPPORT, CHANGELOG, SPEC).
+- Project structure overhaul: moved Python modules to `lib/` folder for better organization.
+- Technical documentation update: created `_helpers/SPECS.md` (later moved to `.github/SPEC.md`) and updated `README.md` and `API_GUIDE.md`.
+- Version synchronization across all documentation files.
 
 ## [1.2.7] - 2026-04-15
 
-### 🔧 Modifié
+### 🔧 Changed
 
-- AFF1: pouvoir Redimensionner les colonnes (au mieux par drag-and-drop sinon via un menu de configuration de l'affichage)
-- AFF2: Popup détail ligne ( manque d'info, qu'est ce que cela signifie ?)
-- Extraction et unification du module de logging dans `logging_setup.py`.
-- Standardisation des clés de configuration du logging (`log_file`, `log_level`, `log_output`, `log_max_bytes`, `log_backup_count`).
-- Support de la clé `log_file` dans le fichier `config.json` pour personnaliser le nom du fichier de log.
+- AFF1: ability to Resize columns (ideally by drag-and-drop, otherwise via a display configuration menu).
+- AFF2: Row detail popup (missing info, what does it mean?).
+- Extraction and unification of the logging module in `logging_setup.py`.
+- Standardization of logging configuration keys (`log_file`, `log_level`, `log_output`, `log_max_bytes`, `log_backup_count`).
+- Support for the `log_file` key in `config.json` to customize the log file name.
 
 ## [1.2.6] - 2026-04-15
 
-### 🚀 Ajouté
+### 🚀 Added
 
-- Module central d'erreurs API `errors.py` avec `ErrorCode`, `AppError` et construction uniforme des payloads d'erreur.
-- Endpoints API4:
-  - `GET /api/test` (healthcheck JSON)
-  - `GET /api/config` (lecture config runtime publique)
-  - `POST /api/config` (mise a jour controlee des parametres autorises)
-- Configuration logging runtime dans `config/config.json`:
+- Central API error module `errors.py` with `ErrorCode`, `AppError`, and uniform error payload construction.
+- API4 Endpoints:
+  - `GET /api/test` (JSON healthcheck)
+  - `GET /api/config` (read public runtime config)
+  - `POST /api/config` (controlled update of allowed parameters)
+- Runtime logging configuration in `config/config.json`:
   - `log_level`, `log_output`, `log_max_bytes`, `log_backup_count`
 
-### 🔧 Modifié
+### 🔧 Changed
 
-- Migration de `routes.py` vers la couche d'erreurs centralisee (`AppError`) en remplacement de la fonction locale `api_error`.
-- `app.py` configure maintenant le logging via `RotatingFileHandler` (console/fichier/both), avec rotation configurable.
-- `config.py` conserve les cles existantes lors de `save()` (merge au lieu d'ecrasement complet).
-- Alignement documentation/API contract:
+- Migration of `routes.py` to the centralized error layer (`AppError`) replacing the local `api_error` function.
+- `app.py` now configures logging via `RotatingFileHandler` (console/file/both), with configurable rotation.
+- `config.py` preserves existing keys during `save()` (merge instead of complete overwrite).
+- Documentation/API contract alignment:
   - `openapi.yaml`
   - `API_GUIDE.md`
   - `README.md`
-- Renforcement des tests API sur le contrat d'erreur et les endpoints API4.
+- Strengthened API tests on the error contract and API4 endpoints.
 
 ## [1.2.5] - 2026-04-15
 
-### 🔧 Modifié
+### 🔧 Changed
 
-- Synchronisation du helper `_helpers/bumpImportantVersion.py` avec le modèle UAM/Fab: configuration locale, scan récursif des balises `Version:` et mise à jour automatique des fichiers tagués.
-- Harmonisation des formulations dans `README.md`, `API_GUIDE.md` et `openapi.yaml` pour garder la documentation alignée avec le comportement réel.
+- Synchronization of the `_helpers/bumpImportantVersion.py` helper with the UAM/Fab model: local configuration, recursive scan for `Version:` tags, and automatic update of tagged files.
+- Harmonization of wording in `README.md`, `API_GUIDE.md`, and `openapi.yaml` to keep documentation aligned with actual behavior.
 
 ## [1.2.4] - 2026-04-15
 
-### 🚀 Ajouté
+### 🚀 Added
 
-- Tests API d'erreurs standards pour valider les comportements sur payloads invalides.
-- Spécification des routes `/api/templates` et `/api/stats` dans `openapi.yaml`.
+- Standard API error tests to validate behavior on invalid payloads.
+- Specification of `/api/templates` and `/api/stats` routes in `openapi.yaml`.
 
-### 🔧 Modifié
+### 🔧 Changed
 
-- Alignement strict de l'implémentation Flask avec la documentation `openapi.yaml`.
-- Sécurisation des payload JSON via `request.get_json(silent=True)` pour éviter les réponses HTML d'erreur 400.
-- Uniformisation du contrat d'erreur standard (status, message) sur l'ensemble des routes (`api_test_path`, `api_batch_export`).
-- Corrections mineures UI (`app.js`) pour la gestion du format des listes de profils.
+- Strict alignment of Flask implementation with `openapi.yaml` documentation.
+- Secured JSON payloads via `request.get_json(silent=True)` to avoid HTML 400 error responses.
+- Standardization of the standard error contract (status, message) across all routes (`api_test_path`, `api_batch_export`).
+- Minor UI fixes (`app.js`) for profile list format management.
 
 ## [1.2.3] - 2026-04-15
 
-### ✨ Validé / Terminé
+### ✨ Validated / Completed
 
-- Résolution des chantiers de documentation (DOC1, DOC2, DOC3).
-- Fin de la phase de migration (MIG1, MIG2).
-- Validation de la nouvelle architecture modulaire.
+- Resolution of documentation tasks (DOC1, DOC2, DOC3).
+- End of migration phase (MIG1, MIG2).
+- Validation of the new modular architecture.
 
 ---
 
 ## [1.2.0] - 2026-04-15
 
-### 🚀 Ajouté
+### 🚀 Added
 
-- **Modularisation (REF2)** : Découpage du monolithe `app.py` en modules spécialisés :
-  - `routes.py` : Endpoints API et Blueprint Flask.
-  - `data_manager.py` : Gestion des sources de données (CSV/SQLite).
-  - `filters.py` : Moteur de filtrage et tags.
-  - `config.py` : Configuration centralisée et templates d'export.
-  - `utils.py` : Utilitaires et support JSONC.
-- Intégration directe de `jsoncUtils` pour supprimer la dépendance legacy à la V1.
-- Support du versioning synchronisé sur les fichiers importants.
+- **Modularization (REF2)**: Splitting the `app.py` monolith into specialized modules:
+  - `routes.py`: API Endpoints and Flask Blueprint.
+  - `data_manager.py`: Data source management (CSV/SQLite).
+  - `filters.py`: Filtering engine and tags.
+  - `config.py`: Centralized configuration and export templates.
+  - `utils.py`: Utilities and JSONC support.
+- Direct integration of `jsoncUtils` to remove legacy dependency on V1.
+- Support for synchronized versioning on important files.
 
-### 🔧 Modifié
+### 🔧 Changed
 
-- Standardisation du contrat d'erreur sur les routes migrées.
-- Optimisation de la structure de chargement SQLite.
+- Standardization of the error contract on migrated routes.
+- Optimization of the SQLite loading structure.
 
 ---
 
 ## [1.1.3] - 2026-04-14
 
-### ❌ Retiré
+### ❌ Removed
 
-- Suppression du fallback legacy `config.json` (racine) dans le chargement de configuration.
+- Removal of legacy `config.json` fallback (root) in configuration loading.
 
-### 🔧 Modifié
+### 🔧 Changed
 
-- `load_config()` lit désormais uniquement `config/config.json`.
+- `load_config()` now only reads `config/config.json`.
 
 ---
 
 ## [1.1.2] - 2026-04-14
 
-### ➕ Ajouté
+### ➕ Added
 
-- Fichiers de personnalisation agent projet:
+- Project agent customization files:
   - `.github/instructions/UnityAssetsManager.instructions.md`
   - `.github/agents/UnityAssetsManager.agent.md`
-- Document temporaire de validation REF1: `_helpers/REF1_VALIDATION_TEMP.md`.
+- Temporary validation document REF1: `_helpers/REF1_VALIDATION_TEMP.md`.
 
-### 🔧 Modifié
+### 🔧 Changed
 
-- Migration de la configuration runtime de `config.json` (racine) vers `config/config.json`.
-- Ajout d'une compatibilité de lecture temporaire de l'ancien chemin `config.json` pour transition.
-- Externalisation des constantes applicatives de `app.py` vers `app_settings.py`:
-  - templates d'export par défaut
-  - réglages Flask (`host`, `port`, `debug`, `threaded`, `secret_key`, `max_content_length_mb`)
-  - cache TTL et pagination par défaut
-- Mise à jour de la documentation et des templates pour refléter le nouveau chemin de configuration.
+- Migration of runtime configuration from `config.json` (root) to `config/config.json`.
+- Added temporary read compatibility for the old `config.json` path for transition.
+- Externalization of application constants from `app.py` to `app_settings.py`:
+  - default export templates
+  - Flask settings (`host`, `port`, `debug`, `threaded`, `secret_key`, `max_content_length_mb`)
+  - default cache TTL and pagination
+- Documentation and templates updated to reflect the new configuration path.
 
 ---
 
 ## [1.1.1] - 2026-03-05
 
-### 🐛 Corrigé
+### 🐛 Fixed
 
-- **Détection automatique du séparateur CSV**:
-  - Ajout de `sep=None` et `engine='python'` dans `pd.read_csv()`
-  - Supporte maintenant automatiquement: `,` `;` `|` `\t`
-  - Fix pour fichiers CSV avec séparateur `;` (comme `unity_assets_export.csv`)
-  - Détection appliquée dans `load_data()` et `api_test_path()`
-  - **HOTFIX**: Suppression de `low_memory=False` (incompatible avec `engine='python'`)
+- **Automatic CSV separator detection**:
+  - Added `sep=None` and `engine='python'` in `pd.read_csv()`
+  - Now automatically supports: `,` `;` `|` `\t`
+  - Fix for CSV files with `;` separator (like `unity_assets_export.csv`)
+  - Detection applied in `load_data()` and `api_test_path()`
+  - **HOTFIX**: Removed `low_memory=False` (incompatible with `engine='python'`)
 
-- **DataTables - Erreur "Requested unknown parameter"**:
-  - Format de données changé: `to_dict('records')` au lieu de `values.tolist()`
-  - Colonnes maintenant définies explicitement avec `columns: [{data: 'col'}]`
-  - Sélecteur de colonnes utilise `.visible()` au lieu de filtrage serveur
-  - Fix pour l'erreur "Requested unknown parameter '1' for row 0, column 1"
+- **DataTables - "Requested unknown parameter" error**:
+  - Data format changed: `to_dict('records')` instead of `values.tolist()`
+  - Columns now explicitly defined with `columns: [{data: 'col'}]`
+  - Column selector uses `.visible()` instead of server filtering
+  - Fix for "Requested unknown parameter '1' for row 0, column 1" error
 
-- **Gestion des profils et colonnes**:
+- **Profile and column management**:
   - Profils chargés dynamiquement via AJAX (liste plus vide)
   - Sauvegarde du choix de colonne affichée dans les profils
   - Suppression de profil maintenant implémentée (DELETE `/api/profiles/<name>`)

@@ -1,44 +1,46 @@
-# Support SQLite - UnityAssetsManager
+# SQLite Support - UnityAssetsManager
 
-## 🎯 Fonctionnalité
+Version: 1.2.8
 
-UnityAssetsManager supporte maintenant **SQLite** comme source de données alternative au CSV.
+## 🎯 Feature
 
-## ✅ Formats supportés
+UnityAssetsManager now supports **SQLite** as an alternative data source to CSV.
 
-| Format | Extensions                   | Détection   |
-| ------ | ---------------------------- | ----------- |
-| CSV    | `.csv`                       | Automatique |
-| SQLite | `.db`, `.sqlite`, `.sqlite3` | Automatique |
+## ✅ Supported Formats
 
-## 🚀 Utilisation
+| Format | Extensions                   | Detection |
+| ------ | ---------------------------- | --------- |
+| CSV    | `.csv`                       | Automatic |
+| SQLite | `.db`, `.sqlite`, `.sqlite3` | Automatic |
 
-### Configuration initiale
+## 🚀 Usage
 
-1. Lance l'app: `python app.py`
-2. Si aucun fichier trouvé → Redirige vers `/setup`
-3. Entre le chemin vers ton fichier SQLite:
+### Initial Configuration
+
+1. Launch the app: `python app.py`
+2. If no file is found → Redirects to `/setup`
+3. Enter the path to your SQLite file:
 
    ```
    H:\path\to\assets.db
    ```
 
-4. Clique "🔍 Tester ce chemin"
-5. **Sélectionne la table** dans le dropdown (ex: `assets`, `unity_marketplace`, etc.)
-6. Clique "💾 Sauvegarder"
+4. Click "🔍 Test this path"
+5. **Select the table** from the dropdown (e.g., `assets`, `unity_marketplace`, etc.)
+6. Click "💾 Save"
 
-### Changement de table
+### Changing Table
 
-Pour changer de table SQLite sans changer de fichier:
+To change the SQLite table without changing the file:
 
-1. Va sur `/setup`
-2. Teste le chemin actuel
-3. Sélectionne une autre table
-4. Sauvegarde
+1. Go to `/setup`
+2. Test the current path
+3. Select another table
+4. Save
 
 ## 📝 Configuration
 
-La configuration est sauvegardée dans `config/config.json`:
+Configuration is saved in `config/config.json`:
 
 ```json
 {
@@ -49,69 +51,68 @@ La configuration est sauvegardée dans `config/config.json`:
 
 ## 🔧 API
 
-### Détection automatique
+### Automatic Detection
 
 ```python
 from pathlib import Path
-
 path = Path("assets.db")
 source_type = AssetDataManager.detect_source_type(path)
-# Retourne: 'sqlite' ou 'csv'
+# Returns: 'sqlite' or 'csv'
 ```
 
-### Lister les tables
+### List Tables
 
 ```python
 tables = AssetDataManager.list_sqlite_tables(Path("assets.db"))
-# Retourne: ['assets', 'categories', 'publishers', ...]
+# Returns: ['assets', 'categories', 'publishers', ...]
 ```
 
-### Chargement
+### Loading
 
-Le chargement est **automatique** - le système détecte le format et charge en conséquence:
+Loading is **automatic** - the system detects the format and loads accordingly:
 
 ```python
 dm = AssetDataManager()
-df = dm.get_data()  # Charge depuis CSV ou SQLite selon la config
+df = dm.get_data()  # Loads from CSV or SQLite based on config
 ```
 
-## 📊 Exemple: Migrer CSV → SQLite
+## 📊 Example: Migrate CSV → SQLite
 
-Si tu as un CSV et veux le convertir en SQLite:
+If you have a CSV and want to convert it to SQLite:
 
 ```python
 import pandas as pd
 import sqlite3
 
-# Lire CSV
+# Read CSV
 df = pd.read_csv("assets.csv")
 
-# Écrire dans SQLite
+# Write to SQLite
 conn = sqlite3.connect("assets.db")
 df.to_sql("assets", conn, if_exists="replace", index=False)
 conn.close()
 
-print("✅ Migration CSV → SQLite terminée")
+print("✅ CSV → SQLite migration completed")
 ```
 
-Ensuite configure UnityAssetsManager pour utiliser `assets.db` avec la table `assets`.
+Then configure UnityAssetsManager to use `assets.db` with the `assets` table.
 
-## 🎯 Avantages SQLite
+## 🎯 SQLite Benefits
 
-| Aspect                  | CSV                       | SQLite                         |
-| ----------------------- | ------------------------- | ------------------------------ |
-| **Taille fichier**      | Plus gros                 | Compressé (30-50% plus petit)  |
-| **Performance lecture** | Rapide pour petit fichier | Plus rapide pour gros datasets |
-| **Index**               | ❌ Non                    | ✅ Oui (via SQL)               |
-| **Filtrage**            | Charge tout puis filtre   | Requêtes SQL optimisées        |
-| **Intégrité**           | Aucune                    | Types + contraintes            |
-| **Multi-tables**        | 1 fichier = 1 table       | Plusieurs tables par fichier   |
+| Aspect               | CSV                  | SQLite                      |
+| -------------------- | -------------------- | --------------------------- |
+| **File Size**        | Larger               | Compressed (30-50% smaller) |
+| **Read Performance** | Fast for small files | Faster for large datasets   |
+| **Indexes**          | ❌ No                | ✅ Yes (via SQL)            |
+| **Filtering**        | Load all then filter | Optimized SQL queries       |
+| **Integrity**        | None                 | Types + constraints         |
+| **Multi-tables**     | 1 file = 1 table     | Multiple tables per file    |
 
 ## 🔍 Troubleshooting
 
-### "Aucune table trouvée"
+### "No tables found"
 
-Vérifier que le fichier SQLite contient des tables:
+Verify that the SQLite file contains tables:
 
 ```python
 import sqlite3
@@ -124,41 +125,22 @@ conn.close()
 
 ### "Table 'X' not found"
 
-La table configurée n'existe plus → Va sur `/setup` et choisis une table existante.
+The configured table no longer exists → Go to `/setup` and choose an existing table.
 
 ### Performance
 
-SQLite peut être **plus lent** que CSV pour petits datasets (< 5000 lignes). Utilise CSV dans ce cas.
-
-Pour gros datasets (> 10000 lignes), SQLite avec index sera **beaucoup plus rapide**.
+SQLite can be **slower** than CSV for small datasets (< 5000 rows). Use CSV in that case.
+For large datasets (> 10000 rows), SQLite with indexes will be **much faster**.
 
 ## 📈 Performance
 
-**Benchmark (3800 assets, 20 colonnes):**
+**Benchmark (3800 assets, 20 columns):**
 
-| Opération            | CSV   | SQLite |
-| -------------------- | ----- | ------ |
-| Chargement initial   | 200ms | 180ms  |
-| Rechargement (cache) | ~0ms  | ~0ms   |
-| Filtrage 1000 lignes | 100ms | 80ms   |
-| Export complet       | 500ms | 450ms  |
+| Operation           | CSV   | SQLite |
+| ------------------- | ----- | ------ |
+| Initial loading     | 200ms | 180ms  |
+| Reloading (cache)   | ~0ms  | ~0ms   |
+| Filtering 1000 rows | 100ms | 80ms   |
+| Full Export         | 500ms | 450ms  |
 
-SQLite est **légèrement plus rapide** mais la vraie différence vient des **index** et **requêtes optimisées**.
-
-## 🎉 Conclusion
-
-SQLite est maintenant **supporté nativement** avec:
-
-- ✅ Détection automatique du format
-- ✅ Sélection de table via UI
-- ✅ Configuration persistante
-- ✅ Compatible avec tous les exports
-- ✅ Même cache (1h TTL)
-
-Pas de changement de code nécessaire - le système s'adapte automatiquement! 🚀
-
----
-
-**Version**: 1.2.8
-**Date**: 2026-03-05
-**Feature**: SQLite support
+SQLite is **slightly faster**, but the real difference comes from **indexes** and **optimized queries**.

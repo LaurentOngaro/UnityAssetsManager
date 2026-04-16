@@ -2,59 +2,58 @@
 
 Version: 1.2.8
 
-Application web locale pour la gestion rapide et efficace d'inventaires d'assets (3800+ lignes) avec support multi-source (CSV/SQLite), filtrage avancé, profils personnalisés et exports flexibles.
+Local web application for fast and efficient management of asset inventories (3800+ lines) with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
 
-## Améliorations par rapport à V1 (Streamlit)
+## Improvements over V1 (Streamlit)
 
 | Aspect              | V1 Streamlit         | V2 Flask                 |
 | ------------------- | -------------------- | ------------------------ |
-| **Affichage table** | 2-5 secondes         | 200-400ms                |
-| **Filtrage**        | Refiltre tout (lent) | Côté serveur (rapide)    |
-| **Pagination**      | Streamlit lent       | DataTables.js natif      |
-| **Exports**         | Via Streamlit (lent) | HTTP direct (rapide)     |
-| **Multi-source**    | CSV + SQLite basic   | CSV + SQLite avec tables |
-| **Profils**         | JSONC manuel         | UI + API REST            |
-| **Scalabilité**     | Difficile            | Excellente               |
-| **Responsif**       | Limité               | Bootstrap 5 (responsive) |
+| **Table Display**   | 2-5 seconds          | 200-400ms                |
+| **Filtering**       | Refilters all (slow) | Server-side (fast)       |
+| **Pagination**      | Slow Streamlit       | Native DataTables.js     |
+| **Exports**         | Via Streamlit (slow) | Direct HTTP (fast)       |
+| **Multi-source**    | Basic CSV + SQLite   | CSV + SQLite with tables |
+| **Profiles**        | Manual JSONC         | UI + REST API            |
+| **Scalability**     | Difficult            | Excellent                |
+| **Responsive**      | Limited              | Bootstrap 5 (responsive) |
 
 ## 🚀 Installation
 
 ```powershell
-# Lancer le batch Windows
+# Launch Windows batch
 .\start_UnityAssetsManager.bat
 ```
 
-Les lanceurs utilisent Python global et installent les dépendances depuis `requirements.txt` avant de démarrer le serveur.
+Launchers use global Python and install dependencies from `requirements.txt` before starting the server.
 
-Le serveur démarre par défaut sur **http://localhost:5003**. Ce port peut être modifié dans `config/config.json`.
+The server starts by default on **http://localhost:5003**. This port can be changed in `config/config.json`.
 
-## 📖 Utilisation
+## 📖 Usage
 
-### Interface principale
+### Main Interface
 
-1. **Recherche** 🔍: Cherche dans tous les champs en temps réel (côté serveur)
-2. **Sélection colonnes** 📋: Choisir les colonnes à afficher (Ctrl+clic pour sélection multiple)
-3. **Pagination**: 25/50/100/250 lignes par page (DataTables)
-4. **Redimensionnement des colonnes** ↔️ : Survolez le bord droit d'un en-tête pour redimensionner (Zone sensible: 10px).
-5. **Détails rapides** 📄 : Cliquez sur n'importe quelle ligne pour ouvrir une popup avec tous les détails de l'asset.
-6. **Profils** 💽 : Sauvegarder/charger vos réglages préférés
-7. **Export** 💾 :
+1. **Search** 🔍: Search all fields in real-time (server-side)
+2. **Column Selection** 📋: Choose columns to display (Ctrl+click for multiple selection)
+3. **Pagination**: 25/50/100/250 lines per page (DataTables)
+4. **Column Resizing** ↔️: Hover over the right edge of a header to resize (Sensitive area: 10px).
+5. **Quick Details** 📄: Click any row to open a popup with all asset details.
+6. **Profiles** 💽: Save/load your preferred settings
+7. **Export** 💾:
+   - Standard CSV / semicolon separator
+   - CSV with URL
+   - JSON
+   - Markdown table
 
-- CSV standard / séparateur point-virgule
-- CSV avec URL
-- JSON
-- Markdown table
+### Keyboard Shortcuts
 
-### Clavier
-
-- **Ctrl+F**: Recherche navigateur (dans la page affichée)
-- **Ctrl+C**: Copier le tableau (depuis le navigateur)
+- **Ctrl+F**: Browser search (within the displayed page)
+- **Ctrl+C**: Copy the table (from browser)
 
 ## 🔧 Configuration
 
-### Chemin des données
+### Data Path
 
-Configurer la source via la page `/setup` (recommandé) ou en éditant `config/config.json`:
+Configure the source via the `/setup` page (recommended) or by editing `config/config.json`:
 
 ```json
 {
@@ -67,35 +66,87 @@ Configurer la source via la page `/setup` (recommandé) ou en éditant `config/c
 }
 ```
 
-Parametres logging runtime:
+Runtime logging parameters:
 
 - `log_level`: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`
 - `log_output`: `console`, `file`, `both`
-- `log_max_bytes`: taille max d'un fichier log avant rotation
-- `log_backup_count`: nombre de fichiers archives gardes
+- `log_max_bytes`: max log file size before rotation
+- `log_backup_count`: number of kept archive files
 
-**Sources supportées:**
+**Supported Sources:**
 
-- ✅ **CSV local** (`.csv`) avec **détection automatique du séparateur** (`,`, `;`, `|`, `\t`)
-- ✅ **CSV avec encodage multiple** (UTF-8, latin-1, cp1252)
-- ✅ **SQLite** (`.db`, `.sqlite`, `.sqlite3`) avec **sélection de table**
-  - Interface `/setup` pour choisir la table
-  - Config persistante dans `config/config.json` (`data_path` + `db_table`)
-  - Support multi-tables (dropdown automatique)
-  - **Guide complet**: Voir `./_helpers/SQLITE_SUPPORT.md` pour migration CSV→SQLite, API, troubleshooting et benchmarks
+- ✅ **Local CSV** (`.csv`) with **automatic separator detection** (`,`, `;`, `|`, `\t`)
+- ✅ **CSV with multiple encodings** (UTF-8, latin-1, cp1252)
+- ✅ **SQLite** (`.db`, `.sqlite`, `.sqlite3`) with **table selection**
+  - `/setup` interface to choose the table
+  - Persistent config in `config/config.json` (`data_path` + `db_table`)
+  - Multi-table support (automatic dropdown)
+  - **Full Guide**: See `./_helpers/SQLITE_SUPPORT.md` for CSV→SQLite migration, API, troubleshooting, and benchmarks
 
-### Répertoires
+### Directories
 
-- `profiles/`: Profils JSON (format: `NomProfil.json`)
-- `exports/`: Fichiers exportés
-- `.cache/`: Cache interne (1h TTL)
+- `profiles/`: JSON profiles (format: `ProfileName.json`)
+- `exports/`: Exported files
+- `.cache/`: Internal cache (1h TTL)
 
-## 📊 API & Documentation technique
+## 📊 API & Technical Documentation
 
-- **Guide API Complet**: [API_GUIDE.md](./API_GUIDE.md) (Endpoints, format JSON, payloads, batch-export).
-- Endpoints API4 disponibles: `GET /api/test`, `GET /api/config`, `POST /api/config`.
-- **Setup SQLite & Migration**: [SQLITE_SUPPORT.md](./_helpers/SQLITE_SUPPORT.md).
-- **Test Qualité**: [tests/test_manual_checklist.py](./tests/test_manual_checklist.py).
+- **Full API Guide**: [API_GUIDE.md](./API_GUIDE.md) (Endpoints, JSON format, payloads, batch-export).
+- **Specifications & Architecture**: [.github/SPEC.md](.github/SPEC.md).
+- **Contributing**: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md).
+- **Security**: [.github/SECURITY.md](.github/SECURITY.md).
+- **SQLite Support & Migration**: [SQLITE_SUPPORT.md](./_helpers/SQLITE_SUPPORT.md).
+- **Quality Check**: [tests/test_manual_checklist.py](./tests/test_manual_checklist.py).
+
+## 🎯 Usage Examples
+
+### Filtered Search
+
+```
+Search "Unreal" in the bar → Displays only assets containing "Unreal"
+```
+
+### Filtered Export
+
+1. Filter to "2000 rows" using search
+2. Click "Export"
+3. Choose format (JSON, CSV, Markdown, etc.)
+4. Download
+
+### Profiles
+
+1. Configure visible columns
+2. Click "Profile" → "Save profile"
+3. Name it (e.g., "WebView")
+4. Later: load the same profile to reuse
+
+## ⚙️ Performance
+
+### Applied Optimizations
+
+- **DataFrame Cache** (1h): No CSV reloading on every request
+- **Server-side DataTables**: Server-side pagination/filtering
+- **Compression**: Automatic GZip
+- **Column Lazy-loading**: Display only selected columns
+
+### Benchmarks (3800 assets, 20 columns)
+
+```
+Operation              V1 (Streamlit)    V2 (Flask)    Gain
+---------------------------------------------------------------
+Load interface         5-8s              ~800ms        8-10x
+Search 1000            2-3s              100-150ms     15-20x
+Change page            1-2s              50-100ms      20x
+Full CSV Export        3-4s              300-500ms     10x
+```
+
+## 🐛 Troubleshooting
+
+### "ModuleNotFoundError: No module named 'flask'"
+
+```powershell
+pip install -r requirements.txt
+```
 
 ## 🎯 Exemples d'utilisation
 

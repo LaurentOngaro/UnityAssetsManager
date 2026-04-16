@@ -2,200 +2,194 @@
 ============================================================================
 UnityAssetsManager - templates/setup.html
 ============================================================================
-Description: Template de configuration des sources de données.
-Version: 1.2.8
+Description: Data source configuration and initialization template.
+Version: 1.2.9
 ============================================================================
 -->
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="container py-5">
-    <div class="row">
-        <div class="col-md-8 mx-auto">
-            <div class="card">
-                <div class="card-header bg-warning text-dark">
-                    <h4 class="mb-0">⚙️ Configuration - Fichier source manquant</h4>
-                </div>
-                <div class="card-body">
-                    <div id="startupStateBlock">
-                    <div id="startupStatus" class="alert {% if current_path_exists %}alert-info{% else %}alert-warning{% endif %}">
-                        {% if current_path_exists %}
-                        <strong>ℹ️ État au démarrage</strong>
-                        <p class="mb-0">Le chemin courant existe, mais les données n'étaient pas encore chargées dans l'application. Teste le chemin ci-dessous puis clique sur <strong>Sauvegarder et continuer</strong>.</p>
-                        {% else %}
-                        <strong>⚠️ État au démarrage: fichier non trouvé</strong>
-                        <p class="mb-0">Le fichier <code>{{ filename }}</code> n'a pas été trouvé dans les chemins candidats au démarrage.</p>
-                        {% endif %}
-                    </div>
-
-                    <p class="text-muted mb-2">Chemins recherchés au démarrage:</p>
-                    <ul class="list-group mb-4" id="startupPathsList">
-                        {% for path in searched_paths %}
-                        <li class="list-group-item">
-                            <code>{{ path }}</code>
-                            {% if path|string == current_path|string %}
-                            <span class="badge bg-primary">Actuel</span>
-                            {% endif %}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    </div>
-
-                    <h5>📂 Sélectionner un nouveau chemin</h5>
-                    <form id="setupForm" method="POST" action="/api/setup">
-                        <div class="mb-3">
-                            <label for="dataPath" class="form-label">Chemin complet du fichier (CSV ou SQLite)</label>
-                            <input type="text" class="form-control" id="dataPath" name="data_path"
-                                    value="{{ current_path }}" required>
-                            <small class="form-text text-muted">
-                                CSV: <code>H:\...\assets.csv</code> ou SQLite: <code>H:\...\assets.db</code>
-                            </small>
-                        </div>
-
-                        <!-- Sélecteur de table SQLite (caché par défaut) -->
-                        <div class="mb-3" id="sqliteTableSelector" style="display:none;">
-                            <label for="dbTable" class="form-label">📊 Table SQLite</label>
-                            <select class="form-select" id="dbTable" name="db_table">
-                                <option value="">-- Sélectionner une table --</option>
-                            </select>
-                            <small class="form-text text-muted" id="tableInfo"></small>
-                        </div>
-
-                        <div class="mb-3">
-                            <button type="button" class="btn btn-secondary" id="btnTestPath">
-                                🔍 Tester ce chemin
-                            </button>
-                            <span id="testResult" class="ms-2"></span>
-                        </div>
-
-                        <hr>
-
-                        <button type="submit" class="btn btn-primary">
-                            💾 Sauvegarder et continuer
-                        </button>
-                        <a href="/" class="btn btn-secondary">Annuler</a>
-                    </form>
-                </div>
-            </div>
-
-            <div class="mt-4">
-                <h5>💡 Conseils</h5>
-                <ul>
-                    <li>Utilise des <code>\</code> ou <code>/</code> pour les séparateurs de chemin</li>
-                    <li><strong>Formats supportés</strong>: CSV (<code>.csv</code>) ou SQLite (<code>.db</code>, <code>.sqlite</code>)</li>
-                    <li>Pour SQLite, tu pourras sélectionner la table après avoir testé le chemin</li>
-                    <li>La configuration sera sauvegardée dans <code>config/config.json</code></li>
-                    <li>Tu peux changer le chemin plus tard via cette page (<code>/setup</code>)</li>
-                </ul>
-            </div>
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card">
+        <div class="card-header bg-warning text-dark">
+          <h4 class="mb-0">⚙️ Configuration - Fichier source manquant</h4>
         </div>
-    </div>
-</div>
-{% endblock %}
+        <div class="card-body">
+          <div id="startupStateBlock">
+            <div id="startupStatus" class="alert {% if current_path_exists %}alert-info{% else %}alert-warning{% endif %}">
+              {% if current_path_exists %}
+              <strong>ℹ️ État au démarrage</strong>
+              <p class="mb-0">
+                Le chemin courant existe, mais les données n'étaient pas encore chargées dans l'application. Teste le chemin ci-dessous puis clique
+                sur <strong>Sauvegarder et continuer</strong>.
+              </p>
+              {% else %}
+              <strong>⚠️ État au démarrage: fichier non trouvé</strong>
+              <p class="mb-0">Le fichier <code>{{ filename }}</code> n'a pas été trouvé dans les chemins candidats au démarrage.</p>
+              {% endif %}
+            </div>
 
-{% block extra_scripts %}
+            <p class="text-muted mb-2">Chemins recherchés au démarrage:</p>
+            <ul class="list-group mb-4" id="startupPathsList">
+              {% for path in searched_paths %}
+              <li class="list-group-item">
+                <code>{{ path }}</code>
+                {% if path|string == current_path|string %}
+                <span class="badge bg-primary">Actuel</span>
+                {% endif %}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <h5>📂 Sélectionner un nouveau chemin</h5>
+          <form id="setupForm" method="POST" action="/api/setup">
+            <div class="mb-3">
+              <label for="dataPath" class="form-label">Chemin complet du fichier (CSV ou SQLite)</label>
+              <input type="text" class="form-control" id="dataPath" name="data_path" value="{{ current_path }}" required />
+              <small class="form-text text-muted"> CSV: <code>H:\...\assets.csv</code> ou SQLite: <code>H:\...\assets.db</code> </small>
+            </div>
+
+            <!-- Sélecteur de table SQLite (caché par défaut) -->
+            <div class="mb-3" id="sqliteTableSelector" style="display: none">
+              <label for="dbTable" class="form-label">📊 Table SQLite</label>
+              <select class="form-select" id="dbTable" name="db_table">
+                <option value="">-- Sélectionner une table --</option>
+              </select>
+              <small class="form-text text-muted" id="tableInfo"></small>
+            </div>
+
+            <div class="mb-3">
+              <button type="button" class="btn btn-secondary" id="btnTestPath">🔍 Tester ce chemin</button>
+              <span id="testResult" class="ms-2"></span>
+            </div>
+
+            <hr />
+
+            <button type="submit" class="btn btn-primary">💾 Sauvegarder et continuer</button>
+            <a href="/" class="btn btn-secondary">Annuler</a>
+          </form>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <h5>💡 Conseils</h5>
+        <ul>
+          <li>Utilise des <code>\</code> ou <code>/</code> pour les séparateurs de chemin</li>
+          <li><strong>Formats supportés</strong>: CSV (<code>.csv</code>) ou SQLite (<code>.db</code>, <code>.sqlite</code>)</li>
+          <li>Pour SQLite, tu pourras sélectionner la table après avoir testé le chemin</li>
+          <li>La configuration sera sauvegardée dans <code>config/config.json</code></li>
+          <li>Tu peux changer le chemin plus tard via cette page (<code>/setup</code>)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_scripts %}
 <script>
-$(document).ready(function() {
+  $(document).ready(function () {
     let detectedType = null;
     let availableTables = [];
 
     // Tester le chemin
-    $('#btnTestPath').on('click', function() {
-        const path = $('#dataPath').val();
-        $('#testResult').html('<span class="spinner-border spinner-border-sm"></span> Test en cours...');
-        $('#sqliteTableSelector').hide();
+    $('#btnTestPath').on('click', function () {
+      const path = $('#dataPath').val();
+      $('#testResult').html('<span class="spinner-border spinner-border-sm"></span> Test en cours...');
+      $('#sqliteTableSelector').hide();
 
-        $.ajax({
-            url: '/api/test-path',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ path: path }),
-            success: function(response) {
-                if (response.exists) {
-                    detectedType = response.type;
+      $.ajax({
+        url: '/api/test-path',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ path: path }),
+        success: function (response) {
+          if (response.exists) {
+            detectedType = response.type;
 
-                    $('#startupStateBlock').slideUp(150);
+            $('#startupStateBlock').slideUp(150);
 
-                    // Afficher résultat
-                    let badge = `<span class="badge bg-success">✅ ${response.type.toUpperCase()} trouvé</span>`;
-                    badge += ` <small class="text-muted">(${response.rows} lignes, ${response.cols} colonnes)</small>`;
-                    if (response.warning) {
-                        badge += ` <small class="text-warning">${response.warning}</small>`;
-                    }
-                    $('#testResult').html(badge);
-
-                    // Si SQLite, afficher sélecteur de tables
-                    if (response.type === 'sqlite' && response.tables) {
-                        availableTables = response.tables;
-                        $('#dbTable').empty();
-                        response.tables.forEach(function(table) {
-                            $('#dbTable').append(`<option value="${table}">${table}</option>`);
-                        });
-
-                        // Sélectionner première table par défaut
-                        $('#dbTable').val(response.tables[0]);
-
-                        $('#tableInfo').text(`${response.tables.length} table(s) disponible(s)`);
-                        $('#sqliteTableSelector').show();
-                    }
-                } else {
-                    $('#startupStatus')
-                        .removeClass('alert-success alert-info')
-                        .addClass('alert-warning')
-                        .html('<strong>⚠️ État au démarrage / test courant</strong><p class="mb-0">Le chemin n\'est pas encore utilisable. Corrige le chemin puis reteste.</p>');
-
-                    const isNotFound = response.code === 'PATH_NOT_FOUND' || response.code === 'PATH_EMPTY';
-                    const badgeText = isNotFound ? '❌ Fichier introuvable' : '❌ Fichier non lisible';
-                    const detailText = response.message || 'Vérifie le chemin et le format du fichier';
-
-                    const $wrap = $('<span></span>');
-                    $wrap.append($('<span class="badge bg-danger me-1"></span>').text(badgeText));
-                    $wrap.append($('<small class="text-muted"></small>').text(detailText));
-                    $('#testResult').empty().append($wrap);
-                }
-            },
-            error: function() {
-                $('#testResult').html('<span class="badge bg-danger">❌ Erreur de test</span>');
+            // Afficher résultat
+            let badge = `<span class="badge bg-success">✅ ${response.type.toUpperCase()} trouvé</span>`;
+            badge += ` <small class="text-muted">(${response.rows} lignes, ${response.cols} colonnes)</small>`;
+            if (response.warning) {
+              badge += ` <small class="text-warning">${response.warning}</small>`;
             }
-        });
+            $('#testResult').html(badge);
+
+            // Si SQLite, afficher sélecteur de tables
+            if (response.type === 'sqlite' && response.tables) {
+              availableTables = response.tables;
+              $('#dbTable').empty();
+              response.tables.forEach(function (table) {
+                $('#dbTable').append(`<option value="${table}">${table}</option>`);
+              });
+
+              // Sélectionner première table par défaut
+              $('#dbTable').val(response.tables[0]);
+
+              $('#tableInfo').text(`${response.tables.length} table(s) disponible(s)`);
+              $('#sqliteTableSelector').show();
+            }
+          } else {
+            $('#startupStatus')
+              .removeClass('alert-success alert-info')
+              .addClass('alert-warning')
+              .html(
+                '<strong>⚠️ État au démarrage / test courant</strong><p class="mb-0">Le chemin n\'est pas encore utilisable. Corrige le chemin puis reteste.</p>'
+              );
+
+            const isNotFound = response.code === 'PATH_NOT_FOUND' || response.code === 'PATH_EMPTY';
+            const badgeText = isNotFound ? '❌ Fichier introuvable' : '❌ Fichier non lisible';
+            const detailText = response.message || 'Vérifie le chemin et le format du fichier';
+
+            const $wrap = $('<span></span>');
+            $wrap.append($('<span class="badge bg-danger me-1"></span>').text(badgeText));
+            $wrap.append($('<small class="text-muted"></small>').text(detailText));
+            $('#testResult').empty().append($wrap);
+          }
+        },
+        error: function () {
+          $('#testResult').html('<span class="badge bg-danger">❌ Erreur de test</span>');
+        },
+      });
     });
 
     // Soumission du formulaire
-    $('#setupForm').on('submit', function(e) {
-        e.preventDefault();
+    $('#setupForm').on('submit', function (e) {
+      e.preventDefault();
 
-        const path = $('#dataPath').val();
-        const dbTable = $('#dbTable').val();
+      const path = $('#dataPath').val();
+      const dbTable = $('#dbTable').val();
 
-        const payload = { data_path: path };
+      const payload = { data_path: path };
 
-        // Ajouter db_table si SQLite
-        if (detectedType === 'sqlite' && dbTable) {
-            payload.db_table = dbTable;
-        }
+      // Ajouter db_table si SQLite
+      if (detectedType === 'sqlite' && dbTable) {
+        payload.db_table = dbTable;
+      }
 
-        $.ajax({
-            url: '/api/setup',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(payload),
-            success: function(response) {
-                if (response.success) {
-                    let msg = '✅ Configuration sauvegardée!';
-                    if (response.db_table) {
-                        msg += `\nTable: ${response.db_table}`;
-                    }
-                    alert(msg);
-                    window.location.href = '/';
-                } else {
-                    alert('❌ Erreur: ' + response.error);
-                }
-            },
-            error: function(xhr) {
-                alert('❌ Erreur lors de la sauvegarde: ' + xhr.responseText);
+      $.ajax({
+        url: '/api/setup',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
+        success: function (response) {
+          if (response.success) {
+            let msg = '✅ Configuration sauvegardée!';
+            if (response.db_table) {
+              msg += `\nTable: ${response.db_table}`;
             }
-        });
+            alert(msg);
+            window.location.href = '/';
+          } else {
+            alert('❌ Erreur: ' + response.error);
+          }
+        },
+        error: function (xhr) {
+          alert('❌ Erreur lors de la sauvegarde: ' + xhr.responseText);
+        },
+      });
     });
-});
+  });
 </script>
 {% endblock %}

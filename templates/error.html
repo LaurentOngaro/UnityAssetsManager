@@ -1,40 +1,46 @@
-{% extends "base.html" %}
-
-{% block content %}
+<!--
+============================================================================
+UnityAssetsManager - templates/error.html
+============================================================================
+Description: Error display template for data loading issues (missing file, invalid path).
+Version: 1.2.9
+============================================================================
+-->
+{% extends "base.html" %} {% block content %}
 <div class="container py-5">
-    <div class="row">
-        <div class="col-md-8 mx-auto">
-            <div class="alert alert-danger" role="alert">
-                <h4 class="alert-heading">❌ Erreur de chargement</h4>
-                <p class="mb-3">{{ error }}</p>
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">❌ Erreur de chargement</h4>
+        <p class="mb-3">{{ error }}</p>
 
-                <hr>
+        <hr />
 
-                <h5>🔧 Solutions possibles:</h5>
-                <ol>
-                    <li>
-                        <strong>Vérifier le chemin du fichier:</strong>
-                        <pre class="bg-light p-2 mt-2"><code>{{ data_path }}</code></pre>
-                    </li>
-                    <li>
-                        <strong>Configurer <code>data_path</code> via <code>/setup</code> ou <code>config/config.json</code></strong>
-                    </li>
-                    <li>
-                        <strong>Vérifier que le fichier existe et est lisible</strong>
-                    </li>
-                    <li>
-                        <strong>Redémarrer le serveur:</strong>
-                        <pre class="bg-light p-2 mt-2"><code>python app.py</code></pre>
-                    </li>
-                </ol>
+        <h5>🔧 Solutions possibles:</h5>
+        <ol>
+          <li>
+            <strong>Vérifier le chemin du fichier:</strong>
+            <pre class="bg-light p-2 mt-2"><code>{{ data_path }}</code></pre>
+          </li>
+          <li>
+            <strong>Configurer <code>data_path</code> via <code>/setup</code> ou <code>config/config.json</code></strong>
+          </li>
+          <li>
+            <strong>Vérifier que le fichier existe et est lisible</strong>
+          </li>
+          <li>
+            <strong>Redémarrer le serveur:</strong>
+            <pre class="bg-light p-2 mt-2"><code>python app.py</code></pre>
+          </li>
+        </ol>
 
-                <hr>
+        <hr />
 
-                <p class="mb-0">
-                    <a href="/" class="btn btn-primary">Réessayer</a>
-                </p>
-            </div>
-        </div>
+        <p class="mb-0">
+          <a href="/" class="btn btn-primary">Réessayer</a>
+        </p>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

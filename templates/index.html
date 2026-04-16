@@ -2,293 +2,283 @@
 ============================================================================
 UnityAssetsManager - templates/index.html
 ============================================================================
-Description: Template principal de l'interface de gestion d'assets.
-Version: 1.2.8
+Description: Main inventory management interface template.
+Version: 1.2.9
 ============================================================================
 -->
-{% extends "base.html" %}
-
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="row mb-4">
-    <div class="col-md-12">
-        <h1 class="mb-3">📦 UnityAssetsManager</h1>
-        <p class="text-muted">Gestionnaire d'assets haute performance • Flask + DataTables • <strong>{{ row_count }}</strong> assets disponibles</p>
-    </div>
+  <div class="col-md-12">
+    <h1 class="mb-3">📦 UnityAssetsManager</h1>
+    <p class="text-muted">Gestionnaire d'assets haute performance • Flask + DataTables • <strong>{{ row_count }}</strong> assets disponibles</p>
+  </div>
 </div>
 
 <!-- Panneau de contrôle -->
 <div class="card mb-4">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">🎛️ Contrôles</h5>
-    </div>
-    <div class="card-body">
-        <div class="row g-3">
-            <!-- Recherche -->
-            <div class="col-md-4">
-                <label for="searchInput" class="form-label">🔍 Recherche</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="searchInput" placeholder="Chercher...">
-                    <button class="btn btn-primary" id="btnSearch" type="button">Chercher</button>
-                </div>
-                <div class="form-check mt-2">
-                    <input class="form-check-input" type="checkbox" id="chkSearchRegex">
-                    <label class="form-check-label" for="chkSearchRegex">
-                        Mode Regex
-                    </label>
-                </div>
-                <small class="text-muted">Pressez Entrée ou cliquez le bouton pour chercher</small>
-            </div>
-
-            <!-- Sélection des colonnes -->
-            <div class="col-md-4">
-                <label for="columnSelector" class="form-label">📋 Colonnes à afficher</label>
-                <select multiple class="form-select" id="columnSelector" size="3">
-                    {% for col in columns %}
-                    <option value="{{ col }}" selected>{{ col }}</option>
-                    {% endfor %}
-                </select>
-                <small class="text-muted">Ctrl+Click pour sélectionner plusieurs</small>
-            </div>
-
-            <!-- Contrôles de filtrage avancés -->
-            <details open class="mb-3 p-3 bg-light rounded">
-                <summary style="cursor:pointer;font-weight:bold;">🧱 Générateur de filtres</summary>
-                <div class="mt-3">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="filterBuilderCol" class="form-label">Colonne</label>
-                            <select class="form-select" id="filterBuilderCol">
-                                <option value="">-- Choisir une colonne --</option>
-                                {% for col in columns %}
-                                <option value="{{ col }}">{{ col }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-8">
-                            <label class="form-label">Opérateur</label>
-                            <div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="filterOp" id="opValues" value="values" checked>
-                                    <label class="form-check-label" for="opValues">Valeurs exactes</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="filterOp" id="opSearch" value="search">
-                                    <label class="form-check-label" for="opSearch">Recherche texte</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="filterOp" id="opRegex" value="regex">
-                                    <label class="form-check-label" for="opRegex">Regex</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-4">
-                            <label for="filterBuilderMode" class="form-label">Mode</label>
-                            <select class="form-select" id="filterBuilderMode">
-                                <option value="include" selected>Inclure (garder)</option>
-                                <option value="exclude">Exclure (retirer)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mt-2">
-                        <label for="filterBuilderValue" class="form-label">Valeur/Texte (séparés par "," pour valeurs multiples)</label>
-                        <div class="input-group">
-                            <textarea class="form-control" id="filterBuilderValue" rows="2" placeholder="ex: Tool, Plugin ou pattern.*"></textarea>
-                            <div class="input-group-text bg-light p-1" style="display: flex; flex-direction: column; justify-content: center; gap: 5px;">
-                                <div class="form-check form-switch" title="Filtrer uniquement sur les valeurs actuellement affichées">
-                                    <input class="form-check-switch" type="checkbox" id="chkFilterDisplayedOnly" style="transform: scale(0.8);">
-                                    <label class="form-check-label" for="chkFilterDisplayedOnly" style="font-size: 0.7rem;">Affichées</label>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Checkboxes pour colonnes booléennes (affichées dynamiquement) -->
-                        <div id="filterBuilderCheckboxes" style="display: none;"></div>
-                        <!-- Multiselect pour colonnes texte/nombre (affichées dynamiquement) -->
-                        <div id="filterBuilderValues" style="display: none;"></div>
-                    </div>
-                    <div class="mt-2">
-                        <button class="btn btn-sm btn-success" id="btnAddFilter">+ Ajouter filtre</button>
-                        <button class="btn btn-sm btn-warning" id="btnClearAllFilters">🗑️ Vider tous les filtres</button>
-                    </div>
-                    <div class="mt-3" id="filterBuilderList"></div>
-                </div>
-            </details>
-
-            <!-- Colonnes filtrables (profil) -->
-            <div class="col-md-4">
-                <label for="filterColumnsSelector" class="form-label">🔧 Colonnes filtrables</label>
-                <select multiple class="form-select" id="filterColumnsSelector" size="3">
-                    {% for col in columns %}
-                    <option value="{{ col }}">{{ col }}</option>
-                    {% endfor %}
-                </select>
-                <small class="text-muted">Spécifie les colonnes disponibles pour les filtres</small>
-            </div>
-
-            <!-- Actions -->
-            <div class="col-md-12">
-                <button class="btn btn-sm btn-primary" id="btnExport">💾 Exporter</button>
-                <button class="btn btn-sm btn-info" id="btnProfile">💾 Profil</button>
-                <button class="btn btn-sm btn-secondary" id="btnReset">↺ Réinitialiser</button>
-            </div>
-
-            <!-- Debug options -->
-            <div class="col-md-12 mt-3">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="chkParserWarnings" {% if show_parser_warnings %}checked{% endif %}>
-                    <label class="form-check-label" for="chkParserWarnings">
-                        Afficher erreurs chargement CSV
-                    </label>
-                </div>
-            </div>
-
-            <!-- Filter stack editor -->
-            <div class="col-md-12 mt-3">
-                <label for="filterStackEditor" class="form-label">🧱 Filtres (JSON)</label>
-                <textarea id="filterStackEditor" class="form-control" rows="3" placeholder="[{ mode: 'include', filters: {...} }, ...]"></textarea>
-                <button class="btn btn-sm btn-secondary mt-1" id="btnApplyFilters">Appliquer filtres</button>
-            </div>
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">🎛️ Contrôles</h5>
+  </div>
+  <div class="card-body">
+    <div class="row g-3">
+      <!-- Recherche -->
+      <div class="col-md-4">
+        <label for="searchInput" class="form-label">🔍 Recherche</label>
+        <div class="input-group">
+          <input type="text" class="form-control" id="searchInput" placeholder="Chercher..." />
+          <button class="btn btn-primary" id="btnSearch" type="button">Chercher</button>
         </div>
+        <div class="form-check mt-2">
+          <input class="form-check-input" type="checkbox" id="chkSearchRegex" />
+          <label class="form-check-label" for="chkSearchRegex"> Mode Regex </label>
+        </div>
+        <small class="text-muted">Pressez Entrée ou cliquez le bouton pour chercher</small>
+      </div>
+
+      <!-- Sélection des colonnes -->
+      <div class="col-md-4">
+        <label for="columnSelector" class="form-label">📋 Colonnes à afficher</label>
+        <select multiple class="form-select" id="columnSelector" size="3">
+          {% for col in columns %}
+          <option value="{{ col }}" selected>{{ col }}</option>
+          {% endfor %}
+        </select>
+        <small class="text-muted">Ctrl+Click pour sélectionner plusieurs</small>
+      </div>
+
+      <!-- Contrôles de filtrage avancés -->
+      <details open class="mb-3 p-3 bg-light rounded">
+        <summary style="cursor: pointer; font-weight: bold">🧱 Générateur de filtres</summary>
+        <div class="mt-3">
+          <div class="row">
+            <div class="col-md-4">
+              <label for="filterBuilderCol" class="form-label">Colonne</label>
+              <select class="form-select" id="filterBuilderCol">
+                <option value="">-- Choisir une colonne --</option>
+                {% for col in columns %}
+                <option value="{{ col }}">{{ col }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-8">
+              <label class="form-label">Opérateur</label>
+              <div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="filterOp" id="opValues" value="values" checked />
+                  <label class="form-check-label" for="opValues">Valeurs exactes</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="filterOp" id="opSearch" value="search" />
+                  <label class="form-check-label" for="opSearch">Recherche texte</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="filterOp" id="opRegex" value="regex" />
+                  <label class="form-check-label" for="opRegex">Regex</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-4">
+              <label for="filterBuilderMode" class="form-label">Mode</label>
+              <select class="form-select" id="filterBuilderMode">
+                <option value="include" selected>Inclure (garder)</option>
+                <option value="exclude">Exclure (retirer)</option>
+              </select>
+            </div>
+          </div>
+          <div class="mt-2">
+            <label for="filterBuilderValue" class="form-label">Valeur/Texte (séparés par "," pour valeurs multiples)</label>
+            <div class="input-group">
+              <textarea class="form-control" id="filterBuilderValue" rows="2" placeholder="ex: Tool, Plugin ou pattern.*"></textarea>
+              <div class="input-group-text bg-light p-1" style="display: flex; flex-direction: column; justify-content: center; gap: 5px">
+                <div class="form-check form-switch" title="Filtrer uniquement sur les valeurs actuellement affichées">
+                  <input class="form-check-switch" type="checkbox" id="chkFilterDisplayedOnly" style="transform: scale(0.8)" />
+                  <label class="form-check-label" for="chkFilterDisplayedOnly" style="font-size: 0.7rem">Affichées</label>
+                </div>
+              </div>
+            </div>
+            <!-- Checkboxes pour colonnes booléennes (affichées dynamiquement) -->
+            <div id="filterBuilderCheckboxes" style="display: none"></div>
+            <!-- Multiselect pour colonnes texte/nombre (affichées dynamiquement) -->
+            <div id="filterBuilderValues" style="display: none"></div>
+          </div>
+          <div class="mt-2">
+            <button class="btn btn-sm btn-success" id="btnAddFilter">+ Ajouter filtre</button>
+            <button class="btn btn-sm btn-warning" id="btnClearAllFilters">🗑️ Vider tous les filtres</button>
+          </div>
+          <div class="mt-3" id="filterBuilderList"></div>
+        </div>
+      </details>
+
+      <!-- Colonnes filtrables (profil) -->
+      <div class="col-md-4">
+        <label for="filterColumnsSelector" class="form-label">🔧 Colonnes filtrables</label>
+        <select multiple class="form-select" id="filterColumnsSelector" size="3">
+          {% for col in columns %}
+          <option value="{{ col }}">{{ col }}</option>
+          {% endfor %}
+        </select>
+        <small class="text-muted">Spécifie les colonnes disponibles pour les filtres</small>
+      </div>
+
+      <!-- Actions -->
+      <div class="col-md-12">
+        <button class="btn btn-sm btn-primary" id="btnExport">💾 Exporter</button>
+        <button class="btn btn-sm btn-info" id="btnProfile">💾 Profil</button>
+        <button class="btn btn-sm btn-secondary" id="btnReset">↺ Réinitialiser</button>
+      </div>
+
+      <!-- Debug options -->
+      <div class="col-md-12 mt-3">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="chkParserWarnings" {% if show_parser_warnings %}checked{% endif %} />
+          <label class="form-check-label" for="chkParserWarnings"> Afficher erreurs chargement CSV </label>
+        </div>
+      </div>
+
+      <!-- Filter stack editor -->
+      <div class="col-md-12 mt-3">
+        <label for="filterStackEditor" class="form-label">🧱 Filtres (JSON)</label>
+        <textarea id="filterStackEditor" class="form-control" rows="3" placeholder="[{ mode: 'include', filters: {...} }, ...]"></textarea>
+        <button class="btn btn-sm btn-secondary mt-1" id="btnApplyFilters">Appliquer filtres</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Modal Export -->
 <div class="modal fade" id="exportModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">💾 Exporter les données</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="exportTemplate" class="form-label">Format d'export</label>
-                    <select class="form-select" id="exportTemplate">
-                        <option value="">-- Chargement des templates... --</option>
-                    </select>
-                    <small id="exportTemplateDesc" class="text-muted d-block mt-1"></small>
-                </div>
-
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="exportAllRows" checked>
-                        <label class="form-check-label" for="exportAllRows">
-                            Exporter les lignes filtrées (<span id="exportLineCount">{{ row_count }}</span> lignes actuellement)
-                        </label>
-                    </div>
-                </div>
-
-                <div class="mb-3" id="exportPreview">
-                    <label class="form-label">🔍 Aperçu</label>
-                    <pre id="exportPreviewText" style="max-height:200px;overflow-y:auto;" class="bg-light p-2 rounded"></pre>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-primary" id="btnConfirmExport">Télécharger</button>
-            </div>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">💾 Exporter les données</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="exportTemplate" class="form-label">Format d'export</label>
+          <select class="form-select" id="exportTemplate">
+            <option value="">-- Chargement des templates... --</option>
+          </select>
+          <small id="exportTemplateDesc" class="text-muted d-block mt-1"></small>
         </div>
+
+        <div class="mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="exportAllRows" checked />
+            <label class="form-check-label" for="exportAllRows">
+              Exporter les lignes filtrées (<span id="exportLineCount">{{ row_count }}</span> lignes actuellement)
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-3" id="exportPreview">
+          <label class="form-label">🔍 Aperçu</label>
+          <pre id="exportPreviewText" style="max-height: 200px; overflow-y: auto" class="bg-light p-2 rounded"></pre>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary" id="btnConfirmExport">Télécharger</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Modal Profil -->
 <div class="modal fade" id="profileModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">💾 Gérer les profils</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p class="text-muted">Un profil sauvegarde votre sélection de colonnes et vos paramètres.</p>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">💾 Gérer les profils</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted">Un profil sauvegarde votre sélection de colonnes et vos paramètres.</p>
 
-                <div class="mb-3">
-                    <label for="profileName" class="form-label">Nom du profil</label>
-                    <input type="text" class="form-control" id="profileName" placeholder="ex: MyProfile">
-                </div>
-
-                <div class="mb-3">
-                    <label for="profilesList" class="form-label">Profils existants</label>
-                    <select class="form-select" id="profilesList">
-                        <option value="">-- Nouveau profil --</option>
-                        {% for profile in profiles %}
-                        <option value="{{ profile }}">{{ profile }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div id="profileActions" style="display:none;">
-                    <button class="btn btn-sm btn-danger" id="btnDeleteProfile">Supprimer</button>
-                    <button class="btn btn-sm btn-info" id="btnLoadProfile">Charger</button>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-primary" id="btnSaveProfile">Enregistrer profil</button>
-            </div>
+        <div class="mb-3">
+          <label for="profileName" class="form-label">Nom du profil</label>
+          <input type="text" class="form-control" id="profileName" placeholder="ex: MyProfile" />
         </div>
+
+        <div class="mb-3">
+          <label for="profilesList" class="form-label">Profils existants</label>
+          <select class="form-select" id="profilesList">
+            <option value="">-- Nouveau profil --</option>
+            {% for profile in profiles %}
+            <option value="{{ profile }}">{{ profile }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div id="profileActions" style="display: none">
+          <button class="btn btn-sm btn-danger" id="btnDeleteProfile">Supprimer</button>
+          <button class="btn btn-sm btn-info" id="btnLoadProfile">Charger</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary" id="btnSaveProfile">Enregistrer profil</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Modal Détails Asset -->
 <div class="modal fade" id="assetDetailModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-info text-white">
-                <h5 class="modal-title">📄 Détails de l'asset</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="assetDetailContent" class="table-responsive">
-                    <!-- Contenu généré par JS -->
-                    <table class="table table-striped table-sm">
-                        <tbody id="assetDetailTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-            </div>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">📄 Détails de l'asset</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="assetDetailContent" class="table-responsive">
+          <!-- Contenu généré par JS -->
+          <table class="table table-striped table-sm">
+            <tbody id="assetDetailTableBody"></tbody>
+          </table>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Table des données -->
 <div class="card">
-    <div class="card-header bg-light">
-        <h5 class="mb-0">📊 Données</h5>
+  <div class="card-header bg-light">
+    <h5 class="mb-0">📊 Données</h5>
+  </div>
+  <div class="card-body p-0">
+    <div style="overflow-x: auto">
+      <table id="assetsTable" class="table table-striped table-hover mb-0 w-100">
+        <thead class="table-dark">
+          <tr>
+            {% for col in columns %}
+            <th>{{ col }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
-    <div class="card-body p-0">
-        <div style="overflow-x: auto;">
-            <table id="assetsTable" class="table table-striped table-hover mb-0 w-100">
-                <thead class="table-dark">
-                    <tr>
-                        {% for col in columns %}
-                        <th>{{ col }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-    </div>
+  </div>
 </div>
 
 <!-- Info supplémentaire -->
 <div class="mt-3">
-    <small class="text-muted">
-        💡 Conseil: Utilisez Ctrl+F pour chercher dans le navigateur, ou la barre de recherche ci-dessus pour filtrer côté serveur (plus rapide).
-    </small>
+  <small class="text-muted">
+    💡 Conseil: Utilisez Ctrl+F pour chercher dans le navigateur, ou la barre de recherche ci-dessus pour filtrer côté serveur (plus rapide).
+  </small>
 </div>
 
-{% endblock %}
-
-{% block extra_scripts %}
+{% endblock %} {% block extra_scripts %}
 <script>
-    const SHOW_PARSER_WARNINGS = {{ 'true' if show_parser_warnings else 'false' }};
+  const SHOW_PARSER_WARNINGS = {{ 'true' if show_parser_warnings else 'false' }};
 </script>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% endblock %}
