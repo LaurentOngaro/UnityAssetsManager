@@ -27,7 +27,7 @@ def test_sqlite_loading(tmp_path, monkeypatch):
     conn.commit()
     conn.close()
 
-    import config
+    from lib import config
     monkeypatch.setattr(config.config, "data_path", str(db_path))
     monkeypatch.setattr(config.config, "db_table", "assets")
 
@@ -44,7 +44,7 @@ def test_csv_loading(tmp_path, monkeypatch):
     csv_path = tmp_path / "test_assets.csv"
     csv_path.write_text("id,name\n1,asset1\n2,asset2\n")
 
-    import config
+    from lib import config
     monkeypatch.setattr(config.config, "data_path", str(csv_path))
 
     df = dm.load_data(force_reload=True)

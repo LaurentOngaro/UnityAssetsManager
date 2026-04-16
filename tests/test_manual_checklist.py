@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_manual_checklist.py
 # ============================================================================
 # Description: Integration test coverage for the manual checklist flow.
-# Version: 1.2.8
+# Version: 1.2.9
 # ============================================================================
 
 from __future__ import annotations
@@ -57,7 +57,7 @@ def _assert_export_content(exported_path: Path, expected_ext: str) -> None:
 def test_manual_checklist_api_flow(monkeypatch, tmp_path):
     """Replacement pytest coverage for the old manual checklist helper."""
     mod = import_unity_assets_manager_module()
-    routes_module = sys.modules.get("routes")
+    routes_module = sys.modules.get("lib.routes")
     assert routes_module is not None, "routes module not loaded"
 
     profiles_dir = tmp_path / "profiles"

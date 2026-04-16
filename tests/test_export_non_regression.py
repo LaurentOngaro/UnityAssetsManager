@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_export_non_regression.py
 # ============================================================================
 # Description: Tests de non-régression pour les templates d'export.
-# Version: 1.2.8
+# Version: 1.2.9
 # ============================================================================
 
 from pathlib import Path
@@ -50,7 +50,8 @@ def test_api_export_template_non_regression(monkeypatch, template_name, pattern,
     """Ensure each export family keeps expected extension/mime/content contract."""
     mod = import_unity_assets_manager_module()
     import sys
-    dm_module = sys.modules.get("data_manager")
+    dm_module = sys.modules.get("lib.data_manager")
+    assert dm_module is not None, "lib.data_manager not loaded"
 
     monkeypatch.setattr(dm_module.dm, "_df", SAMPLE_DF.copy())
     monkeypatch.setattr(mod.config, "export_templates", {template_name: {"description": "Template de test", "pattern": pattern, }})
@@ -89,7 +90,8 @@ def test_api_batch_export_writes_expected_extension(monkeypatch, tmp_path, templ
     """Headless export must keep extension inference stable for automation flows."""
     mod = import_unity_assets_manager_module()
     import sys
-    dm_module = sys.modules.get("data_manager")
+    dm_module = sys.modules.get("lib.data_manager")
+    assert dm_module is not None, "lib.data_manager not loaded"
 
     monkeypatch.setattr(dm_module.dm, "_df", SAMPLE_DF.copy())
     monkeypatch.setattr(mod.config, "export_templates", {template_name: {"description": "Template de test", "pattern": pattern, }})
@@ -120,7 +122,8 @@ def test_batch_export_applies_include_exclude_stack(monkeypatch, tmp_path):
     """Non-regression for include/exclude order in batch export mode."""
     mod = import_unity_assets_manager_module()
     import sys
-    dm_module = sys.modules.get("data_manager")
+    dm_module = sys.modules.get("lib.data_manager")
+    assert dm_module is not None, "lib.data_manager not loaded"
 
     monkeypatch.setattr(dm_module.dm, "_df", SAMPLE_DF.copy())
     monkeypatch.setattr(
