@@ -1,21 +1,8 @@
-# 🚀 UnityAssetsManager - Flask Edition
+# 🚀 UnityAssetsManager (UAM)
 
 Version: 1.2.11
 
 Local web application for fast and efficient management of asset inventories (3800+ lines) with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
-
-## Improvements over V1 (Streamlit)
-
-| Aspect              | V1 Streamlit         | V2 Flask                 |
-| ------------------- | -------------------- | ------------------------ |
-| **Table Display**   | 2-5 seconds          | 200-400ms                |
-| **Filtering**       | Refilters all (slow) | Server-side (fast)       |
-| **Pagination**      | Slow Streamlit       | Native DataTables.js     |
-| **Exports**         | Via Streamlit (slow) | Direct HTTP (fast)       |
-| **Multi-source**    | Basic CSV + SQLite   | CSV + SQLite with tables |
-| **Profiles**        | Manual JSONC         | UI + REST API            |
-| **Scalability**     | Difficult            | Excellent                |
-| **Responsive**      | Limited              | Bootstrap 5 (responsive) |
 
 ## 🚀 Installation
 

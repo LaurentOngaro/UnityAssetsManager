@@ -50,7 +50,6 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 ## Terminés
 
 - [x] AFF3: Reprendre le theme de couleur "sombre" de FabAssetsManager"
-
 - [x] AFF1: pouvoir Redimensionner les colonnes (au mieux par drag-and-drop sinon via un menu de configuration de l'affichage)
 - [x] AFF2: Popup détail ligne ( manque d'info, qu'est ce que cela signifie ?)
 - [x] API4: Ajouter des endpoints de diagnostic et de configuration (ex: `/api/test`, `/api/config`) pour faciliter l'automatisation.

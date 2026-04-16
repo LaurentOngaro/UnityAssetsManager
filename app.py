@@ -68,17 +68,15 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    logger.info("🚀 UnityAssetsManager")
-    logger.info("=" * 40)
-
     server_port = config.server_port
     server_host = config.server_host
     flask_debug = config.flask_debug
     flask_threaded = config.flask_threaded
-
-    logger.info(f"\nOpen: http://{server_host}:{server_port}\n")
+    print("🚀 UnityAssetsManager")
+    print("=" * 40)
+    print(f"\nOpen: http://{server_host}:{server_port}\n")
     if flask_debug:
-        logger.info("\n✅ FLASK DEBUGGER ON\n")
+        print("✅ FLASK DEBUGGER ON")
     if flask_threaded:
-        logger.info("\n✅ FLASK THREADING ON\n")
+        print("✅ FLASK THREADING ON")
     app.run(debug=flask_debug, host=server_host, port=server_port, threaded=flask_threaded)
