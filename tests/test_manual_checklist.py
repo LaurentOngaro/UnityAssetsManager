@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_manual_checklist.py
 # ============================================================================
 # Description: Integration test coverage for the manual checklist flow.
-# Version: 1.2.12
+# Version: 1.2.13
 # ============================================================================
 
 from __future__ import annotations
@@ -71,7 +71,6 @@ def test_manual_checklist_api_flow(monkeypatch, tmp_path):
         "name":
         profile_name,
         "columns": ["DisplayName", "DisplayPublisher", "DisplayCategory", "Version"],
-        "filter_columns": ["DisplayCategory", "DisplayPublisher"],
         "filter_stack": [
             {
                 "mode": "include",

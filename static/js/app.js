@@ -13,7 +13,6 @@ const RESIZER_SENSITIVITY = 10; // Zone sensible pour le redimensionnement (pixe
 let dataTable;
 let assetDetailModal;
 let currentColumns = [];
-let currentFilterColumns = [];
 let currentFilterStack = [];
 let currentAliasMap = {};
 let currentProfileName = null; // Nom du profil actif
@@ -112,14 +111,6 @@ function initializeTable() {
     })
     .get();
 
-  // remplir le sélecteur de colonnes filtrables (utilisé dans UI des filtres)
-  const opts = currentColumns.map((c) => `<option value="${c}">${c}</option>`).join('');
-  $('#filterColumnsSelector').html(opts);
-  // restaurer sélection si profile chargé
-  if (currentFilterColumns && currentFilterColumns.length) {
-    $('#filterColumnsSelector').val(currentFilterColumns);
-  }
-
   // Créer les définitions de colonnes pour DataTables (format objet)
   const columnDefs = currentColumns.map(function (colName) {
     return {
@@ -160,9 +151,6 @@ function initializeTable() {
         console.log('[Ajax.data] envoi params', d);
 
         // filtres de profil ou créés manuellement
-        if (currentFilterColumns && currentFilterColumns.length) {
-          d.filter_columns = JSON.stringify(currentFilterColumns);
-        }
         if (currentFilterStack && currentFilterStack.length) {
           d.filter_stack = JSON.stringify(currentFilterStack);
         }
@@ -364,10 +352,6 @@ function showExportModal() {
     payload.alias_map = JSON.stringify(currentAliasMap || {});
   }
 
-  if (currentFilterColumns && currentFilterColumns.length > 0) {
-    payload.filter_columns = JSON.stringify(currentFilterColumns);
-  }
-
   console.log('[Export] Demande comptage avec payload:', payload);
 
   $.ajax({
@@ -493,7 +477,6 @@ function performExport() {
       template: template,
       columns: cols,
       search: searchValue,
-      filter_columns: currentFilterColumns,
       filter_stack: currentFilterStack,
       alias_map: currentAliasMap,
     }),
@@ -660,10 +643,6 @@ function saveProfile() {
     }
   });
 
-  // Synchroniser les filtres avant sauvegarde
-  const selectedFilterColumns = $('#filterColumnsSelector').val() || [];
-  currentFilterColumns = selectedFilterColumns;
-
   let filterStackToSave = currentFilterStack;
   try {
     const parsedFilterStack = JSON.parse($('#filterStackEditor').val() || '[]');
@@ -682,7 +661,6 @@ function saveProfile() {
     data: JSON.stringify({
       name: name,
       columns: visibleCols, // Sauvegarder colonnes réellement visibles
-      filter_columns: selectedFilterColumns,
       filter_stack: filterStackToSave,
       column_aliases: currentAliasMap,
     }),
@@ -728,10 +706,6 @@ function loadProfile() {
       }
 
       // filters
-      currentFilterColumns = profile.filter_columns || [];
-      // update UI selector for filter columns
-      $('#filterColumnsSelector').val(currentFilterColumns);
-
       currentFilterStack = profile.filter_stack || [];
       $('#filterStackEditor').val(JSON.stringify(currentFilterStack, null, 2));
       // P3.2: Afficher les filtres du profil dans la liste
@@ -873,9 +847,6 @@ function loadColumnValues(column) {
     if (currentFilterStack && currentFilterStack.length > 0) {
       payload.filter_stack = JSON.stringify(currentFilterStack);
       payload.alias_map = JSON.stringify(currentAliasMap || {});
-    }
-    if (currentFilterColumns && currentFilterColumns.length > 0) {
-      payload.filter_columns = JSON.stringify(currentFilterColumns);
     }
   }
 
@@ -1106,11 +1077,9 @@ function resetFilters() {
   $('#columnSelector').val(currentColumns).change();
 
   // vider les filtres personnalisés
-  currentFilterColumns = [];
   currentFilterStack = [];
   currentProfileName = null; // Réinitialiser le profil actif
   currentAliasMap = {};
-  $('#filterColumnsSelector').val([]);
   $('#filterStackEditor').val('[]');
 
   dataTable.ajax.reload();

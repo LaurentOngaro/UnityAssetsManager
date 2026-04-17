@@ -1,6 +1,8 @@
 # TODOs
 
-## Bugs (last: BUG1)
+## Bugs (last: BUG2)
+
+- [ ] BUG2: valeur undefined dans le texte en bas de page: "UnityAssetsManager Flask • undefined / 5059 lignes affichées
 
 ## Corrections immédiates (last:CI1)
 

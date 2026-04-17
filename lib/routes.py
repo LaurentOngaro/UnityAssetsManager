@@ -2,7 +2,7 @@
 # UnityAssetsManager - routes.py
 # ============================================================================
 # Description: Web route definitions and API endpoints.
-# Version: 1.2.12
+# Version: 1.2.13
 # ============================================================================
 
 import logging
@@ -116,7 +116,7 @@ def load_profile(profile_name):
         elif "column_profile" in profile_data and isinstance(profile_data["column_profile"], dict):
             normalized["columns"] = profile_data["column_profile"].get("cols", [])
 
-        for key in ["description", "lastUpdated", "updatedBy", "filter_columns", "filter_stack", "column_aliases", "column_profile"]:
+        for key in ["description", "lastUpdated", "updatedBy", "filter_stack", "column_aliases", "column_profile"]:
             if key in profile_data:
                 normalized[key] = profile_data[key]
         return normalized

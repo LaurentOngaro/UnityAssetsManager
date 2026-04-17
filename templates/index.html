@@ -3,7 +3,7 @@
 UnityAssetsManager - templates/index.html
 ============================================================================
 Description: Main inventory management interface template.
-Version: 1.2.12
+Version: 1.2.13
 ============================================================================
 -->
 {% extends "base.html" %} {% block content %}
@@ -110,17 +110,6 @@ Version: 1.2.12
           <div class="mt-3" id="filterBuilderList"></div>
         </div>
       </details>
-
-      <!-- Colonnes filtrables (profil) -->
-      <div class="col-md-4">
-        <label for="filterColumnsSelector" class="form-label">🔧 Colonnes filtrables</label>
-        <select multiple class="form-select" id="filterColumnsSelector" size="3">
-          {% for col in columns %}
-          <option value="{{ col }}">{{ col }}</option>
-          {% endfor %}
-        </select>
-        <small class="text-muted">Spécifie les colonnes disponibles pour les filtres</small>
-      </div>
 
       <!-- Actions -->
       <div class="col-md-12">

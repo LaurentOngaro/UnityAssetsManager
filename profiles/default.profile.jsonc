@@ -19,14 +19,6 @@
     ],
     "saved_at": "2026-02-08T19:30:02.115302+00:00"
   },
-  "filter_columns": [
-    "URPCompatible",
-    "DisplayName",
-    "DisplayCategory",
-    "DisplayPublisher",
-    "PackageTags",
-    "AssetSource"
-  ],
   "column_aliases": {
     "Url": "AssetLink"
   }

@@ -1,6 +1,6 @@
 # API Guide - UnityAssetsManager
 
-**Version:** 1.2.12
+**Version:** 1.2.13
 
 ## Overview
 
@@ -95,7 +95,6 @@ Save profile payload (`POST /api/profiles`):
 {
   "name": "MyProfile",
   "columns": ["DisplayName", "DisplayPublisher"],
-  "filter_columns": ["DisplayCategory"],
   "filter_stack": []
 }
 ```
@@ -112,7 +111,6 @@ Sample payload:
   "template": "CSV avec URL",
   "columns": ["DisplayName", "Url", "Version"],
   "search": "tool",
-  "filter_columns": ["DisplayCategory"],
   "filter_stack": [],
   "alias_map": {}
 }
@@ -251,7 +249,6 @@ base = "http://localhost:5003"
 payload = {
     "name": "PublisherFocus",
     "columns": ["DisplayName", "DisplayPublisher", "Version"],
-    "filter_columns": ["DisplayPublisher"],
     "filter_stack": []
 }
 resp = requests.post(f"{base}/api/profiles", json=payload, timeout=20)
