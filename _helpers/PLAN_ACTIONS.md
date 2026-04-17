@@ -7,7 +7,7 @@ La priorisation des tâches est définie dans `TODO.md` et doit être respectée
 ## Contexte et Lignes Directrices (Héritées du plan de migration)
 
 - **Séparation des rôles** : Garder une séparation claire entre l'outil applicatif (`UnityAssetsManager`) et le pipeline de curation (`_Helpers/04_Assets/AssetsCuration/`).
-- **Nomenclature** : Le nom officiel est `UnityAssetsManager`. Toute ancienne référence (AssetManagerV2, AssetsManagerV2) est dépréciée.
+- **Nomenclature** : Le nom officiel est `UnityAssetsManager`. Toute ancienne référence (AssetManager, AssetManager V1, AssetsManager V2) est dépréciée.
 
 **REGLE D'OR : Toujours proposer d'effectuer les corrections de bugs et les corrections immédiates en premier. Elles sont listées dans les section "Corrections immédiates" et "Bugs" du fichier `TODO.md`.**
 
@@ -43,18 +43,7 @@ Chaque fois qu'une modification est teminée:
 
 ### Migration
 
- MIG3: archiver V1 (`AssetsManager/assetManager.py`) après validation de la chaîne complète V2.
+ MIG3: archiver l'ancien `assetManager.py` après validation de bout en bout de la chaîne raw-first UnityAssetsManager.
 
-- l'équivalence des fonctionnalités a été validée par IA, il rester à tester la chaîne complète de bout en bout pour valider la bascule.
-- ne fermer V1 qu'une fois la chaîne V2 validée de bout en bout.
-
-### Intégration future
-
-- INT1: intégrer le moteur `buildStoreRawNormalized` comme service dans UnityAssetsManager.
-  - préparer l'assemblage raw multi-boutiques dans le projet.
-- INT2: ajouter un provider Unity (SQLite prioritaire, CSV fallback) pour produire `raw_assets_normalized.json`.
-  - prioriser la source locale Unity et conserver un fallback CSV.
-- INT3: ajouter un provider Fab à partir des exports/cache consolidés.
-  - réutiliser le dépôt Fab comme source sans le rapatrier.
-- INT4: ajouter un provider boutiques manuelles via `raw_assets.md`.
-  - permettre une saisie manuelle ponctuelle hors flux automatisé.
+- l'équivalence des fonctionnalités a été validée par IA, il reste à tester la chaîne complète de bout en bout pour valider la bascule.
+- ne clôturer l'ancien AssetManager qu'une fois la chaîne complète validée de bout en bout.

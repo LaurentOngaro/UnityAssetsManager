@@ -36,19 +36,19 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 - [ ] MIG3: Archiver V1 (`AssetsManager/assetManager.py`) après validation de la chaîne complète V2.
 
-### Intégration future (last: INT4) - utilité à questionner
+### Intégration future (last: INT2)
 
-ces points sont à discuter:
-est il interessant d'intégrer ces fonctionnalités directement dans UnityAssetsManager ou vaut-il mieux les garder dans des scripts séparés pour éviter de complexifier l'application principale ?
-
-- [ ] INT1: Intégrer le moteur `buildStoreRawNormalized` comme service dans UnityAssetsManager.
-- [ ] INT2: Ajouter provider Unity (SQLite prioritaire, CSV fallback) pour produire `raw_assets_normalized.json`.
-- [ ] INT3: Ajouter provider Fab à partir des exports/cache consolidés (sans rapatrier FabAssetsManager).
-- [ ] INT4: Ajouter provider boutiques manuelles via `raw_assets.md`.
+- [ ] INT2: Finaliser l'export batch pour générer les 29 fichiers de catégories bruts (profils) dans `assetsExports/Unity/`.
 
 ### Idées à creuser (last: IDEA1) - utilité à questionner
 
 - [ ] IDEA1: Ajouter un mode de filtrage avancé avec des opérateurs logiques (AND/OR) et des plages de valeurs (ex: date range).
+
+### Décision actée Hors Périmètre (Pivot stratégique - UAM reste spécialisé Unity)
+
+- [x] INT1: NE PAS intégrer le moteur `buildStoreRawNormalized`. (Uniformisation gérée par les scripts du pipeline de curation).
+- [x] INT3: NE PAS intégrer de provider Fab. (Géré par FAM - FabAssetsManager).
+- [x] INT4: NE PAS intégrer de provider boutiques manuelles. (Géré par `buildStoreRawNormalized.py`).
 
 ## Terminés
 

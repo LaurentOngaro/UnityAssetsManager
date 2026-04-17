@@ -4,6 +4,12 @@ Version: 1.2.12
 
 Local web application for fast and efficient management of asset inventories (3900+ lines) with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
 
+## 🎯 Périmètre & Intégration TerraBloom
+
+> **Note d'Architecture :** Cet outil est **strictement spécialisé pour les assets Unity Store**. Il sert de point d'entrée "Raw Collecte" pour l'écosystème TerraBloom. Il s'occupe de filtrer la colossale base SQLite/CSV des achats Unity et génère 29 fichiers bruts ciblés.
+> L'uniformisation et la consolidation inter-stores (Fab, Synty, etc.) sont gérées plus bas dans le pipeline par les scripts d'assets curation.
+> **Documentation complète du flux de Curation TerraBloom :** Voir `[[337_Processus - Audit et curation audit des assets]]`.
+
 ## 🚀 Installation
 
 ```powershell
@@ -108,26 +114,6 @@ Search "Unreal" in the bar → Displays only assets containing "Unreal"
 3. Name it (e.g., "WebView")
 4. Later: load the same profile to reuse
 
-## ⚙️ Performance
-
-### Applied Optimizations
-
-- **DataFrame Cache** (1h): No CSV reloading on every request
-- **Server-side DataTables**: Server-side pagination/filtering
-- **Compression**: Automatic GZip
-- **Column Lazy-loading**: Display only selected columns
-
-### Benchmarks (3800 assets, 20 columns)
-
-```
-Operation              V1 (Streamlit)    V2 (Flask)    Gain
----------------------------------------------------------------
-Load interface         5-8s              ~800ms        8-10x
-Search 1000            2-3s              100-150ms     15-20x
-Change page            1-2s              50-100ms      20x
-Full CSV Export        3-4s              300-500ms     10x
-```
-
 ## 🐛 Troubleshooting
 
 ### "ModuleNotFoundError: No module named 'flask'"
@@ -136,118 +122,64 @@ Full CSV Export        3-4s              300-500ms     10x
 pip install -r requirements.txt
 ```
 
-## 🎯 Exemples d'utilisation
-
-### Recherche filtrée
-
-```
-Chercher "Unreal" dans la barre → Affiche seulement les assets contenant "Unreal"
-```
-
-### Export filtré
-
-1. Filtrer à "2000 lignes" avec recherche
-2. Cliquer "Exporter"
-3. Choisir format (JSON, CSV, Markdown, etc)
-4. Télécharger
-
-### Profils
-
-1. Configurer colonnes visibles
-2. Cliquer "Profil" → "Enregistrer profil"
-3. Nommer (ex: "WebView")
-4. Plus tard: charger le même profil pour réutiliser
-
-## ⚙️ Performance
-
-### Optimisations appliquées
-
-- **Cache DataFrame** (1h): Pas de rechargement CSV à chaque requête
-- **DataTables côté serveur**: Pagination/filtrage côté serveur
-- **Compression**: GZip automatique
-- **Lazy-loading colonnes**: Afficher seulement les sélectionnées
-
-### Benchmarks (3800 assets, 20 colonnes)
-
-```
-Opération              V1 (Streamlit)    V2 (Flask)    Gain
----------------------------------------------------------------
-Charger interface      5-8s              ~800ms        8-10x
-Rechercher 1000        2-3s              100-150ms     15-20x
-Changer page           1-2s              50-100ms      20x
-Export CSV complet     3-4s              300-500ms     10x
-```
-
-## 🐛 Troubleshooting
-
-### "ModuleNotFoundError: No module named 'flask'"
-
-```powershell
-pip install -r requirements.txt
-```
-
-### "Fichier source non trouvé"
-
-Configurer `data_path` via `/setup` ou dans `config/config.json`.
-
-### Port 5003 déjà utilisé
+### Port 5003 already in use
 
 ```python
-app.run(port=5004)  # Changer port
+app.run(port=5004)  # Change port
 ```
 
-ou bien modifier `server_port` dans `config/config.json`
+or modify `server_port` in `config/config.json`
 
-### Ne vois pas mes données
+### Cannot see my data
 
-1. Vérifier `data_path` dans `config/config.json`
-2. Cliquer 🔄 Recharger (navbar)
-3. Vérifier la console (F12 → Console)
+1. Check `data_path` in `config/config.json`
+2. Click 🔄 Reload (navbar)
+3. Check the console (F12 → Console)
 
-## 📝 Notes techniques
+## 📝 Technical Notes
 
 ### Stack
 
 - **Backend**: Flask 3.0 (Python)
 - **Frontend**: Bootstrap 5 + DataTables.js (AJAX pagination)
-- **Data**: Pandas (chargement/filtrage CSV/SQLite)
-- **Export**: Templates JSONC configurables (11 formats)
+- **Data**: Pandas (CSV/SQLite loading/filtering)
+- **Export**: Configurable JSONC templates (11 formats)
 
 ### Architecture
 
 ```text
-app.py (point d'entrée Flask)
+app.py (Flask entry point)
 config.py (configuration)
-data_manager.py (chargement CSV/SQLite)
-filters.py (logique de filtrage)
-routes.py (endpoints API)
-utils.py (fonctions utilitaires)
+data_manager.py (CSV/SQLite loading)
+filters.py (filtering logic)
+routes.py (API endpoints)
+utils.py (utility functions)
 
 templates/
 ├── base.html (layout)
-├── setup.html (page config)
-└── index.html (tableau + filter builder)
+├── setup.html (config page)
+└── index.html (table + filter builder)
 
 static/
 ├── css/style.css
 └── js/app.js (DataTables + Ajax)
 
 data/
-└── export_templates.jsonc (11 templates configurables)
+└── export_templates.jsonc (11 configurable templates)
 
 profiles/
-└── *.profile.jsonc (profils V1/V2 compatibles)
+└── *.profile.jsonc (V1/V2 compatible profiles)
 ```
 
-### Documentation technique
+### Technical Documentation
 
-- **Backlog principal**: [`TODO.md`](TODO.md) - Vue priorisée des tâches à faire
-- **Plan d'action**: [`_helpers/PLAN_ACTIONS.md`](./_helpers/PLAN_ACTIONS.md) - Vue détaillée et ordonnée des tâches
-- **Migration V1→V2**: [Migration V1→V2](./_helpers/MIGRATION%20STATE%20V1%20to%20V2%20.md) - Matrice complète, gaps, roadmap
-- **Support SQLite**: [`_helpers/SQLITE_SUPPORT.md`](./_helpers/SQLITE_SUPPORT.md) - Guide SQLite
+- **Main Backlog**: [`TODO.md`](TODO.md) - Prioritized view of tasks to do
+- **Action Plan**: [`_helpers/PLAN_ACTIONS.md`](./_helpers/PLAN_ACTIONS.md) - Detailed and ordered view of tasks
+- **Migration V1→V2**: [Migration V1→V2](./_helpers/MIGRATION%20STATE%20V1%20to%20V2%20.md) - Complete matrix, gaps, roadmap
+- **SQLite Support**: [`_helpers/SQLITE_SUPPORT.md`](./_helpers/SQLITE_SUPPORT.md) - SQLite Guide
 - **Test**: [`tests/test_manual_checklist.py`](./tests/test_manual_checklist.py)
 
-### Validation rapide
+### Rapid Validation
 
 ```powershell
 python -m pytest tests/test_export_non_regression.py -v
@@ -255,9 +187,9 @@ python -m pytest tests/test_manual_checklist.py -v
 python _helpers/bumpImportantVersion.py --scope patch --dry-run
 ```
 
-### Prochaines améliorations
+### Upcoming improvements
 
-Le backlog TODO est centralisé dans [`TODO.md`](TODO.md).
+The TODO backlog is centralized in [`TODO.md`](TODO.md).
 
 ## 📄 License
 
@@ -265,4 +197,4 @@ TerraBloom Project
 
 ## 🤝 Support
 
-Pour les bugs: Créer un issue dans le repo TerraBloom
+For bugs: Create an issue in the TerraBloom repo
