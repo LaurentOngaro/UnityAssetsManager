@@ -2,7 +2,7 @@
 # UnityAssetsManager - filters.py
 # ============================================================================
 # Description: Filtering engine and search logic (filter stacks, tags).
-# Version: 1.2.11
+# Version: 1.2.12
 # ============================================================================
 
 import pandas as pd

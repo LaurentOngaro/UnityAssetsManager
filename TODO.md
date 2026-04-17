@@ -6,7 +6,7 @@
 
 ## Améliorations du projet
 
-Pour plus de détails sur l'implémentation de ces modifications, consulter le fichier `_helpers\PLAN_ACTIONS.md` qui détaille les étapes à suivre pour chaque tâche.
+Pour plus de détails sur l'implémentation de ces modifications, consulter le fichier `_helpers\PLAN_ACTIONS.md` qui détaille les étapes à suivre pour chaque tâche (si besoin).
 
 ### Priorités d'implémentation
 
@@ -22,7 +22,9 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 - [ ] AFF4: mémoriser la dimension des colonnes et la rétablir à l'ouverture suivante
 
-### Features (last: FEAT1)
+### Features (last: FEAT2)
+
+- [ ] FEAT2:  faire du scrapping direct depuis le unity store
 
 ### Renforcement du contrat API (last: API4)
 
@@ -36,6 +38,9 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Intégration future (last: INT4) - utilité à questionner
 
+ces points sont à discuter:
+est il interessant d'intégrer ces fonctionnalités directement dans UnityAssetsManager ou vaut-il mieux les garder dans des scripts séparés pour éviter de complexifier l'application principale ?
+
 - [ ] INT1: Intégrer le moteur `buildStoreRawNormalized` comme service dans UnityAssetsManager.
 - [ ] INT2: Ajouter provider Unity (SQLite prioritaire, CSV fallback) pour produire `raw_assets_normalized.json`.
 - [ ] INT3: Ajouter provider Fab à partir des exports/cache consolidés (sans rapatrier FabAssetsManager).
@@ -43,12 +48,12 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Idées à creuser (last: IDEA1) - utilité à questionner
 
-- [ ] Filtres avancés (date ranges, etc)
-- [ ] Import depuis URL
+- [ ] IDEA1: Ajouter un mode de filtrage avancé avec des opérateurs logiques (AND/OR) et des plages de valeurs (ex: date range).
 
 ## Terminés
 
-- [x] MIG2: Finaliser la dépréciation des flux legacy `assetsCuration/85X_A00_*.json` après migration complète.- [x] AFF3: Reprendre le theme de couleur "sombre" de FabAssetsManager"
+- [x] MIG2: Finaliser la dépréciation des flux legacy `assetsCuration/85X_A00_*.json` après migration complète.
+- [x] AFF3: Reprendre le theme de couleur "sombre" de FabAssetsManager"
 - [x] AFF1: pouvoir Redimensionner les colonnes (au mieux par drag-and-drop sinon via un menu de configuration de l'affichage)
 - [x] AFF2: Popup détail ligne ( manque d'info, qu'est ce que cela signifie ?)
 - [x] API4: Ajouter des endpoints de diagnostic et de configuration (ex: `/api/test`, `/api/config`) pour faciliter l'automatisation.

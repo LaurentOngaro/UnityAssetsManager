@@ -1,6 +1,8 @@
-# PLAN_ACTIONS - UnityAssetsManager
+# PLAN D'ACTIONS
 
-Ce document ordonne et détaille les étapes d'implémentation selon les Groupes définies dans le fichier `TODO.md`.
+Ce document détaille (et décrits les étapes d'implémentation) de certaines des taches présentes dans le fichier `TODO.md`.
+Un regroupement par Sprints peut être envisagé dans ce document, selon le nombre de tâches à implémenter.
+La priorisation des tâches est définie dans `TODO.md` et doit être respectée pour éviter de se disperser sur des points moins urgents.
 
 ## Contexte et Lignes Directrices (Héritées du plan de migration)
 
@@ -19,12 +21,6 @@ Chaque fois qu'une modification est teminée:
   - supprimer la tache de la liste des Groupes
   - déplacer la tache au début de la section "Terminés" à la fin du fichier (ex: `### Terminés`)
 
-## Rattachement rapide des sprints aux TODO
-
-- Sprint P3 - MIG2, MIG3
-- Sprint P4 - AFF3
-- Sprint P5 - INT1, INT2, INT3, INT4
-
 ## TOP Priorités (pour les corrections immédiates)
 
 ### Gestion
@@ -38,6 +34,12 @@ Chaque fois qu'une modification est teminée:
 ### Affichage
 
 ### Features
+
+- [ ] FEAT2:  faire du scrapping direct depuis le unity store
+  - ne plus dépendre de l'export CSV ou de la base de donnée SQL de "Assets inventory"
+  - reprendre la logique de FAM (cad se baser sur un equivalent de `fetch_fab_library.py`) pour contacter le store Unity
+  - voir si le countournement de Cloudflare est nécessaire sur le store Unity
+  - récupérer les données à la volée et gérer avec un cache local pour limiter les appels répétitifs
 
 ### Migration
 
@@ -56,23 +58,3 @@ Chaque fois qu'une modification est teminée:
   - réutiliser le dépôt Fab comme source sans le rapatrier.
 - INT4: ajouter un provider boutiques manuelles via `raw_assets.md`.
   - permettre une saisie manuelle ponctuelle hors flux automatisé.
-
-## Regroupement des taches par Sprints
-
-cete répartition est indicative et peut être ajustée en fonction des dépendances et de l'avancement.
-Elle n'est pas un classement par priorité mais plutôt une organisation thématique pour structurer les sprints.
-
-### Sprint P3 - Validation finale (MIG2, MIG3)
-
-- Action: rejouer pipeline complet (Unity + Fab minimum).
-- Action: valider exports et docs de bascule.
-- Action: preparer deprecation/archivage V1 selon preconditions projet.
-- Definition of done: migration V2 operationnelle, documentee, et exploitable en routine.
-
-### Sprint P5 - Raw-First Providers (INT1, INT2, INT3, INT4)
-
-- Action: Integrer service de normalisation raw multi-boutiques.
-- Action: Prioriser provider Unity (SQLite, fallback CSV).
-- Action: Ajouter provider Fab depuis exports/cache consolides.
-- Action: Ajouter providers stores manuels (`raw_assets.md`).
-- Definition of done: generation pilotable de `raw_assets_normalized.json` pour Unity + Fab + stores manuels.

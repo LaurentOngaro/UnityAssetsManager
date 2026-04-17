@@ -2,7 +2,7 @@
 # UnityAssetsManager - routes.py
 # ============================================================================
 # Description: Web route definitions and API endpoints.
-# Version: 1.2.11
+# Version: 1.2.12
 # ============================================================================
 
 import logging
