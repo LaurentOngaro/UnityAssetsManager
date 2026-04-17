@@ -4,11 +4,11 @@ Version: 1.2.12
 
 Local web application for fast and efficient management of asset inventories (3900+ lines) with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
 
-## 🎯 Périmètre & Intégration TerraBloom
+## 🎯 Scope & Integration TerraBloom
 
-> **Note d'Architecture :** Cet outil est **strictement spécialisé pour les assets Unity Store**. Il sert de point d'entrée "Raw Collecte" pour l'écosystème TerraBloom. Il s'occupe de filtrer la colossale base SQLite/CSV des achats Unity et génère 29 fichiers bruts ciblés.
-> L'uniformisation et la consolidation inter-stores (Fab, Synty, etc.) sont gérées plus bas dans le pipeline par les scripts d'assets curation.
-> **Documentation complète du flux de Curation TerraBloom :** Voir `[[337_Processus - Audit et curation audit des assets]]`.
+> **Architecture Note:** This tool is **strictly specialized for Unity Store assets**. It serves as a “Raw Collection” entry point for the TerraBloom ecosystem. It takes care of filtering the colossal SQLite/CSV database of Unity purchases and generates 29 targeted raw files.
+> Standardization and cross-store consolidation (Fab, Synty, etc.) are managed further down the pipeline by asset curation scripts.
+> **Complete documentation of the TerraBloom Curation flow:** Voir `[[337_Processus - Audit et curation audit des assets]]`.
 
 ## 🚀 Installation
 
