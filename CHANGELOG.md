@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.16] - 2026-04-18
+
+### 🔧 Changed
+
+- Exported Markdown files now receive a H1 title based on the filename before the linting pass.
+- Kept the post-export markdown preparation integrated with the existing `--lint_markdown_results` flow.
+
+## [1.2.15] - 2026-04-18
+
+### 🔧 Changed
+
+- Added the `--lint_markdown_results` / `-l` option to `UnityAssetsManagerExportAllProfiles.py`.
+- Enabled a post-export markdown lint pass by default on the folders that contain exported files.
+- Documented the new lint behavior in `README.md`.
+
 ## [1.2.14] - 2026-04-18
 
 ### 🔧 Changed

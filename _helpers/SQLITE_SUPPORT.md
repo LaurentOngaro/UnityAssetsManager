@@ -1,6 +1,6 @@
 # SQLite Support - UnityAssetsManager
 
-Version: 1.2.14
+Version: 1.2.16
 
 ## 🎯 Feature
 

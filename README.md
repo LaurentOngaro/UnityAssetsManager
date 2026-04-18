@@ -1,6 +1,6 @@
 # 🚀 UnityAssetsManager (UAM)
 
-Version: 1.2.14
+Version: 1.2.16
 
 Local web application for fast and efficient management of asset inventories with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
 
@@ -103,9 +103,13 @@ Main options:
 - `--resume`: continue from the last successful cached profile
 - `--start_index` / `--end_index`: process only a bounded profile range
 - `--workers`: number of parallel export workers
+- `--lint_markdown_results` / `-l`: run `run_linters.bat` on exported folders after the batch completes (enabled by default)
+- `--no-lint_markdown_results`: disable the post-export markdown lint step
 - `--force`: re-export even if output files already exist
 - `--url`: target API base URL (default: `http://localhost:5003/api`)
 - `--no-reload`: skip initial server-side reload step
+
+Before linting, each exported Markdown file receives a top-level title (`# <filename without extension>`).
 
 ## 📊 API & Technical Documentation
 

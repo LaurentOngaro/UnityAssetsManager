@@ -4,19 +4,20 @@
 #              UnityAssetsManager Flask API (/api/batch-export).
 #              Writes raw exports to assetsExports/Unity for later normalization.
 #
-# Version: 1.2.14
+# Version: 1.2.16
 #
 # Requirements:
 #   - UnityAssetsManager server must be running (default: http://localhost:5003)
 #   - python -m pip install requests
 #
 # Parameters:
-#   -r, --resume         : Resume from the last successful profile
-#   -s, --start_index    : Start index in the profile list (1-based)
-#   -e, --end_index      : End index in the profile list (1-based)
-#   -t, --template       : Export template to use (default: table markdown avec URL)
-#   -f, --force          : Force export even if the raw file already exists
-#   --url                : Base URL of the API (default: http://localhost:5003/api)
+#   -r, --resume                : Resume from the last successful profile
+#   -s, --start_index           : Start index in the profile list (1-based)
+#   -e, --end_index             : End index in the profile list (1-based)
+#   -t, --template              : Export template to use (default: table markdown avec URL)
+#   -f, --force                 : Force export even if the raw file already exists
+#   -l, --lint_markdown_results : Run markdown linters on exported folders (default: enabled)
+#   -u, --url                   : Base URL of the API (default: http://localhost:5003/api)
 # ----------------------------------------------------------------------------
 
 import argparse
@@ -24,6 +25,7 @@ import sys
 import json
 import requests
 import concurrent.futures
+import subprocess
 from pathlib import Path
 from datetime import datetime
 
@@ -46,6 +48,11 @@ except ImportError:
         print("Error: vaultConfig.py not found.")
         sys.exit(1)
 
+try:
+    from markdownUtils import format_markdown_path  # type: ignore
+except ImportError:
+    format_markdown_path = None
+
 # Configuration local to UnityAssetsManager
 SCRIPT_DIR = Path(__file__).parent
 # Raw export directory used as input of the normalization step.
@@ -57,6 +64,7 @@ STATE_FILE = CACHE_DIR / "export_state.json"
 DEFAULT_TEMPLATE = "table markdown avec URL"
 DEFAULT_API_URL = "http://localhost:5003/api"
 DEFAULT_WORKERS = 4  # Number of parallel exports
+LINT_BATCH_SCRIPT = Path(r"H:\Sync\Scripts\Windows\04c_dev_scripts\run_linters.bat")
 
 
 def load_state():
@@ -104,6 +112,62 @@ def export_profile(api_url, profile, template, output_file):
         return profile, 0, {"error": {"message": str(e)}}
 
 
+def ensure_markdown_h1(markdown_file: Path):
+    """Prepend a H1 title matching the file stem when it is missing."""
+    if markdown_file.suffix.lower() != ".md" or not markdown_file.exists():
+        return
+
+    heading = f"# {markdown_file.stem}"
+    content = markdown_file.read_text(encoding="utf-8")
+    lines = content.splitlines()
+
+    if lines and lines[0].strip() == heading:
+        return
+
+    if not content:
+        new_content = f"{heading}\n"
+    else:
+        new_content = f"{heading}\n\n{content.lstrip('\r\n')}"
+
+    markdown_file.write_text(new_content, encoding="utf-8")
+
+
+def add_markdown_h1_titles(directories):
+    """Add file-name H1 titles to exported markdown files before linting."""
+    unique_directories = sorted({Path(directory).resolve() for directory in directories})
+    if not unique_directories:
+        return
+
+    for directory in unique_directories:
+        for markdown_file in sorted(directory.rglob("*.md")):
+            cprint(f"📝 Adding title to {markdown_file}", "CYAN")
+            ensure_markdown_h1(markdown_file)
+
+
+def run_markdown_lint(directories):
+    """Format tables and run the markdown lint batch script on each exported directory."""
+    unique_directories = sorted({Path(directory).resolve() for directory in directories})
+    if not unique_directories:
+        return
+
+    add_markdown_h1_titles(unique_directories)
+
+    for directory in unique_directories:
+        # 1. Format tables first (as the batch script doesn't do it)
+        if format_markdown_path:
+            cprint(f"🧹 Formatting markdown tables in {directory}", "CYAN")
+            format_markdown_path(directory)
+
+        # 2. Run the legacy batch script for general linting if available
+        if LINT_BATCH_SCRIPT.exists():
+            cprint(f"🔍 Running additional linters in {directory}", "CYAN")
+            completed = subprocess.run(["cmd", "/c", str(LINT_BATCH_SCRIPT), str(directory)], check=False, )
+            if completed.returncode != 0:
+                cprint(f"⚠️ Markdown lint reported issues (non-blocking) for {directory}", "YELLOW")
+        else:
+            cprint(f"⚠️ External lint script not found: {LINT_BATCH_SCRIPT}", "YELLOW")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Optimized automate asset profile exports via UAM API.")
     parser.add_argument("-r", "--resume", action="store_true", help="Resume from the last successful profile")
@@ -112,7 +176,18 @@ def main():
     parser.add_argument("-t", "--template", default=DEFAULT_TEMPLATE, help=f"Export template (default: {DEFAULT_TEMPLATE})")
     parser.add_argument("-f", "--force", action="store_true", help="Force export even if raw output file already exists")
     parser.add_argument("-w", "--workers", type=int, default=DEFAULT_WORKERS, help=f"Parallel workers (default: {DEFAULT_WORKERS})")
-    parser.add_argument("--url", default=DEFAULT_API_URL, help=f"API Base URL (default: {DEFAULT_API_URL})")
+    parser.add_argument(
+        "-l",
+        "--lint_markdown_results",
+        dest="lint_markdown_results",
+        action="store_true",
+        default=True,
+        help="Run markdown linters on exported folders (default: enabled)"
+    )
+    parser.add_argument(
+        "--no-lint_markdown_results", dest="lint_markdown_results", action="store_false", help="Disable markdown linting on exported folders"
+    )
+    parser.add_argument("-u", "--url", default=DEFAULT_API_URL, help=f"API Base URL (default: {DEFAULT_API_URL})")
     parser.add_argument("--no-reload", action="store_true", help="Skip initial API reload")
 
     args = parser.parse_args()
@@ -178,6 +253,7 @@ def main():
 
     EXPORT_DIR.mkdir(parents=True, exist_ok=True)
     cprint(f"🚀 Processing profiles {start_idx + 1} to {end_idx} using {args.workers} workers", "GREEN", bold=True)
+    exported_directories = {EXPORT_DIR}
 
     # 3. Parallel execution loop
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
@@ -193,19 +269,21 @@ def main():
             if not args.force and output_file.exists():
                 cprint(f"⏩ Skipping {profile}: already exists", "WHITE")
                 save_state(profile, current_global_idx + 1)
+                exported_directories.add(output_file.parent)
                 continue
 
             future = executor.submit(export_profile, api_url, profile, args.template, output_file)
-            future_to_profile[future] = (profile, current_global_idx)
+            future_to_profile[future] = (profile, current_global_idx, output_file.parent)
 
         completed = 0
         for future in concurrent.futures.as_completed(future_to_profile):
             profile, status_code, data = future.result()
-            _, global_idx = future_to_profile[future]
+            _, global_idx, output_directory = future_to_profile[future]
             completed += 1
 
             if status_code == 200 and data.get("status") == "success":
                 save_state(profile, global_idx + 1)
+                exported_directories.add(output_directory)
                 cprint(f"✅ [{completed}/{len(future_to_profile)}] {profile}: Exported ({data.get('count')} rows)", "GREEN")
             else:
                 error_msg = data.get("error", {}).get("message", "Unknown error")
@@ -222,9 +300,9 @@ def main():
     except (Exception):
         pass
 
+    if args.lint_markdown_results:
+        run_markdown_lint(exported_directories)
 
-if __name__ == "__main__":
-    main()
 
 if __name__ == "__main__":
     main()
