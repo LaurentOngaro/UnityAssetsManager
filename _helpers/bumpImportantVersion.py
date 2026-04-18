@@ -88,7 +88,19 @@ def changed_important_files(base_ref: str, repo_root: Path | None) -> list[str]:
     if repo_root is None:
         return []
 
-    rel_paths = [normalize_repo_path(path, repo_root) for path in important_file_paths()]
+    rel_paths: list[str] = []
+    for path in important_file_paths():
+        try:
+            rel_paths.append(normalize_repo_path(path, repo_root))
+        except ValueError:
+            # Some Windows setups can expose different canonical roots for the same
+            # workspace (for example H:\... vs H:\h\...). Ignore those entries
+            # and let --force handle explicit bumps.
+            continue
+
+    if not rel_paths:
+        return []
+
     cmd = ["git", "diff", "--name-only", base_ref, "--", *rel_paths]
     probe = run_git_command(cmd, repo_root)
     if probe.returncode != 0:

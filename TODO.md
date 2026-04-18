@@ -1,8 +1,9 @@
 # TODOs
 
-## Bugs (last: BUG2)
+## Bugs (last: BUG3)
 
 - [ ] BUG2: valeur undefined dans le texte en bas de page: "UnityAssetsManager Flask • undefined / 5059 lignes affichées
+- [ ] BUG3: un clic sur le tri de colonne ne change pas la liste
 
 ## Corrections immédiates (last:CI1)
 
@@ -36,11 +37,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Migration (last: MIG3)
 
-- [ ] MIG3: Archiver V1 (`AssetsManager/assetManager.py`) après validation de la chaîne complète V2.
-
 ### Intégration future (last: INT2)
-
-- [ ] INT2: Finaliser l'export batch pour générer les 29 fichiers de catégories bruts (profils) dans `assetsExports/Unity/`.
 
 ### Idées à creuser (last: IDEA1) - utilité à questionner
 
@@ -54,6 +51,8 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] INT2: Finaliser l'export batch pour générer les fichiers de catégories bruts (profils) dans `assetsExports/Unity/`.
+- [x] MIG3: Archiver V1 (`AssetsManager/assetManager.py`) après validation de la chaîne complète V2.
 - [x] MIG2: Finaliser la dépréciation des flux legacy `assetsCuration/85X_A00_*.json` après migration complète.
 - [x] AFF3: Reprendre le theme de couleur "sombre" de FabAssetsManager"
 - [x] AFF1: pouvoir Redimensionner les colonnes (au mieux par drag-and-drop sinon via un menu de configuration de l'affichage)

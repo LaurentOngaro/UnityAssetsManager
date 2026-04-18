@@ -14,5 +14,5 @@
   "log_output": "console",
   "log_max_bytes": 1048576,
   "log_backup_count": 3,
-  "data_path": "H:\\Sync\\PKM_PROJECTS\\TerraBloom\\_Helpers\\data\\assetsExports\\Unity\\unity_assets_export.csv"
+  "data_path": "L:\\Unity\\AssetInventory\\AssetInventory.db"
 }

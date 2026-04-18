@@ -2,7 +2,7 @@
 # UnityAssetsManager - utils.py
 # ============================================================================
 # Description: Generic utility functions (JSONC, parsing).
-# Version: 1.2.13
+# Version: 1.2.14
 # ============================================================================
 
 import json

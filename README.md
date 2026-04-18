@@ -1,8 +1,8 @@
 # 🚀 UnityAssetsManager (UAM)
 
-Version: 1.2.13
+Version: 1.2.14
 
-Local web application for fast and efficient management of asset inventories (3900+ lines) with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
+Local web application for fast and efficient management of asset inventories with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
 
 ## 🎯 Scope & Integration TerraBloom
 
@@ -37,11 +37,6 @@ The server starts by default on **http://localhost:5003**. This port can be chan
    - JSON
    - Markdown table
 8. **Dark Theme** 🌙: Modern and comfortable interface (aligned with FabAssetsManager).
-
-### Keyboard Shortcuts
-
-- **Ctrl+F**: Browser search (within the displayed page)
-- **Ctrl+C**: Copy the table (from browser)
 
 ## 🔧 Configuration
 
@@ -82,6 +77,35 @@ Runtime logging parameters:
 - `profiles/`: JSON profiles (format: `ProfileName.json`)
 - `exports/`: Exported files
 - `.cache/`: Internal cache (1h TTL)
+
+## 🤖 Batch Export Automation
+
+The script `UnityAssetsManagerExportAllProfiles.py`, automates profile exports via `POST /api/batch-export` and writes raw category files to `assetsExports/Unity/`.
+
+Typical usage:
+
+```powershell
+# Export all profiles (4 workers by default)
+python .\UnityAssetsManagerExportAllProfiles.py
+
+# Resume from the last successful profile
+python .\UnityAssetsManagerExportAllProfiles.py --resume
+
+# Export only a subrange of profiles (1-based indexes)
+python .\UnityAssetsManagerExportAllProfiles.py --start_index 1 --end_index 10
+
+# Force overwrite and use a specific template
+python .\UnityAssetsManagerExportAllProfiles.py --force --template "table markdown avec URL"
+```
+
+Main options:
+
+- `--resume`: continue from the last successful cached profile
+- `--start_index` / `--end_index`: process only a bounded profile range
+- `--workers`: number of parallel export workers
+- `--force`: re-export even if output files already exist
+- `--url`: target API base URL (default: `http://localhost:5003/api`)
+- `--no-reload`: skip initial server-side reload step
 
 ## 📊 API & Technical Documentation
 
