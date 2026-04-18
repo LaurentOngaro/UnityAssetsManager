@@ -1,3 +1,10 @@
+# ============================================================================
+# UnityAssetsManager - tests/test_filters.py
+# ============================================================================
+# Description: Unit tests for the filtering functionality.
+# Version: 1.2.13
+# ============================================================================
+
 import pandas as pd
 from lib.filters import apply_filter_stack, vectorized_tag_filter, is_tag_column
 
