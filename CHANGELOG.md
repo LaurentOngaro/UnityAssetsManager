@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.18] - 2026-04-21
 
+### 🐛 Fixed
+
+- Fixed a bug in the version bump script that was not updating the version in `_helpers/bumpImportantVersion.py`, causing versions to be out of sync between tracked files.
+
 ### 🔧 Changed
 
 - AFF4: the table now persists resized column widths in localStorage and restores them on the next application launch.
