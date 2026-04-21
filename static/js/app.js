@@ -9,6 +9,7 @@
 // Configuration
 const MIN_COL_WIDTH = 150; // Largeur minimum en pixels pour chaque colonne
 const RESIZER_SENSITIVITY = 10; // Zone sensible pour le redimensionnement (pixels)
+const COLUMN_WIDTH_STORAGE_KEY = 'UnityAssetsManager.columnWidths.v1';
 
 let dataTable;
 let assetDetailModal;
@@ -173,6 +174,7 @@ function initializeTable() {
       console.log("[Table] Prête à l'affichage");
       setupRowClickHandlers();
       setupColumnResizing(); // AFF1
+      restoreColumnWidths();
     },
   });
 
@@ -229,6 +231,7 @@ function setupEventHandlers() {
     });
 
     updateDataInfo();
+    restoreColumnWidths();
   });
 
   // Boutons
@@ -1232,9 +1235,66 @@ function createResizableColumn(col, resizer) {
     document.removeEventListener('mousemove', mouseMoveHandler);
     document.removeEventListener('mouseup', mouseUpHandler);
     resizer.classList.remove('resizing');
+    saveColumnWidth(col);
   };
 
   resizer.addEventListener('mousedown', mouseDownHandler);
+}
+
+function getColumnWidthStorage() {
+  try {
+    const raw = window.localStorage.getItem(COLUMN_WIDTH_STORAGE_KEY);
+    if (!raw) {
+      return {};
+    }
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (error) {
+    console.warn('[Columns] Impossible de lire les largeurs sauvegardées', error);
+    return {};
+  }
+}
+
+function saveColumnWidths(map) {
+  try {
+    window.localStorage.setItem(COLUMN_WIDTH_STORAGE_KEY, JSON.stringify(map));
+  } catch (error) {
+    console.warn('[Columns] Impossible de sauvegarder les largeurs', error);
+  }
+}
+
+function saveColumnWidth(col) {
+  const columnName = (col.textContent || '').trim();
+  if (!columnName) {
+    return;
+  }
+
+  const width = Math.max(MIN_COL_WIDTH, Math.round(col.getBoundingClientRect().width));
+  const storedWidths = getColumnWidthStorage();
+  storedWidths[columnName] = width;
+  saveColumnWidths(storedWidths);
+}
+
+function restoreColumnWidths() {
+  const storedWidths = getColumnWidthStorage();
+  const table = document.getElementById('assetsTable');
+  if (!table) return;
+
+  table.querySelectorAll('thead th').forEach((col) => {
+    const columnName = (col.textContent || '').trim();
+    const width = storedWidths[columnName];
+    if (!columnName || !width) {
+      return;
+    }
+
+    const normalizedWidth = Math.max(MIN_COL_WIDTH, parseInt(width, 10) || MIN_COL_WIDTH);
+    col.style.width = `${normalizedWidth}px`;
+    col.style.minWidth = `${normalizedWidth}px`;
+  });
+
+  if (dataTable && dataTable.columns) {
+    dataTable.columns.adjust();
+  }
 }
 
 // ============================================================================

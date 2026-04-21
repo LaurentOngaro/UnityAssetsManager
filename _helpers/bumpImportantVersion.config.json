@@ -9,6 +9,7 @@
     "lib/utils.py",
     "lib/logging_setup.py",
     "static/js/app.js",
+    "static/css/style.css",
     "templates/base.html",
     "templates/index.html",
     "templates/setup.html",

@@ -20,8 +20,6 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Affichage (last: AFF4)
 
-- [ ] AFF4: mémoriser la dimension des colonnes et la rétablir à l'ouverture suivante
-
 ### Features (last: FEAT3)
 
 - [ ] FEAT2:  faire du scrapping direct depuis le unity store
@@ -48,6 +46,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] AFF4: mémoriser la dimension des colonnes et la rétablir à l'ouverture suivante
 - [x] BUG4: lorsque qu'un profil est chargé, l'application du filtre échoue silencieusement et la liste n'est pas filtrée (route api_data ignorait filter_stack)
 - [x] FEAT3: ajouter une gestion des alias de colonnes (par ex: "URL" et "AssetLink" peuvent être utilisés indépendamment, principalement dans les template d'export ou bien dans les filtres)
 - [x] BUG3: un clic sur le tri de colonne ne change pas la liste

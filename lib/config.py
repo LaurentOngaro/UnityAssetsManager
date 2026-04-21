@@ -2,7 +2,7 @@
 # UnityAssetsManager - config.py
 # ============================================================================
 # Description: Runtime configuration and export template management.
-# Version: 1.2.17
+# Version: 1.2.18
 # ============================================================================
 
 import logging

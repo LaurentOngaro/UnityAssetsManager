@@ -1,6 +1,6 @@
 # API Guide - UnityAssetsManager
 
-**Version:** 1.2.17
+**Version:** 1.2.18
 
 ## Overview
 
