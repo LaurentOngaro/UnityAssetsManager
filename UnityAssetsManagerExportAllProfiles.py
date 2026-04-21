@@ -4,7 +4,7 @@
 #              UnityAssetsManager Flask API (/api/batch-export).
 #              Writes raw exports to assetsExports/Unity for later normalization.
 #
-# Version: 1.2.16
+# Version: 1.2.17
 #
 # Requirements:
 #   - UnityAssetsManager server must be running (default: http://localhost:5003)
@@ -48,10 +48,11 @@ except ImportError:
         print("Error: vaultConfig.py not found.")
         sys.exit(1)
 
-try:
-    from markdownUtils import format_markdown_path  # type: ignore
-except ImportError:
-    format_markdown_path = None
+# not used anymore because run_linters.bat now includes markdown-table-formatter in its flow, so it formats tables as well.
+# try:
+#     from markdownUtils import format_markdown_path  # type: ignore
+# except ImportError:
+#     format_markdown_path = None
 
 # Configuration local to UnityAssetsManager
 SCRIPT_DIR = Path(__file__).parent
@@ -154,9 +155,10 @@ def run_markdown_lint(directories):
 
     for directory in unique_directories:
         # 1. Format tables first (as the batch script doesn't do it)
-        if format_markdown_path:
-            cprint(f"🧹 Formatting markdown tables in {directory}", "CYAN")
-            format_markdown_path(directory)
+        # not used anymore because run_linters.bat now includes markdown-table-formatter in its flow, so it formats tables as well.
+        # if format_markdown_path:
+        #     cprint(f"🧹 Formatting markdown tables in {directory}", "CYAN")
+        #     format_markdown_path(directory)
 
         # 2. Run the legacy batch script for general linting if available
         if LINT_BATCH_SCRIPT.exists():

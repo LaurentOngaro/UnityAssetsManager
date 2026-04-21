@@ -2,7 +2,7 @@
 # UnityAssetsManager - routes.py
 # ============================================================================
 # Description: Web route definitions and API endpoints.
-# Version: 1.2.16
+# Version: 1.2.17
 # ============================================================================
 
 import logging
@@ -176,20 +176,51 @@ def api_data():
     length = int(request.args.get('length', config.default_page_size))
     search_value = request.args.get('search[value]', '')
     profile_name = request.args.get('profile', '')
+    filter_stack_str = request.args.get('filter_stack')
+    alias_map_str = request.args.get('alias_map')
 
     filtered_df = df
     alias_map = {}
+    filter_stack = []
 
-    if profile_name:
+    if filter_stack_str:
+        import json
+        try:
+            filter_stack = json.loads(filter_stack_str)
+        except Exception:
+            pass
+
+    if alias_map_str:
+        import json
+        try:
+            alias_map = json.loads(alias_map_str)
+        except Exception:
+            pass
+
+    if profile_name and not filter_stack:
         profile = load_profile(profile_name)
         if profile:
             filter_stack = profile.get('filter_stack', [])
             alias_map = _build_alias_map_from_profile(profile)
-            filtered_df = apply_filter_stack(df, filter_stack, alias_map)
+
+    if filter_stack:
+        filtered_df = apply_filter_stack(df, filter_stack, alias_map)
 
     if search_value:
         search_mask = filtered_df.astype(str).apply(lambda row: row.str.contains(search_value, case=False, na=False).any(), axis=1)
         filtered_df = filtered_df[search_mask]
+
+    # Handle sorting
+    order_col_idx = request.args.get('order[0][column]')
+    order_dir = request.args.get('order[0][dir]')
+
+    if order_col_idx is not None and order_dir in ['asc', 'desc']:
+        col_name_key = f'columns[{order_col_idx}][data]'
+        col_name = request.args.get(col_name_key)
+
+        if col_name and col_name in filtered_df.columns:
+            ascending = order_dir == 'asc'
+            filtered_df = filtered_df.sort_values(by=col_name, ascending=ascending)
 
     records_total = len(df)
     records_filtered = len(filtered_df)
@@ -250,6 +281,7 @@ def api_export():
         raise AppError(ErrorCode.DATA_NOT_FOUND, "Aucune donnee a exporter", 404)
 
     filtered_df = df
+    alias_map = data.get('alias_map', {})
     if profile_name:
         profile = load_profile(profile_name)
         if profile:
@@ -259,7 +291,7 @@ def api_export():
 
     try:
         if template_name:
-            export_content = config.apply_export_template(filtered_df, template_name)
+            export_content = config.apply_export_template(filtered_df, template_name, alias_map)
             ext, mimetype = config.detect_export_format(template_name)
             filename = f"export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{ext}"
             return send_file(BytesIO(export_content.encode('utf-8')), mimetype=mimetype, as_attachment=True, download_name=filename)
@@ -466,7 +498,7 @@ def api_batch_export():
     filtered_df = apply_filter_stack(df, filter_stack, alias_map)
 
     try:
-        export_content = config.apply_export_template(filtered_df, template_name)
+        export_content = config.apply_export_template(filtered_df, template_name, alias_map)
         ext, _ = config.detect_export_format(template_name)
 
         if output_path:

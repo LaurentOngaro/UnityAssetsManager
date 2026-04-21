@@ -2,7 +2,7 @@
 # UnityAssetsManager - config.py
 # ============================================================================
 # Description: Runtime configuration and export template management.
-# Version: 1.2.16
+# Version: 1.2.17
 # ============================================================================
 
 import logging
@@ -133,7 +133,10 @@ class AppConfig:
         else:
             return DEFAULT_EXPORT_TEMPLATES
 
-    def apply_export_template(self, df: pd.DataFrame, template_name: str) -> str:
+    def apply_export_template(self, df: pd.DataFrame, template_name: str, alias_map: dict = None) -> str:
+        if alias_map is None:
+            alias_map = {}
+
         if not self.export_templates:
             raise ValueError("Aucun template d'export disponible")
 
@@ -151,7 +154,20 @@ class AppConfig:
             return json.dumps({"assets": data_list}, indent=2, ensure_ascii=False)
 
         column_placeholders = re.findall(r'%([^%]+)%', pattern)
-        used_columns = [col for col in column_placeholders if col in df.columns]
+
+        placeholder_to_col = {}
+        used_columns = []
+        for ph in column_placeholders:
+            actual_col = ph
+            if ph not in df.columns:
+                if ph in alias_map and alias_map[ph] in df.columns:
+                    actual_col = alias_map[ph]
+                elif ph.lower() in alias_map and alias_map[ph.lower()] in df.columns:
+                    actual_col = alias_map[ph.lower()]
+
+            if actual_col in df.columns:
+                placeholder_to_col[ph] = actual_col
+                used_columns.append(ph)
 
         header_lines = []
         is_markdown_table = '|' in pattern and '{' not in pattern
@@ -173,9 +189,9 @@ class AppConfig:
         lines = []
         for _, row in df.iterrows():
             line = pattern
-            for col in df.columns:
-                placeholder = f"%{col}%"
-                value = str(row[col]) if pd.notna(row[col]) else ""
+            for ph, actual_col in placeholder_to_col.items():
+                placeholder = f"%{ph}%"
+                value = str(row[actual_col]) if pd.notna(row[actual_col]) else ""
                 if is_markdown_table and '|' in value:
                     value = value.replace('|', '-')
                 line = line.replace(placeholder, value)

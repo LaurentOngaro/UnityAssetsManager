@@ -1107,7 +1107,7 @@ function reloadData() {
 function updateDataInfo() {
   const info = dataTable.page.info();
   if (info) {
-    const msg = `${info.recordsFiltered} / ${info.recordsTotal} lignes affichées`;
+    const msg = `${info.recordsDisplay} / ${info.recordsTotal} lignes affichées`;
     $('#dataInfo').text(msg);
   }
 }

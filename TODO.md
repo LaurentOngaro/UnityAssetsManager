@@ -1,9 +1,6 @@
 # TODOs
 
-## Bugs (last: BUG3)
-
-- [ ] BUG2: valeur undefined dans le texte en bas de page: "UnityAssetsManager Flask • undefined / 5059 lignes affichées
-- [ ] BUG3: un clic sur le tri de colonne ne change pas la liste
+## Bugs (last: BUG4)
 
 ## Corrections immédiates (last:CI1)
 
@@ -25,7 +22,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 - [ ] AFF4: mémoriser la dimension des colonnes et la rétablir à l'ouverture suivante
 
-### Features (last: FEAT2)
+### Features (last: FEAT3)
 
 - [ ] FEAT2:  faire du scrapping direct depuis le unity store
 
@@ -51,6 +48,10 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] BUG4: lorsque qu'un profil est chargé, l'application du filtre échoue silencieusement et la liste n'est pas filtrée (route api_data ignorait filter_stack)
+- [x] FEAT3: ajouter une gestion des alias de colonnes (par ex: "URL" et "AssetLink" peuvent être utilisés indépendamment, principalement dans les template d'export ou bien dans les filtres)
+- [x] BUG3: un clic sur le tri de colonne ne change pas la liste
+- [x] BUG2: valeur undefined dans le texte en bas de page: "UnityAssetsManager Flask • undefined / 5059 lignes affichées
 - [x] INT2: Finaliser l'export batch pour générer les fichiers de catégories bruts (profils) dans `assetsExports/Unity/`.
 - [x] MIG3: Archiver V1 (`AssetsManager/assetManager.py`) après validation de la chaîne complète V2.
 - [x] MIG2: Finaliser la dépréciation des flux legacy `assetsCuration/85X_A00_*.json` après migration complète.
