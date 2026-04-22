@@ -6,15 +6,16 @@
    ============================================================================ */
 
 :root {
-  --primary-color: #01a9af;
-  --bg-color: #0e0e1d;
-  --secondary-bg-color: #2f054b;
-  --text-color: #9bebe7;
+  --primary-color: #1db7b2;
+  --bg-color: #0a1020;
+  --secondary-bg-color: #141f3b;
+  --text-color: #d1e6ff;
   --success-color: #198754;
   --warning-color: #ffc107;
   --danger-color: #dc3545;
-  --light-gray: #2f054b;
-  --border-color: #4a1d70;
+  --light-gray: #19274a;
+  --border-color: #24406f;
+  --accent-bg: #102646;
   --resizer-width: 10px; /* Zone sensible pour le redimensionnement */
 }
 
@@ -40,7 +41,7 @@
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Segoe UI', 'Trebuchet MS', Tahoma, sans-serif;
 }
 
 .container-fluid {
@@ -60,14 +61,15 @@ body {
 
 /* Cards */
 .card {
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
   border: 1px solid var(--border-color);
+  border-radius: 10px;
 }
 
 .card-header {
   font-weight: 600;
-  border-bottom: 2px solid rgb(8, 238, 238);
-  font-variant: small-caps;
+  border-bottom: 1px solid rgba(29, 183, 178, 0.4);
+  letter-spacing: 0.02em;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -86,12 +88,13 @@ body {
 
 .sub-panel {
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: 8px;
   margin-bottom: 1rem;
+  background-color: rgba(16, 38, 70, 0.5);
 }
 
 .sub-panel-header {
-  background-color: rgba(1, 169, 175, 0.1);
+  background-color: rgba(29, 183, 178, 0.12);
   padding: 0.5rem 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -113,14 +116,34 @@ body {
   padding: 1rem;
 }
 
+.profile-inline-row .form-control-sm,
+.profile-inline-row .form-select-sm {
+  min-height: 34px;
+}
+
 .pagination-top {
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1rem;
-  background-color: var(--secondary-bg-color);
+  background-color: rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* PAG2: Menu de longueur (le "Afficher 25/50...") */
+.dataTables_length {
+  margin-bottom: 0 !important;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.dataTables_length select {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
   border-radius: 4px;
+  padding: 2px 5px;
+  margin: 0 5px;
 }
 
 #columnFilterInput {
@@ -279,9 +302,16 @@ body {
 
 /* Buttons */
 .btn {
-  border-radius: 5px;
+  border-radius: 8px;
   font-weight: 500;
   padding: 0.5rem 1rem;
+}
+
+.btn-uam {
+  min-height: 34px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.01em;
 }
 
 .btn-primary {
@@ -290,8 +320,8 @@ body {
 }
 
 .btn-primary:hover {
-  background-color: #018a8f;
-  border-color: #018a8f;
+  background-color: #179994;
+  border-color: #179994;
 }
 
 .btn-sm {
@@ -339,8 +369,12 @@ body {
 }
 
 .alert-info {
-  background-color: rgba(1, 169, 175, 0.2);
+  background-color: rgba(29, 183, 178, 0.2);
   color: var(--text-color);
+}
+
+#columnActions .btn {
+  text-align: left;
 }
 
 .alert-success {

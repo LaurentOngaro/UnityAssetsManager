@@ -18,6 +18,7 @@ let currentColumns = [];
 let currentFilterStack = [];
 let currentAliasMap = {};
 let currentProfileName = null; // Nom du profil actif
+let currentProfileColumns = [];
 let exportModal; // Modal export
 let profileModal = null; // Obsolète depuis Sprint 2 (intégré dans le panel)
 let loadedTemplates = []; // Templates d'export chargés depuis le serveur
@@ -142,6 +143,71 @@ function setupColumnFilter() {
   });
 }
 
+function normalizeColumnName(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function dedupeColumns(columns) {
+  const seen = new Set();
+  const result = [];
+
+  (columns || []).forEach(function (col) {
+    const key = normalizeColumnName(col);
+    if (!key || seen.has(key)) {
+      return;
+    }
+    seen.add(key);
+    result.push(col);
+  });
+
+  return result;
+}
+
+function resolveExistingColumns(columns) {
+  const byNormalizedName = new Map();
+  currentColumns.forEach(function (col) {
+    byNormalizedName.set(normalizeColumnName(col), col);
+  });
+
+  const resolved = [];
+  (columns || []).forEach(function (col) {
+    const mapped = byNormalizedName.get(normalizeColumnName(col));
+    if (mapped) {
+      resolved.push(mapped);
+    }
+  });
+
+  return dedupeColumns(resolved);
+}
+
+function applyColumnSelection(columns) {
+  const selected = dedupeColumns(resolveExistingColumns(columns));
+  $('#columnSelector').val(selected).trigger('change');
+}
+
+function getMinimumColumnsSelection() {
+  const byNormalizedName = new Map();
+  currentColumns.forEach(function (col) {
+    byNormalizedName.set(normalizeColumnName(col), col);
+  });
+
+  const minimum = [];
+  const displayName = byNormalizedName.get('displayname');
+  if (displayName) {
+    minimum.push(displayName);
+  }
+
+  const urlColumn = byNormalizedName.get('url') || byNormalizedName.get('assetlink');
+  const slugColumn = byNormalizedName.get('slug');
+  if (urlColumn) {
+    minimum.push(urlColumn);
+  } else if (slugColumn) {
+    minimum.push(slugColumn);
+  }
+
+  return dedupeColumns(minimum);
+}
+
 function initializeTable() {
   console.log('[Table] Initialisation DataTables...');
 
@@ -176,6 +242,7 @@ function initializeTable() {
     lengthMenu: [25, 50, 100, 250],
     order: [],
     columns: columnDefs,
+    dom: 'rt', // On cache les contrôles natifs de DataTables pour utiliser nos zones personnalisées
 
     ajax: {
       url: '/api/data',
@@ -210,6 +277,11 @@ function initializeTable() {
       url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json',
     },
 
+    drawCallback: function(settings) {
+      console.log('[Table] drawCallback');
+      updateDataInfo();
+    },
+
     initComplete: function () {
       console.log("[Table] Prête à l'affichage");
       setupRowClickHandlers();
@@ -221,6 +293,7 @@ function initializeTable() {
   // Re-attacher les handlers après chaque dessin (pour la pagination)
   dataTable.on('draw', function () {
     setupRowClickHandlers();
+    // updateDataInfo(); // Retiré car géré par drawCallback
   });
 }
 
@@ -258,6 +331,49 @@ function setupEventHandlers() {
     }
   });
 
+  $('#btnColumnsShowAll').on('click', function () {
+    applyColumnSelection(currentColumns);
+    showAlert('Toutes les colonnes sont affichées', 'info');
+  });
+
+  $('#btnColumnsShowProfile').on('click', function () {
+    if (!currentProfileName || !currentProfileColumns.length) {
+      showAlert('Aucun profil actif chargé', 'warning');
+      return;
+    }
+
+    const resolved = resolveExistingColumns(currentProfileColumns);
+    if (!resolved.length) {
+      showAlert('Le profil actif ne contient aucune colonne valide pour cette source', 'warning');
+      return;
+    }
+
+    applyColumnSelection(resolved);
+    showAlert(`Colonnes du profil actif affichées (${resolved.length})`, 'success');
+  });
+
+  $('#btnColumnsShowMinimum').on('click', function () {
+    const minimum = getMinimumColumnsSelection();
+    if (!minimum.length) {
+      showAlert('Impossible de trouver DisplayName et Url/Slug dans la source', 'warning');
+      return;
+    }
+
+    applyColumnSelection(minimum);
+    showAlert(`Sélection minimale appliquée (${minimum.join(', ')})`, 'info');
+  });
+
+  $('#btnColumnsInvert').on('click', function () {
+    const selectedCols = $('#columnSelector').val() || [];
+    const selectedSet = new Set(selectedCols.map(normalizeColumnName));
+    const inverted = currentColumns.filter(function (col) {
+      return !selectedSet.has(normalizeColumnName(col));
+    });
+
+    applyColumnSelection(inverted);
+    showAlert('Sélection de colonnes inversée', 'info');
+  });
+
   // Sélection des colonnes - Utiliser la visibilité native de DataTables
   $('#columnSelector').on('change', function () {
     console.log('[Columns] Changement des colonnes');
@@ -269,7 +385,7 @@ function setupEventHandlers() {
       if (!header) return;
 
       const colName = header.textContent.trim();
-      const shouldShow = selectedCols.length === 0 || selectedCols.includes(colName);
+      const shouldShow = selectedCols.includes(colName);
       this.visible(shouldShow);
     });
 
@@ -738,9 +854,14 @@ function loadProfile() {
     success: function (profile) {
       currentProfileName = name;
 
-      if (profile.columns && Array.isArray(profile.columns)) {
-        $('#columnSelector').val(profile.columns).change();
-        showAlert(`Profil "${profile.name || name}" chargé (${profile.columns.length} colonnes)`, 'success');
+      const profileColumns = Array.isArray(profile.columns) && profile.columns.length
+        ? profile.columns
+        : (profile.column_profile && Array.isArray(profile.column_profile.cols) ? profile.column_profile.cols : []);
+      currentProfileColumns = dedupeColumns(profileColumns);
+
+      if (currentProfileColumns.length > 0) {
+        applyColumnSelection(currentProfileColumns);
+        showAlert(`Profil "${profile.name || name}" chargé (${currentProfileColumns.length} colonnes)`, 'success');
       }
 
       currentFilterStack = profile.filter_stack || [];
@@ -1105,11 +1226,12 @@ function getVisibleColumns() {
 function resetFilters() {
   console.log('[Filters] Réinitialisation');
   $('#searchInput').val('');
-  $('#columnSelector').val(currentColumns).change();
+  applyColumnSelection(currentColumns);
 
   // vider les filtres personnalisés
   currentFilterStack = [];
   currentProfileName = null; // Réinitialiser le profil actif
+  currentProfileColumns = [];
   currentAliasMap = {};
   $('#filterStackEditor').val('[]');
 
@@ -1138,44 +1260,84 @@ function reloadData() {
 function updateDataInfo() {
   const info = dataTable ? dataTable.page.info() : null;
   if (info) {
-    const msg = `Affichage de ${info.start + 1} à ${info.start + info.length} sur ${info.recordsDisplay} entrées`;
+    let msg = `Affichage de ${info.start + 1} à ${info.start + info.length} sur ${info.recordsDisplay} entrées`;
     if (info.recordsDisplay !== info.recordsTotal) {
       msg += ` (filtré sur ${info.recordsTotal} entrées totales)`;
     }
 
-    // Mettre à jour zone native (si visible)
+    // Mettre à jour les zones d'info (haut et bas)
+    $('#paginationInfoTop').text(msg);
     $('#dataInfo').text(msg);
 
-    // Mettre à jour zone dupliquée en haut
-    $('#paginationInfoTop').text(msg);
-
-    // Dupliquer les contrôles de pagination
-    syncPaginationControls();
+    // Mettre à jour les contrôles (pagination et select)
+    renderCustomControls(info);
   }
 }
 
-function syncPaginationControls() {
-  // Cloner les boutons de pagination vers le haut
-  const $src = $('.dataTables_paginate').first();
-  const $dst = $('#paginationControlsTop');
+/**
+ * Génère manuellement les contrôles HTML (évite le clonage instable)
+ */
+function renderCustomControls(info) {
+  const $dstPagTop = $('#paginationControlsTop');
+  const $dstPagBot = $('#paginationControlsBottom');
+  const $dstLenTop = $('#paginationLengthTop');
+  const $dstLenBot = $('#paginationLengthBottom');
 
-  if ($src.length && $dst.length) {
-    $dst.html($src.html());
+  // 1. Générer le sélecteur de longueur
+  const lengthOptions = [25, 50, 100, 250];
+  let selectHtml = '<div class="dataTables_length"><label>Afficher <select class="form-select form-select-sm d-inline-block w-auto mx-1">';
+  lengthOptions.forEach(opt => {
+    selectHtml += `<option value="${opt}" ${opt === info.length ? 'selected' : ''}>${opt}</option>`;
+  });
+  selectHtml += '</select> entrées</label></div>';
 
-    // Récâbler les clics
-    $dst.find('.paginate_button').on('click', function(e) {
-      e.preventDefault();
-      if ($(this).hasClass('disabled') || $(this).hasClass('current')) return;
+  $dstLenTop.html(selectHtml);
+  $dstLenBot.html(selectHtml);
 
-      const btnText = $(this).text();
-      if (btnText === 'Précédent') dataTable.page('previous').draw('page');
-      else if (btnText === 'Suivant') dataTable.page('next').draw('page');
-      else {
-        const pageNum = parseInt(btnText) - 1;
-        if (!isNaN(pageNum)) dataTable.page(pageNum).draw('page');
-      }
-    });
+  // Événements pour le select
+  $('.dataTables_length select').on('change', function() {
+    dataTable.page.len($(this).val()).draw();
+  });
+
+  // 2. Générer la pagination
+  const totalPages = Math.ceil(info.recordsDisplay / info.length);
+  const currentPage = info.page;
+
+  let pagHtml = '<ul class="pagination pagination-sm mb-0">';
+
+  // Bouton Précédent
+  pagHtml += `<li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="prev">Précédente</a>
+              </li>`;
+
+  // Pages (affichage intelligent : début, fin et entourage page courante)
+  for (let i = 0; i < totalPages; i++) {
+    if (i === 0 || i === totalPages - 1 || (i >= currentPage - 2 && i <= currentPage + 2)) {
+      pagHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link py-1 px-2" href="#" data-page="${i}">${i + 1}</a>
+                  </li>`;
+    } else if (i === 1 || i === totalPages - 2) {
+      pagHtml += `<li class="page-item disabled"><span class="page-link py-1 px-2">...</span></li>`;
+    }
   }
+
+  // Bouton Suivant
+  pagHtml += `<li class="page-item ${currentPage >= totalPages - 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="next">Suivante</a>
+              </li>`;
+  pagHtml += '</ul>';
+
+  $dstPagTop.html(pagHtml);
+  $dstPagBot.html(pagHtml);
+
+  // Événements pour la pagination
+  $('.page-link').on('click', function(e) {
+    e.preventDefault();
+    const target = $(this).data('page');
+    if (target === 'prev') dataTable.page('previous').draw('page');
+    else if (target === 'next') dataTable.page('next').draw('page');
+    else dataTable.page(parseInt(target)).draw('page');
+  });
 }
 
 function showAlert(message, type = 'info') {

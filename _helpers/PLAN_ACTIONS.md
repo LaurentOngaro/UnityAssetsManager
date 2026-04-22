@@ -44,6 +44,12 @@ Règle de pilotage:
 - Stabiliser la hiérarchie finale de l'UI avant d'ajouter d'autres fonctionnalités.
 - Fix: TypeError reading style during column visibility change.
 
+### Sprint 2.1 - DONE [AFF11/AFF12/AFF13] Finition ergonomie et cohérence visuelle
+
+- AFF11: zone colonnes revue avec actions rapides (`Afficher tous`, `Afficher profil`, `Afficher minimum`, `Inverser`).
+- AFF12: zone profils compactée sur une seule ligne avec champs réduits et boutons alignés à droite.
+- AFF13: design unifié (titres de sous-sections allégés, boutons harmonisés, thème visuel cohérent).
+
 ### Sprint 3 - [REF4/REF2/API4/API3] Consolidation technique
 
 - Garder le contrat d'API stable pendant la refonte de l'interface.

@@ -18,20 +18,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Pagination (last: PAG1)
 
-### Affichage (last: AFF10)
-
-- [ ] AFF11: dans la zone "colonnes à afficher":
-  - diminuer la largeur de la liste et afficher à droite une zone contenant les boutons suivants:
-    - "Afficher tous" :affiche tous les champs disponibles dans la source de données
-    - "Afficher profil" :affiche uniquement les champs définis dans le champs "column_profile" du profil actif
-    - "Afficher minimum" :RAZ la selection et conserve uniquement displayname et url (ou slug si url indisponible)
-    - "Inverser" :inverse la selection
-- [ ] AFF12: dans la zone "Profils":
-  - [ ] diminuer la taille des 2 zones de texte et mettre tous les boutons sur la droite, le tout sur une ligne (au lieu de 2 actuellement)
-- [ ] AFF13: améliorer le design général
-  - apliquer un theme et un design cohérent
-  - enlever les icones dans les titre des sous sections (ex: "Recherche", "Colonnes à afficher", "Profils") pour alléger le design
-  - uniformiser la taille et le design des boutons car quasiement TOUS les boutons sont différents(sauf cas particulier tel que supprimer que reste en rouge)
+### Affichage (last: AFF13)
 
 #### part 1: réorganisation de l'UI: ajouter de la cohérence, de la lisibilité et permettre de reduire les sections pour se concentrer sur l'essentiel
 
@@ -57,6 +44,18 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] AFF13: améliorer le design général
+  - apliquer un theme et un design cohérent
+  - enlever les icones dans les titre des sous sections (ex: "Recherche", "Colonnes à afficher", "Profils") pour alléger le design
+  - uniformiser la taille et le design des boutons car quasiement TOUS les boutons sont différents(sauf cas particulier tel que supprimer que reste en rouge)
+- [x] AFF12: dans la zone "Profils":
+  - [x] diminuer la taille des 2 zones de texte et mettre tous les boutons sur la droite, le tout sur une ligne (au lieu de 2 actuellement)
+- [x] AFF11: dans la zone "colonnes à afficher":
+  - diminuer la largeur de la liste et afficher à droite une zone contenant les boutons suivants:
+    - "Afficher tous" :affiche tous les champs disponibles dans la source de données
+    - "Afficher profil" :affiche uniquement les champs définis dans le champs "column_profile" du profil actif
+    - "Afficher minimum" :RAZ la selection et conserve uniquement displayname et url (ou slug si url indisponible)
+    - "Inverser" :inverse la selection
 - [x] PAG2: deplacer le selecteur du nombre d'assets par page (ex "Afficher 50 entrées") à gauche de la zone de pagination (cad à gauche du texte "Affichage de 1 à 50 sur 5 898 entrées")
 - [x] PAG1: mettre un doublon de la zone de pagination en haut de la liste (incluant le texte "Affichage de 1 à 50 sur 5 898 entrées" )
 - [x] AFF8: rendre les zone "Controles" et "Données" collapsable

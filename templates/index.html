@@ -3,7 +3,7 @@
 UnityAssetsManager - templates/index.html
 ============================================================================
 Description: Main inventory management interface template.
-Version: 1.3.0
+Version: 1.3.1
 ============================================================================
 -->
 {% extends "base.html" %} {% block content %}
@@ -40,7 +40,7 @@ Version: 1.3.0
         <div class="col-md-12">
           <div class="sub-panel">
             <div class="sub-panel-header" data-bs-toggle="collapse" data-bs-target="#searchCollapse">
-              <span>🔍 Recherche</span>
+              <span>Recherche</span>
               <span class="collapse-icon"></span>
             </div>
             <div id="searchCollapse" class="collapse show">
@@ -49,7 +49,7 @@ Version: 1.3.0
                   <div class="col-md-8">
                     <div class="input-group">
                       <input type="text" class="form-control" id="searchInput" placeholder="Chercher dans toutes les colonnes..." />
-                      <button class="btn btn-primary" id="btnSearch" type="button">Chercher</button>
+                      <button class="btn btn-primary btn-uam" id="btnSearch" type="button">Chercher</button>
                     </div>
                   </div>
                   <div class="col-md-4">
@@ -68,18 +68,30 @@ Version: 1.3.0
         <div class="col-md-12">
           <div class="sub-panel">
             <div class="sub-panel-header" data-bs-toggle="collapse" data-bs-target="#columnsCollapse">
-              <span>📋 Colonnes à afficher</span>
+              <span>Colonnes à afficher</span>
               <span class="collapse-icon"></span>
             </div>
             <div id="columnsCollapse" class="collapse">
               <div class="sub-panel-body">
                 <input type="text" id="columnFilterInput" class="form-control form-control-sm mb-2" placeholder="Filtrer les noms de colonnes..." />
-                <select multiple class="form-select" id="columnSelector" size="5">
-                  {% for col in columns %}
-                  <option value="{{ col }}" selected>{{ col }}</option>
-                  {% endfor %}
-                </select>
-                <small class="text-muted">Ctrl+Click pour sélectionner plusieurs</small>
+                <div class="row g-2 align-items-start">
+                  <div class="col-lg-8">
+                    <select multiple class="form-select" id="columnSelector" size="7">
+                      {% for col in columns %}
+                      <option value="{{ col }}" selected>{{ col }}</option>
+                      {% endfor %}
+                    </select>
+                    <small class="text-muted">Ctrl+Click pour sélectionner plusieurs</small>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="d-grid gap-2" id="columnActions">
+                      <button class="btn btn-outline-info btn-uam" id="btnColumnsShowAll" type="button">Afficher tous</button>
+                      <button class="btn btn-outline-info btn-uam" id="btnColumnsShowProfile" type="button">Afficher profil</button>
+                      <button class="btn btn-outline-info btn-uam" id="btnColumnsShowMinimum" type="button">Afficher minimum</button>
+                      <button class="btn btn-outline-info btn-uam" id="btnColumnsInvert" type="button">Inverser</button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -89,7 +101,7 @@ Version: 1.3.0
         <div class="col-md-12">
           <div class="sub-panel">
             <div class="sub-panel-header" data-bs-toggle="collapse" data-bs-target="#filteringCollapse">
-              <span>🧱 Filtrage & Profils</span>
+              <span>Filtrage & Profils</span>
               <span class="collapse-icon"></span>
             </div>
             <div id="filteringCollapse" class="collapse show">
@@ -146,8 +158,8 @@ Version: 1.3.0
                     <div id="filterBuilderValues" style="display: none"></div>
                   </div>
                   <div class="mt-2">
-                    <button class="btn btn-sm btn-success" id="btnAddFilter">+ Ajouter</button>
-                    <button class="btn btn-sm btn-outline-warning" id="btnClearAllFilters">Vider</button>
+                    <button class="btn btn-sm btn-success btn-uam" id="btnAddFilter">+ Ajouter</button>
+                    <button class="btn btn-sm btn-outline-warning btn-uam" id="btnClearAllFilters">Vider</button>
                   </div>
                   <div class="mt-3" id="filterBuilderList"></div>
                 </div>
@@ -155,9 +167,9 @@ Version: 1.3.0
                 <!-- Profils -->
                 <div class="mb-4 p-3 bg-dark rounded border border-secondary">
                   <h6 class="border-bottom border-secondary pb-2 mb-3 text-info">Profils</h6>
-                  <div class="row g-2 align-items-end">
-                    <div class="col-md-5">
-                      <label for="profilesList" class="form-label small">Charger/Supprimer</label>
+                  <div class="row g-2 align-items-end profile-inline-row">
+                    <div class="col-md-4">
+                      <label for="profilesList" class="form-label small mb-1">Charger</label>
                       <select class="form-select form-select-sm" id="profilesList">
                         <option value="">-- Nouveau profil --</option>
                         {% for profile in profiles %}
@@ -165,33 +177,31 @@ Version: 1.3.0
                         {% endfor %}
                       </select>
                     </div>
-                    <div class="col-md-4">
-                      <label for="profileName" class="form-label small">Sauvegarder sous</label>
+                    <div class="col-md-3">
+                      <label for="profileName" class="form-label small mb-1">Nom</label>
                       <input type="text" class="form-control form-control-sm" id="profileName" placeholder="Nom..." />
                     </div>
-                    <div class="col-md-3">
-                      <div class="d-flex gap-1">
-                        <button class="btn btn-sm btn-info w-100" id="btnLoadProfile">Charger</button>
-                        <button class="btn btn-sm btn-danger" id="btnDeleteProfile">🗑️</button>
+                    <div class="col-md-5">
+                      <div class="d-flex justify-content-end gap-2 flex-wrap" id="profileActions">
+                        <button class="btn btn-sm btn-info btn-uam" id="btnLoadProfile" type="button">Charger</button>
+                        <button class="btn btn-sm btn-primary btn-uam" id="btnSaveProfile" type="button">Enregistrer profil</button>
+                        <button class="btn btn-sm btn-danger btn-uam" id="btnDeleteProfile" type="button">Supprimer</button>
                       </div>
                     </div>
-                  </div>
-                  <div class="mt-2 text-end">
-                    <button class="btn btn-sm btn-primary" id="btnSaveProfile">Enregistrer Profil</button>
                   </div>
                 </div>
 
                 <!-- Actions globales -->
                 <div class="d-flex gap-2 justify-content-end">
-                  <button class="btn btn-sm btn-primary" id="btnExport">💾 Exporter</button>
-                  <button class="btn btn-sm btn-secondary" id="btnReset">↺ Réinitialiser</button>
+                  <button class="btn btn-sm btn-primary btn-uam" id="btnExport">Exporter</button>
+                  <button class="btn btn-sm btn-secondary btn-uam" id="btnReset">Réinitialiser</button>
                 </div>
 
                 <!-- Filter stack editor -->
                 <details class="mt-3">
                   <summary class="small text-muted" style="cursor: pointer">Expert: Éditeur JSON</summary>
                   <textarea id="filterStackEditor" class="form-control form-control-sm mt-2" rows="3" placeholder="[{ mode: 'include', filters: {...} }, ...]"></textarea>
-                  <button class="btn btn-xs btn-outline-secondary mt-1" id="btnApplyFilters" style="font-size: 0.7rem">Appliquer JSON</button>
+                  <button class="btn btn-xs btn-outline-secondary btn-uam mt-1" id="btnApplyFilters" style="font-size: 0.7rem">Appliquer JSON</button>
                 </details>
               </div>
             </div>
@@ -213,6 +223,7 @@ Version: 1.3.0
       <!-- Pagination dupliquée en haut -->
       <div class="pagination-top d-flex align-items-center justify-content-between p-2">
         <div id="paginationInfoTop" class="text-muted small"></div>
+        <div id="paginationLengthTop"></div>
         <div id="paginationControlsTop"></div>
       </div>
 
@@ -227,6 +238,13 @@ Version: 1.3.0
           </thead>
           <tbody></tbody>
         </table>
+      </div>
+
+      <!-- Pagination native / dupliquée en bas -->
+      <div class="pagination-bottom d-flex align-items-center justify-content-between p-2 border-top">
+        <div id="dataInfo" class="text-muted small"></div>
+        <div id="paginationLengthBottom"></div>
+        <div id="paginationControlsBottom"></div>
       </div>
     </div>
   </div>
@@ -286,8 +304,8 @@ Version: 1.3.0
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-        <button type="button" class="btn btn-primary" id="btnConfirmExport">Télécharger</button>
+        <button type="button" class="btn btn-secondary btn-uam" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary btn-uam" id="btnConfirmExport">Télécharger</button>
       </div>
     </div>
   </div>
