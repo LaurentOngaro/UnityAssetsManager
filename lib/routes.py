@@ -2,7 +2,7 @@
 # UnityAssetsManager - routes.py
 # ============================================================================
 # Description: Web route definitions and API endpoints.
-# Version: 1.3.1
+# Version: 1.4.0
 # ============================================================================
 
 import logging
@@ -333,7 +333,11 @@ def api_export():
 
 @bp.route('/api/reload', methods=['POST'])
 def api_reload():
-    dm.reload()
+    try:
+        dm.reload()
+    except Exception as e:
+        logger.exception("Erreur lors du rechargement des donnees")
+        raise AppError(ErrorCode.INTERNAL_ERROR, "Erreur lors du rechargement des donnees", 500, details={"exception": type(e).__name__}, ) from e
     return jsonify({"status": "success", "message": "Données rechargées"})
 
 
@@ -373,8 +377,16 @@ def api_setup_save():
     if not data:
         raise AppError(ErrorCode.INVALID_PAYLOAD, "Config manquante", 400)
 
+    data_path_str = data.get('data_path')
+    if data_path_str:
+        data_path = Path(data_path_str)
+        if not data_path.exists():
+            raise AppError(ErrorCode.INVALID_CONFIG, "Le chemin de donnees n'existe pas", 400, details={"path": str(data_path)}, )
+        if data_path.is_dir():
+            raise AppError(ErrorCode.INVALID_CONFIG, "Le chemin de donnees doit pointer vers un fichier", 400, details={"path": str(data_path)}, )
+
     new_config = {
-        "data_path": data.get('data_path'),
+        "data_path": data_path_str,
         "db_table": data.get('db_table'),
         "show_parser_warnings": data.get('show_parser_warnings', config.show_parser_warnings),
     }
@@ -473,9 +485,9 @@ def api_test_path():
 @bp.route('/api/columns', methods=['GET'])
 def api_columns():
     df = dm.get_data()
-    if df is not None:
-        return jsonify(list(df.columns))
-    return jsonify([])
+    if df is None or df.empty:
+        raise AppError(ErrorCode.DATA_NOT_FOUND, "Aucune donnee n'est chargee.", 404)
+    return jsonify(list(df.columns))
 
 
 @bp.route('/api/templates', methods=['GET'])

@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_profiles_non_regression.py
 # ============================================================================
 # Description: Non-regression checks for profile structure consistency.
-# Version: 1.3.1
+# Version: 1.4.0
 # ============================================================================
 
 from pathlib import Path

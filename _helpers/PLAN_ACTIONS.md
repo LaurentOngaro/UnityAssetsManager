@@ -50,11 +50,14 @@ Règle de pilotage:
 - AFF12: zone profils compactée sur une seule ligne avec champs réduits et boutons alignés à droite.
 - AFF13: design unifié (titres de sous-sections allégés, boutons harmonisés, thème visuel cohérent).
 
-### Sprint 3 - [REF4/REF2/API4/API3] Consolidation technique
+### Sprint 3 - DONE [REF4/REF2/API4/API3] Consolidation technique
 
-- Garder le contrat d'API stable pendant la refonte de l'interface.
-- Vérifier les routes, les erreurs uniformes et la documentation technique.
-- Limiter les régressions de performance ou d'automatisation.
+- Uniformisation du contrat d'erreur sur toutes les routes (`/api/columns` retourne maintenant `AppError(DATA_NOT_FOUND)` au lieu de `jsonify([])`).
+- Gestion explicite des erreurs sur `POST /api/reload` (try/except avec `AppError(INTERNAL_ERROR)`).
+- Validation du `data_path` sur `POST /api/setup` (verifie existence et type fichier).
+- Mise a jour de `openapi.yaml` : parametres manquants pour `/api/data` (profile, filter_stack, alias_map, filter_invalid_assets, tri), `/api/export` (profile), `/api/setup` (show_parser_warnings), reponses 404 pour `/api/columns` et `/api/data`, schema `ProfileResponse` detaille.
+- Ajout de 16 tests couvrant les routes non testees (profiles CRUD, reload, setup, config GET, templates, colonnes sans donnees).
+- 55 tests passent (contre 39 precedemment).
 
 ### Sprint 4 - [DOC1/DOC2/DOC3/CI1/CI2/MIG1/MIG2/MIG3] Alignement documentaire et technique
 

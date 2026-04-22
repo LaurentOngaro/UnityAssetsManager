@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-04-22
+
+### 🔧 Changed
+
+- `GET /api/columns` now raises `AppError(DATA_NOT_FOUND, 404)` when no data is loaded (was returning `jsonify([])`).
+- `POST /api/reload` now wraps `dm.reload()` in try/except and raises `AppError(INTERNAL_ERROR)` on failure.
+- `POST /api/setup` now validates `data_path` existence and type (must be a file, not a directory) before saving.
+
+### 📝 Documentation
+
+- `openapi.yaml` updated with missing query parameters for `GET /api/data` (profile, filter_stack, alias_map, filter_invalid_assets, sorting).
+- `openapi.yaml` updated with `profile` field in `ExportRequest` schema.
+- `openapi.yaml` updated with `show_parser_warnings` in `SetupRequest` schema.
+- `openapi.yaml` added `ProfileResponse` schema and 404 responses for `/api/columns` and `/api/data`.
+- `openapi.yaml` added 500 response for `/api/reload`.
+
+### ✅ Tests
+
+- Added `test_api_routes_coverage.py` with 16 new tests covering previously untested routes: profiles CRUD, reload, setup, config GET, templates, columns with no data.
+- Total test count: 55 (was 39).
+
 ## [1.3.1] - 2026-04-22
 
 ### 🔧 Changed

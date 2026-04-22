@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_data_manager.py
 # ============================================================================
 # Description: Unit tests for the data manager (AssetDataManager).
-# Version: 1.3.1
+# Version: 1.4.0
 # ============================================================================
 
 import sqlite3

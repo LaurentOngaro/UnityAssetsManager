@@ -26,11 +26,11 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 - [ ] FEAT2:  faire du scrapping direct depuis le unity store
 
-### Renforcement du contrat API (last: API4)
+### Renforcement du contrat API (last: API5)
 
-### Refactoring (last: REF4)
+### Refactoring (last: REF5)
 
-### API (last: API4)
+### API (last: API5)
 
 ### Migration (last: MIG3)
 
@@ -44,6 +44,10 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] REF5: Uniformiser le contrat d'erreur sur toutes les routes (GET /api/columns retourne AppError au lieu de jsonify([]))
+- [x] API5: Gestion explicite des erreurs sur POST /api/reload et validation du data_path sur POST /api/setup
+- [x] DOC4: Mise a jour de openapi.yaml (parametres manquants pour /api/data, /api/export, /api/setup, schema ProfileResponse)
+- [x] TEST1: Ajout de 16 tests couvrant les routes non testees (profiles CRUD, reload, setup, config GET, templates)
 - [x] AFF13: améliorer le design général
   - apliquer un theme et un design cohérent
   - enlever les icones dans les titre des sous sections (ex: "Recherche", "Colonnes à afficher", "Profils") pour alléger le design

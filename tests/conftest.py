@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/conftest.py
 # ============================================================================
 # Description: Shared pytest fixtures and configuration.
-# Version: 1.3.1
+# Version: 1.4.0
 # ============================================================================
 
 import pytest
