@@ -30,39 +30,15 @@ Règle de pilotage:
 - A la fin d'un sprint significatif, utiliser `python _helpers/bumpImportantVersion.py --scope minor`.
 - Ne pas multiplier les bumps pour les corrections mineures isolées; les regrouper dans le sprint en cours ou en fin de sprint.
 
-### Sprint 1 - DONE [BUG5/PROF1/FEAT4] Stabilisation export et profils
+### Sprint 5 - [BUG6/PERF1/PERF2/PERF3/SEC1] Optimisations & Robustesse
 
-- BUG5: normalisation stricte des textes d'assets, slugs et identifiants pour supprimer les caractères problématiques.
-- PROF1: validation de la présence de `column_aliases` sur les profils et couverture par tests.
-- FEAT4: filtre des assets invalides côté UI, export interactif et export batch.
+Suite à une analyse complète du code (Frontend/Backend/Data), voici des propositions d'améliorations techniques et corrections :
 
-### Sprint 2 - DONE [PAG1/PAG2/AFF5/AFF6/AFF7/AFF8/AFF9/AFF10] Refonte progressive de l'interface
-
-- Revoir la pagination et le sélecteur du nombre d'entrees visibles.
-- Recomposer les zones `Message`, `Contrôles`, `Données` et `Options`.
-- Isoler la recherche, les colonnes à afficher et les options globales.
-- Stabiliser la hiérarchie finale de l'UI avant d'ajouter d'autres fonctionnalités.
-- Fix: TypeError reading style during column visibility change.
-
-### Sprint 2.1 - DONE [AFF11/AFF12/AFF13] Finition ergonomie et cohérence visuelle
-
-- AFF11: zone colonnes revue avec actions rapides (`Afficher tous`, `Afficher profil`, `Afficher minimum`, `Inverser`).
-- AFF12: zone profils compactée sur une seule ligne avec champs réduits et boutons alignés à droite.
-- AFF13: design unifié (titres de sous-sections allégés, boutons harmonisés, thème visuel cohérent).
-
-### Sprint 3 - DONE [REF4/REF2/API4/API3] Consolidation technique
-
-- Uniformisation du contrat d'erreur sur toutes les routes (`/api/columns` retourne maintenant `AppError(DATA_NOT_FOUND)` au lieu de `jsonify([])`).
-- Gestion explicite des erreurs sur `POST /api/reload` (try/except avec `AppError(INTERNAL_ERROR)`).
-- Validation du `data_path` sur `POST /api/setup` (verifie existence et type fichier).
-- Mise a jour de `openapi.yaml` : parametres manquants pour `/api/data` (profile, filter_stack, alias_map, filter_invalid_assets, tri), `/api/export` (profile), `/api/setup` (show_parser_warnings), reponses 404 pour `/api/columns` et `/api/data`, schema `ProfileResponse` detaille.
-- Ajout de 16 tests couvrant les routes non testees (profiles CRUD, reload, setup, config GET, templates, colonnes sans donnees).
-- 55 tests passent (contre 39 precedemment).
-
-### Sprint 4 - [DOC1/DOC2/DOC3/CI1/CI2/MIG1/MIG2/MIG3] Alignement documentaire et technique
-
-- Maintenir la documentation, le versioning et les migrations alignés avec le code.
-- Garder les scripts d'automatisation compatibles avec les flux de travail actuels.
+- **BUG6** : Corriger la redirection silencieusement bloquée dans `templates/setup.html` (vérification de `response.status === 'success'`).
+- **SEC1** : Sécuriser la route `/api/test-path` pour éviter les accès arbitraires (Path Traversal) sur la machine hôte.
+- **PERF1** : Remplacer l'itération ligne par ligne de la recherche globale (`apply(axis=1)`) par une approche vectorisée (ex: `np.column_stack`) pour de meilleures performances sur les grands datasets.
+- **PERF2** : Implémenter le filtrage SQL natif pour la source SQLite (éviter le chargement complet de la table en mémoire).
+- **PERF3** : Sécuriser les accès concurrents au cache de `AssetDataManager` via un `threading.Lock()` (Flask fonctionnant en mode multi-threadé).
 
 ### Standby - [FEAT2]
 

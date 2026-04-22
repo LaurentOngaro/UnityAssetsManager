@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: UnityAssetsManager API
-  version: 1.4.0
+  version: 1.4.1
   description: API locale pour explorer et exporter des assets Unity (CSV/SQLite). Le port HTTP par défaut est 5003 et peut être modifié dans config/config.json.
 servers:
   - url: http://localhost:5003
@@ -559,12 +559,6 @@ components:
         profile:
           type: string
           description: Nom du profil à appliquer (charge filter_stack et alias_map du profil)
-        columns:
-          type: array
-          items:
-            type: string
-        search:
-          type: string
         filter_stack:
           type: array
           items:

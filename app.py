@@ -2,7 +2,7 @@
 # UnityAssetsManager - app.py
 # ============================================================================
 # Description: Flask application entry point and initialization.
-# Version: 1.4.0
+# Version: 1.4.1
 # ============================================================================
 
 import logging

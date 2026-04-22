@@ -1,6 +1,6 @@
 # API Guide - UnityAssetsManager
 
-**Version:** 1.4.0
+**Version:** 1.4.1
 
 ## Overview
 
@@ -109,8 +109,7 @@ Sample payload:
 ```json
 {
   "template": "CSV avec URL",
-  "columns": ["DisplayName", "Url", "Version"],
-  "search": "tool",
+  "profile": "851_011_Player_Character",
   "filter_stack": [],
   "alias_map": {},
   "filter_invalid_assets": true
@@ -134,18 +133,17 @@ Sample payload:
 ```json
 {
   "template": "CSV avec URL",
-  "columns": ["DisplayName", "Url", "Version"],
-  "search": "tool",
+  "profile": "851_011_Player_Character",
   "filter_stack": [],
   "alias_map": {},
-  "output_dir": "exports",
-  "file_name": "unity_assets_filtered"
+  "output_path": "H:/.../assetsExports/Unity/Player_Character.csv"
 }
 ```
 
 Notes:
 
-- `output_dir` is optional (default: application `exports` folder).
+- Use `output_path` for a direct absolute path output.
+- Alternatively, use `output_dir` and `file_name` to compose a path inside the application folder.
 - If `file_name` has no extension, it's inferred from the template.
 - If `output_dir` is relative, it's resolved from the application folder.
 - `/api/batch-export` always removes invalid assets (missing both slug+url, or missing one of DisplayName/DisplayCategory/DisplayPublisher).

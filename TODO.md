@@ -1,6 +1,8 @@
 # TODOs
 
-## Bugs (last: BUG5)
+## Bugs (last: BUG6)
+
+- [ ] BUG6: Redirection bloquée dans la page Setup (`templates/setup.html`). Le callback AJAX vérifie `response.success` au lieu de `response.status === 'success'`, ce qui bloque la redirection après une configuration réussie.
 
 ## Corrections immédiates (last:CI1)
 
@@ -12,6 +14,8 @@ Pour plus de détails sur l'implémentation de ces modifications, consulter le f
 
 classement des demandes par priorité de la plus urgente à la moins urgente:
 
+- None
+
 ### Documentation (last: DOC3)
 
 ### Filtrage et profils (last: PROF1)
@@ -19,8 +23,6 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 ### Pagination (last: PAG1)
 
 ### Affichage (last: AFF13)
-
-#### part 1: réorganisation de l'UI: ajouter de la cohérence, de la lisibilité et permettre de reduire les sections pour se concentrer sur l'essentiel
 
 ### Features (last: FEAT4)
 
@@ -33,6 +35,16 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 ### API (last: API5)
 
 ### Migration (last: MIG3)
+
+### Performance (last: PERF3)
+
+- [ ] PERF1: Optimisation du moteur de recherche global (`lib/routes.py` et `lib/filters.py`). La recherche via `pd.DataFrame.apply(axis=1)` est inefficace sur de gros volumes. La remplacer par une approche vectorisée (ex: `np.column_stack`).
+- [ ] PERF2: Filtrage SQL natif pour SQLite (`lib/data_manager.py`). Actuellement, la table entière est chargée en mémoire. Traduire le `filter_stack` en clauses SQL (`WHERE`, `LIKE`, `LIMIT`, `OFFSET`) pour soulager la RAM.
+- [ ] PERF3: Thread-Safety du DataManager (`lib/data_manager.py`). Flask tournant en mode multi-threadé (`threaded=True`), l'absence de `threading.Lock()` lors du chargement des données peut créer des *race conditions* et des pics de consommation mémoire lors des rechargements simultanés.
+
+### Sécurité (last: SEC1)
+
+- [ ] SEC1: Sécurisation de l'endpoint `/api/test-path`. Restreindre la vérification d'existence de fichier pour éviter l'exploration arbitraire du système (Path Traversal), ou documenter explicitement le risque assumé pour cet outil local.
 
 ### Intégration future (last: INT4)
 

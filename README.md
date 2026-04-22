@@ -1,6 +1,6 @@
 # 🚀 UnityAssetsManager (UAM)
 
-Version: 1.4.0
+Version: 1.4.1
 
 Local web application for fast and efficient management of asset inventories with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
 
@@ -177,11 +177,16 @@ or modify `server_port` in `config/config.json`
 
 ```text
 app.py (Flask entry point)
-config.py (configuration)
-data_manager.py (CSV/SQLite loading)
-filters.py (filtering logic)
-routes.py (API endpoints)
-utils.py (utility functions)
+
+lib/
+├── app_settings.py (default constants)
+├── config.py (configuration)
+├── data_manager.py (CSV/SQLite loading)
+├── errors.py (centralized error handling)
+├── filters.py (filtering logic)
+├── logging_setup.py (logging configuration)
+├── routes.py (API endpoints)
+└── utils.py (utility functions)
 
 templates/
 ├── base.html (layout)

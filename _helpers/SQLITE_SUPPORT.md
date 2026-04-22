@@ -1,6 +1,6 @@
 # SQLite Support - UnityAssetsManager
 
-Version: 1.4.0
+Version: 1.4.1
 
 ## 🎯 Feature
 
@@ -55,6 +55,8 @@ Configuration is saved in `config/config.json`:
 
 ```python
 from pathlib import Path
+from lib.data_manager import AssetDataManager
+
 path = Path("assets.db")
 source_type = AssetDataManager.detect_source_type(path)
 # Returns: 'sqlite' or 'csv'
@@ -63,6 +65,8 @@ source_type = AssetDataManager.detect_source_type(path)
 ### List Tables
 
 ```python
+from lib.data_manager import AssetDataManager
+
 tables = AssetDataManager.list_sqlite_tables(Path("assets.db"))
 # Returns: ['assets', 'categories', 'publishers', ...]
 ```
@@ -72,6 +76,8 @@ tables = AssetDataManager.list_sqlite_tables(Path("assets.db"))
 Loading is **automatic** - the system detects the format and loads accordingly:
 
 ```python
+from lib.data_manager import AssetDataManager
+
 dm = AssetDataManager()
 df = dm.get_data()  # Loads from CSV or SQLite based on config
 ```

@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-04-22
+
+### 📝 Documentation
+
+- Alignement documentaire avec le code v1.4.0 (Sprint 4).
+- `README.md` : Mise à jour de l'arborescence pour refléter le dossier `lib/`.
+- `API_GUIDE.md` : Suppression des anciens champs (`search`, `columns`) dans les payloads d'export et ajout de la doc pour `output_path`.
+- `openapi.yaml` : Suppression des champs (`search`, `columns`) du schéma `ExportRequest`.
+- `SQLITE_SUPPORT.md` : Correction des imports Python (`from lib.data_manager import AssetDataManager`).
+
 ## [1.4.0] - 2026-04-22
 
 ### 🔧 Changed

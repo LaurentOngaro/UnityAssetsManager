@@ -2,7 +2,7 @@
 # UnityAssetsManager - app_settings.py
 # ============================================================================
 # Description: Configuration constants and default application paths.
-# Version: 1.4.0
+# Version: 1.4.1
 # ============================================================================
 
 from __future__ import annotations
