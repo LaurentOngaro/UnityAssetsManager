@@ -179,6 +179,94 @@ def test_batch_export_applies_include_exclude_stack(monkeypatch, tmp_path):
     assert exported_df.iloc[0]["DisplayName"] == "Tree Pack"
 
 
+def test_export_template_resolves_uppercase_url_alias_case_insensitive(monkeypatch):
+    """%URL% must resolve via alias map even when alias key casing differs."""
+    mod = import_unity_assets_manager_module()
+
+    df = pd.DataFrame([{"DisplayName": "Tree Pack", "AssetLink": "https://example.com/tree-pack", }])
+
+    monkeypatch.setattr(
+        mod.config, "export_templates",
+        {"Markdown URL Alias": {
+            "description": "Template de test alias URL",
+            "pattern": "| [%DisplayName%](%URL%) |",
+        }},
+    )
+
+    content = mod.config.apply_export_template(df, "Markdown URL Alias", alias_map={"Url": "assetLink"})
+    assert "https://example.com/tree-pack" in content
+
+
+def test_export_template_resolves_url_from_candidate_aliases(monkeypatch):
+    """%URL% must resolve from declarative candidates when AssetLink exists."""
+    mod = import_unity_assets_manager_module()
+
+    df = pd.DataFrame([{"DisplayName": "Tree Pack", "AssetLink": "https://example.com/tree-pack"}])
+
+    monkeypatch.setattr(
+        mod.config, "export_templates",
+        {"Markdown URL Candidates": {
+            "description": "Template de test alias candidates URL",
+            "pattern": "| [%DisplayName%](%URL%) |",
+        }},
+    )
+
+    alias_map = {"Url": {"candidates": [{"source": "AssetLink"}, {"source": "Slug", "transform": "asset_store_url"}, ]}}
+
+    content = mod.config.apply_export_template(df, "Markdown URL Candidates", alias_map=alias_map)
+    assert "https://example.com/tree-pack" in content
+
+
+def test_export_template_resolves_url_from_slug_variant_complex(monkeypatch):
+    """%URL% must extract the numeric ID from a complex slug 'name-id'."""
+    mod = import_unity_assets_manager_module()
+    df = pd.DataFrame([{"DisplayName": "Test", "Slug": "my-asset-pack-302531"}])
+    monkeypatch.setattr(mod.config, "export_templates", {"T": {"pattern": "%Url%"}})
+    alias_map = {"Url": {"candidates": [{"source": "Slug", "transform": "asset_store_url"}]}}
+    content = mod.config.apply_export_template(df, "T", alias_map=alias_map)
+    assert "https://assetstore.unity.com/packages/slug/302531" in content
+
+
+def test_export_template_resolves_url_from_slug_variant_numeric(monkeypatch):
+    """%URL% must use a purely numeric slug as is."""
+    mod = import_unity_assets_manager_module()
+    df = pd.DataFrame([{"DisplayName": "Test", "Slug": "302531"}])
+    monkeypatch.setattr(mod.config, "export_templates", {"T": {"pattern": "%Url%"}})
+    alias_map = {"Url": {"candidates": [{"source": "Slug", "transform": "asset_store_url"}]}}
+    content = mod.config.apply_export_template(df, "T", alias_map=alias_map)
+    assert "https://assetstore.unity.com/packages/slug/302531" in content
+
+
+def test_export_template_resolves_slug_from_url_variant_complex(monkeypatch):
+    """%Slug% must extract ID from URL even if it's a full name-id slug in the path."""
+    mod = import_unity_assets_manager_module()
+    df = pd.DataFrame([{"DisplayName": "Test", "Url": "https://assetstore.unity.com/packages/slug/my-asset-pack-302531"}])
+    monkeypatch.setattr(mod.config, "export_templates", {"T": {"pattern": "%Slug%"}})
+    alias_map = {"Slug": {"candidates": [{"source": "Url", "transform": "slug_from_url"}]}}
+    content = mod.config.apply_export_template(df, "T", alias_map=alias_map)
+    assert "302531" in content
+
+
+def test_export_template_raises_when_url_candidates_missing(monkeypatch):
+    """%URL% must fail explicitly when neither AssetLink nor Slug is available."""
+    mod = import_unity_assets_manager_module()
+
+    df = pd.DataFrame([{"DisplayName": "Tree Pack", "DisplayPublisher": "PublisherA"}])
+
+    monkeypatch.setattr(
+        mod.config, "export_templates",
+        {"Markdown URL Missing": {
+            "description": "Template de test alias missing",
+            "pattern": "| [%DisplayName%](%URL%) |",
+        }},
+    )
+
+    alias_map = {"Url": {"candidates": [{"source": "AssetLink"}, {"source": "Slug", "transform": "asset_store_url"}, ]}}
+
+    with pytest.raises(ValueError, match="Colonne manquante"):
+        mod.config.apply_export_template(df, "Markdown URL Missing", alias_map=alias_map)
+
+
 def test_api_test_path_accepts_csv_with_late_malformed_lines(tmp_path):
     """Setup path check must accept CSV even if some later rows are malformed."""
     mod = import_unity_assets_manager_module()

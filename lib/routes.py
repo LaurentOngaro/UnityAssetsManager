@@ -282,16 +282,24 @@ def api_export():
 
     filtered_df = df
     alias_map = data.get('alias_map', {})
+    export_alias_map = alias_map
     if profile_name:
         profile = load_profile(profile_name)
         if profile:
             filter_stack = profile.get('filter_stack', [])
+            export_alias_map = profile.get('column_aliases', {}) or {}
             alias_map = _build_alias_map_from_profile(profile)
+            logger.debug(
+                f"Export using profile '{profile_name}', filter_stack length {len(filter_stack)}, alias_map {alias_map}, export_alias_map {export_alias_map}"
+            )
             filtered_df = apply_filter_stack(df, filter_stack, alias_map)
+            logger.debug(f"Export filtered rows: {len(filtered_df)} (original {len(df)})")
+        else:
+            logger.warning(f"Profile '{profile_name}' not found, using unfiltered data")
 
     try:
         if template_name:
-            export_content = config.apply_export_template(filtered_df, template_name, alias_map)
+            export_content = config.apply_export_template(filtered_df, template_name, export_alias_map)
             ext, mimetype = config.detect_export_format(template_name)
             filename = f"export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{ext}"
             return send_file(BytesIO(export_content.encode('utf-8')), mimetype=mimetype, as_attachment=True, download_name=filename)
@@ -475,6 +483,7 @@ def api_batch_export():
     template_name = data.get('template')
     filter_stack = data.get('filter_stack', [])
     alias_map = data.get('alias_map', {})
+    export_alias_map = alias_map
 
     # Support for both explicit path or split dir/name
     output_path = data.get('output_path')
@@ -493,12 +502,17 @@ def api_batch_export():
         if not profile:
             raise AppError(ErrorCode.PROFILE_NOT_FOUND, f"Profile {profile_name} not found", 404)
         filter_stack = profile.get('filter_stack', [])
+        export_alias_map = profile.get('column_aliases', {}) or {}
         alias_map = _build_alias_map_from_profile(profile)
+        logger.debug(
+            f"Batch export using profile '{profile_name}', filter_stack length {len(filter_stack)}, alias_map {alias_map}, export_alias_map {export_alias_map}"
+        )
 
     filtered_df = apply_filter_stack(df, filter_stack, alias_map)
+    logger.debug(f"Batch export filtered rows: {len(filtered_df)} (original {len(df)})")
 
     try:
-        export_content = config.apply_export_template(filtered_df, template_name, alias_map)
+        export_content = config.apply_export_template(filtered_df, template_name, export_alias_map)
         ext, _ = config.detect_export_format(template_name)
 
         if output_path:

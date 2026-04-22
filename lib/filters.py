@@ -59,7 +59,24 @@ def _build_alias_map_from_profile(profile: dict | None) -> dict:
     raw = profile.get('column_aliases') or {}
     if not isinstance(raw, dict):
         return {}
-    return {str(k): str(v) for k, v in raw.items()}
+    alias_map = {}
+    for key, value in raw.items():
+        if isinstance(value, dict):
+            source = value.get('source') or value.get('column')
+            if not source:
+                candidates = value.get('candidates') or value.get('choices') or []
+                for candidate in candidates:
+                    if isinstance(candidate, dict):
+                        source = candidate.get('source') or candidate.get('column')
+                    elif candidate:
+                        source = candidate
+                    if source:
+                        break
+            if source:
+                alias_map[str(key)] = str(source)
+        elif value is not None:
+            alias_map[str(key)] = str(value)
+    return alias_map
 
 
 def _resolve_col_name(name: str, cols: list, alias_map: dict | None = None) -> str | None:

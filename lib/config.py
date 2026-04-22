@@ -7,6 +7,7 @@
 
 import logging
 from pathlib import Path
+from urllib.parse import urlparse
 import pandas as pd
 import re
 import json
@@ -33,6 +34,110 @@ CACHE_DIR.mkdir(exist_ok=True)
 CONFIG_FILE.parent.mkdir(exist_ok=True)
 
 _ALLOWED_LOG_OUTPUTS = {"console", "file", "both"}
+
+
+def _normalize_alias_candidate(alias_definition) -> tuple[str | None, str | None]:
+    """Normalize a single alias candidate into (source_column, transform_name)."""
+    if isinstance(alias_definition, dict):
+        source = alias_definition.get("source") or alias_definition.get("column")
+        transform = alias_definition.get("transform")
+        return (str(source) if source else None, str(transform) if transform else None)
+    if alias_definition:
+        return (str(alias_definition), None)
+    return (None, None)
+
+
+def _resolve_alias_candidates(alias_map: dict, placeholder: str) -> list[tuple[str, str | None]]:
+    """Resolve alias candidates in a case-insensitive way."""
+    if not isinstance(alias_map, dict) or not placeholder:
+        return []
+
+    # Fast path for exact keys first.
+    direct = alias_map.get(placeholder)
+    candidates = []
+    if isinstance(direct, dict) and (direct.get("candidates") or direct.get("choices")):
+        raw_candidates = direct.get("candidates") or direct.get("choices") or []
+        for candidate in raw_candidates:
+            source, transform = _normalize_alias_candidate(candidate)
+            if source:
+                candidates.append((source, transform))
+        return candidates
+
+    source, transform = _normalize_alias_candidate(direct)
+    if source:
+        return [(source, transform)]
+
+    placeholder_lower = str(placeholder).lower()
+    for alias, target in alias_map.items():
+        if str(alias).lower() == placeholder_lower and target is not None:
+            if isinstance(target, dict) and (target.get("candidates") or target.get("choices")):
+                raw_candidates = target.get("candidates") or target.get("choices") or []
+                for candidate in raw_candidates:
+                    source, transform = _normalize_alias_candidate(candidate)
+                    if source:
+                        candidates.append((source, transform))
+                return candidates
+            source, transform = _normalize_alias_candidate(target)
+            if source:
+                return [(source, transform)]
+    return []
+
+
+def _resolve_column_name(df: pd.DataFrame, col_name: str) -> str | None:
+    """Resolve a DataFrame column name case-insensitively."""
+    if not col_name:
+        return None
+
+    if col_name in df.columns:
+        return col_name
+
+    target_lower = str(col_name).lower()
+    for existing_col in df.columns:
+        if str(existing_col).lower() == target_lower:
+            return str(existing_col)
+    return None
+
+
+def _apply_alias_transform(value, transform: str | None, row: pd.Series | None = None) -> str:
+    """Apply a declared transform to an export value."""
+    if transform is None:
+        return value
+
+    transform_name = str(transform).strip().lower()
+    val_str = str(value).strip()
+
+    if transform_name == "asset_store_url":
+        if not val_str:
+            return val_str
+        if val_str.startswith("http"):
+            return val_str
+
+        # Variant 1: string ending with -NUMBER (e.g. name-12345)
+        if "-" in val_str:
+            parts = val_str.split("-")
+            if parts[-1].isdigit():
+                val_str = parts[-1]
+
+        # Variant 2: purely numeric (3-6 digits) is already val_str
+        return f"https://assetstore.unity.com/packages/slug/{val_str}"
+
+    if transform_name == "slug_from_url":
+        if not val_str:
+            return val_str
+        parsed = urlparse(val_str)
+        path = parsed.path.rstrip("/")
+        candidate = val_str
+        if path:
+            candidate = path.split("/")[-1]
+
+        # Apply the same extraction logic: if it's a full slug with ID, take only the ID
+        if "-" in candidate:
+            parts = candidate.split("-")
+            if parts[-1].isdigit():
+                return parts[-1]
+        return candidate
+
+    return value
 
 
 def _normalize_log_output(value, default_value: str = DEFAULT_LOG_OUTPUT) -> str:
@@ -133,7 +238,7 @@ class AppConfig:
         else:
             return DEFAULT_EXPORT_TEMPLATES
 
-    def apply_export_template(self, df: pd.DataFrame, template_name: str, alias_map: dict = None) -> str:
+    def apply_export_template(self, df: pd.DataFrame, template_name: str, alias_map: dict | None = None) -> str:
         if alias_map is None:
             alias_map = {}
 
@@ -158,17 +263,28 @@ class AppConfig:
         placeholder_to_col = {}
         used_columns = []
         for ph in column_placeholders:
-            actual_col = ph
-            if ph not in df.columns:
-                if ph in alias_map and alias_map[ph] in df.columns:
-                    actual_col = alias_map[ph]
-                elif ph.lower() in alias_map and alias_map[ph.lower()] in df.columns:
-                    actual_col = alias_map[ph.lower()]
+            actual_col = _resolve_column_name(df, ph)
+            alias_transform = None
+            alias_candidates = []
 
-            if actual_col in df.columns:
-                placeholder_to_col[ph] = actual_col
+            if actual_col is None:
+                alias_candidates = _resolve_alias_candidates(alias_map, ph)
+                for alias_target, candidate_transform in alias_candidates:
+                    resolved_col = _resolve_column_name(df, alias_target)
+                    if resolved_col is not None:
+                        actual_col = resolved_col
+                        alias_transform = candidate_transform
+                        break
+
+            if actual_col is not None:
+                placeholder_to_col[ph] = (actual_col, alias_transform)
                 used_columns.append(ph)
+            else:
+                if alias_candidates:
+                    raise ValueError(f"Colonne manquante pour le placeholder '%{ph}%': aucune source correspondante dans {list(df.columns)}")
+                logger.warning(f"Export template placeholder '%{ph}%' could not be resolved (alias_map={alias_map}, df columns={list(df.columns)})")
 
+        logger.debug(f"Export template '{template_name}' mapping: {placeholder_to_col}")
         header_lines = []
         is_markdown_table = '|' in pattern and '{' not in pattern
 
@@ -187,14 +303,17 @@ class AppConfig:
             header_lines = [header]
 
         lines = []
-        for _, row in df.iterrows():
+        for row_idx, (_, row) in enumerate(df.iterrows()):
             line = pattern
-            for ph, actual_col in placeholder_to_col.items():
+            for ph, (actual_col, alias_transform) in placeholder_to_col.items():
                 placeholder = f"%{ph}%"
-                value = str(row[actual_col]) if pd.notna(row[actual_col]) else ""
+                raw_value = row.get(actual_col, "")
+                value = str(raw_value) if pd.notna(raw_value) else ""
+                value = _apply_alias_transform(value, alias_transform, row)
                 if is_markdown_table and '|' in value:
                     value = value.replace('|', '-')
                 line = line.replace(placeholder, value)
+                logger.debug(f"Row {row_idx}: placeholder %{ph}% -> column '{actual_col}' -> value '{value}'")
             line = re.sub(r'%[^%]*%', '', line)
             lines.append(line)
 
