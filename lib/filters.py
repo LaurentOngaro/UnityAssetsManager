@@ -2,7 +2,7 @@
 # UnityAssetsManager - filters.py
 # ============================================================================
 # Description: Filtering engine and search logic (filter stacks, tags).
-# Version: 1.2.20
+# Version: 1.2.21
 # ============================================================================
 
 import pandas as pd
@@ -83,6 +83,46 @@ def _resolve_col_name(name: str, cols: list, alias_map: dict | None = None) -> s
     if not name:
         return None
     return _find_col(cols, name, alias_map)
+
+
+def _resolve_first_col(cols: list, candidates: list[str], alias_map: dict | None = None) -> str | None:
+    for candidate in candidates:
+        resolved = _resolve_col_name(candidate, cols, alias_map)
+        if resolved:
+            return resolved
+    return None
+
+
+def _missing_mask(series: pd.Series) -> pd.Series:
+    text = series.astype(str).str.strip()
+    return series.isna() | text.eq('') | text.str.lower().isin({'nan', 'none', 'null'})
+
+
+def filter_invalid_assets(df: pd.DataFrame, alias_map: dict | None = None) -> pd.DataFrame:
+    """Remove rows that are missing required identity fields for exports/UI usage."""
+    if df is None or df.empty:
+        return df
+
+    cols = list(df.columns)
+    aliases = alias_map or {}
+
+    name_col = _resolve_first_col(cols, ['DisplayName', 'Name', 'AssetName'], aliases)
+    category_col = _resolve_first_col(cols, ['DisplayCategory', 'Category', 'AssetCategory'], aliases)
+    publisher_col = _resolve_first_col(cols, ['DisplayPublisher', 'Publisher', 'AssetPublisher'], aliases)
+    slug_col = _resolve_first_col(cols, ['Slug', 'AssetSlug', 'DisplaySlug'], aliases)
+    url_col = _resolve_first_col(cols, ['Url', 'URL', 'AssetLink', 'AssetUrl', 'AssetURL', 'Link'], aliases)
+
+    index = df.index
+    missing_name = _missing_mask(df[name_col]) if name_col else pd.Series(True, index=index)
+    missing_category = _missing_mask(df[category_col]) if category_col else pd.Series(True, index=index)
+    missing_publisher = _missing_mask(df[publisher_col]) if publisher_col else pd.Series(True, index=index)
+    missing_slug = _missing_mask(df[slug_col]) if slug_col else pd.Series(True, index=index)
+    missing_url = _missing_mask(df[url_col]) if url_col else pd.Series(True, index=index)
+
+    valid_slug_or_url = ~(missing_slug & missing_url)
+    has_required_display_fields = ~(missing_name | missing_category | missing_publisher)
+    valid_mask = valid_slug_or_url & has_required_display_fields
+    return df[valid_mask]
 
 
 def apply_filter_stack(df: pd.DataFrame, filter_stack: list | None, alias_map: dict | None = None) -> pd.DataFrame:

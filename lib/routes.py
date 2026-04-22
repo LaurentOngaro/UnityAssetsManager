@@ -2,7 +2,7 @@
 # UnityAssetsManager - routes.py
 # ============================================================================
 # Description: Web route definitions and API endpoints.
-# Version: 1.2.20
+# Version: 1.2.21
 # ============================================================================
 
 import logging
@@ -16,7 +16,7 @@ from io import BytesIO
 from .config import config, PROFILES_DIR, EXPORTS_DIR, SCRIPT_DIR
 from .utils import read_json, write_json_normalized, _parse_bool, _parse_int
 from .data_manager import dm
-from .filters import apply_filter_stack, _build_alias_map_from_profile
+from .filters import apply_filter_stack, _build_alias_map_from_profile, filter_invalid_assets
 from .errors import AppError, ErrorCode
 from .logging_setup import configure_logging
 
@@ -178,6 +178,7 @@ def api_data():
     profile_name = request.args.get('profile', '')
     filter_stack_str = request.args.get('filter_stack')
     alias_map_str = request.args.get('alias_map')
+    filter_invalid_assets_enabled = _parse_bool(request.args.get('filter_invalid_assets'), False)
 
     filtered_df = df
     alias_map = {}
@@ -205,6 +206,9 @@ def api_data():
 
     if filter_stack:
         filtered_df = apply_filter_stack(df, filter_stack, alias_map)
+
+    if filter_invalid_assets_enabled:
+        filtered_df = filter_invalid_assets(filtered_df, alias_map)
 
     if search_value:
         search_mask = filtered_df.astype(str).apply(lambda row: row.str.contains(search_value, case=False, na=False).any(), axis=1)
@@ -283,6 +287,7 @@ def api_export():
     filtered_df = df
     filter_stack = data.get('filter_stack', []) or []
     alias_map = data.get('alias_map', {}) or {}
+    filter_invalid_assets_enabled = _parse_bool(data.get('filter_invalid_assets'), False)
     export_alias_map = alias_map
 
     if profile_name:
@@ -305,6 +310,10 @@ def api_export():
     if filter_stack:
         filtered_df = apply_filter_stack(df, filter_stack, alias_map)
         logger.debug(f"Export filtered rows: {len(filtered_df)} (original {len(df)})")
+
+    if filter_invalid_assets_enabled:
+        filtered_df = filter_invalid_assets(filtered_df, alias_map)
+        logger.debug(f"Export invalid-asset filter rows: {len(filtered_df)}")
 
     try:
         if template_name:
@@ -519,6 +528,9 @@ def api_batch_export():
 
     filtered_df = apply_filter_stack(df, filter_stack, alias_map)
     logger.debug(f"Batch export filtered rows: {len(filtered_df)} (original {len(df)})")
+
+    filtered_df = filter_invalid_assets(filtered_df, alias_map)
+    logger.debug(f"Batch export invalid-asset filter rows: {len(filtered_df)}")
 
     try:
         export_content = config.apply_export_template(filtered_df, template_name, export_alias_map)

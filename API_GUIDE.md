@@ -1,6 +1,6 @@
 # API Guide - UnityAssetsManager
 
-**Version:** 1.2.20
+**Version:** 1.2.21
 
 ## Overview
 
@@ -112,7 +112,8 @@ Sample payload:
   "columns": ["DisplayName", "Url", "Version"],
   "search": "tool",
   "filter_stack": [],
-  "alias_map": {}
+  "alias_map": {},
+  "filter_invalid_assets": true
 }
 ```
 
@@ -120,6 +121,7 @@ Returns:
 
 - Success: Binary file for download.
 - Error: Standard error contract.
+- `filter_invalid_assets` is optional for interactive export (`/api/export`) and only applied when `true`.
 
 ### Batch export headless
 
@@ -146,6 +148,7 @@ Notes:
 - `output_dir` is optional (default: application `exports` folder).
 - If `file_name` has no extension, it's inferred from the template.
 - If `output_dir` is relative, it's resolved from the application folder.
+- `/api/batch-export` always removes invalid assets (missing both slug+url, or missing one of DisplayName/DisplayCategory/DisplayPublisher).
 
 Retour success:
 

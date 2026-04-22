@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_export_non_regression.py
 # ============================================================================
 # Description: Tests de non-régression pour les templates d'export.
-# Version: 1.2.20
+# Version: 1.2.21
 # ============================================================================
 
 from io import BytesIO
@@ -224,6 +224,106 @@ def test_api_export_applies_filter_stack(monkeypatch):
     exported_df = pd.read_csv(BytesIO(response.data))
     assert len(exported_df) == 1
     assert exported_df.iloc[0]["DisplayName"] == "Tree Pack"
+
+
+def test_api_export_filters_invalid_assets_when_enabled(monkeypatch):
+    """FEAT4: export must skip invalid assets when the option is enabled."""
+    mod = import_unity_assets_manager_module()
+    import sys
+    dm_module = sys.modules.get("lib.data_manager")
+    assert dm_module is not None, "lib.data_manager not loaded"
+
+    df = pd.DataFrame(
+        [
+            {
+                "DisplayName": "Valid Asset",
+                "DisplayPublisher": "PublisherA",
+                "DisplayCategory": "Tools",
+                "Url": "https://example.com/valid",
+                "Slug": "",
+            }, {
+                "DisplayName": "Invalid Missing Link",
+                "DisplayPublisher": "PublisherB",
+                "DisplayCategory": "Tools",
+                "Url": "",
+                "Slug": "",
+            },
+        ]
+    )
+
+    monkeypatch.setattr(dm_module.dm, "_df", df)
+    monkeypatch.setattr(
+        mod.config, "export_templates",
+        {"CSV FEAT4": {
+            "description": "Template CSV FEAT4",
+            "pattern": "%DisplayName%,%DisplayPublisher%,%DisplayCategory%",
+        }},
+    )
+
+    client = mod.app.test_client()
+    response = client.post("/api/export", json={"template": "CSV FEAT4", "filter_stack": [], "alias_map": {}, "filter_invalid_assets": True, }, )
+
+    assert response.status_code == 200
+    exported_df = pd.read_csv(BytesIO(response.data))
+    assert len(exported_df) == 1
+    assert exported_df.iloc[0]["DisplayName"] == "Valid Asset"
+
+
+def test_batch_export_always_filters_invalid_assets(monkeypatch, tmp_path):
+    """Batch export must always skip invalid assets to reduce automation noise."""
+    mod = import_unity_assets_manager_module()
+    import sys
+    dm_module = sys.modules.get("lib.data_manager")
+    assert dm_module is not None, "lib.data_manager not loaded"
+
+    df = pd.DataFrame(
+        [
+            {
+                "DisplayName": "Valid Asset",
+                "DisplayPublisher": "PublisherA",
+                "DisplayCategory": "Tools",
+                "Url": "https://example.com/valid",
+                "Slug": "",
+            }, {
+                "DisplayName": "Invalid Missing Link",
+                "DisplayPublisher": "PublisherB",
+                "DisplayCategory": "Tools",
+                "Url": "",
+                "Slug": "",
+            },
+        ]
+    )
+
+    monkeypatch.setattr(dm_module.dm, "_df", df)
+    monkeypatch.setattr(
+        mod.config, "export_templates",
+        {"CSV FEAT4 Batch": {
+            "description": "Template CSV FEAT4 batch",
+            "pattern": "%DisplayName%,%DisplayPublisher%,%DisplayCategory%",
+        }},
+    )
+
+    client = mod.app.test_client()
+    response = client.post(
+        "/api/batch-export",
+        json={
+            "template": "CSV FEAT4 Batch",
+            "filter_stack": [],
+            "alias_map": {},
+            "output_dir": str(tmp_path),
+            "file_name": "feat4_batch_always",
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload is not None and payload.get("status") == "success"
+    assert payload.get("count") == 1
+
+    out_file = Path(payload["file"])
+    exported_df = pd.read_csv(out_file)
+    assert len(exported_df) == 1
+    assert exported_df.iloc[0]["DisplayName"] == "Valid Asset"
 
 
 def test_export_template_resolves_uppercase_url_alias_case_insensitive(monkeypatch):

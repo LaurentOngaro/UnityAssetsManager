@@ -30,7 +30,7 @@ Chaque fois qu'une modification est teminée:
 - Verifier que les alias de colonnes restent appliques de la meme manière dans l'export simple et l'export batch.
 - Ajouter une regression test sur l'export interactif pour garantir que les lignes exclues n'apparaissent plus.
 
-### 1. [PROF1] Harmoniser les profils avec `column_aliases`
+### 1. DONE [PROF1] Harmoniser les profils avec `column_aliases`
 
 - Normaliser tous les profils JSONC afin qu'ils exposent `column_aliases` avec une structure homogène.
 - Verifier les profils existants pour detecter les alias implicites encore deplaces dans des champs historiques.
@@ -54,7 +54,10 @@ Chaque fois qu'une modification est teminée:
 - Isoler la recherche dans un panneau `Recherche` avec le toggle regex sur la meme ligne.
 - Isoler la selection des colonnes dans un panneau `Colonnes à afficher` avec un filtre rapide par nom.
 - Remonter les options globales dans un panneau `Options` distinct.
-- Deplacer l'option d'affichage des erreurs CSV et ajouter le filtre des assets invalides (FEAT4).
+- Deplacer l'option d'affichage des erreurs CSV et le filtre des assets invalides.
+- DONE FEAT4: ajouter le filtre des assets invalides.
+- DONE FEAT4: appliquer le filtre invalide sur l'export interactif uniquement si l'option est cochée.
+- DONE FEAT4: appliquer le filtre invalide en permanence sur `/api/batch-export` pour limiter le bruit dans les exports automatises.
 - Nettoyer les redondances visuelles entre les titres de panneaux et les titres internes.
 
 ### 5. [AFF10] Finaliser la hiérarchie de l'UI

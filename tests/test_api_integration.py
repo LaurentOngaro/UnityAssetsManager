@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_api_integration.py
 # ============================================================================
 # Description: Integration tests for data retrieval and filtering endpoints.
-# Version: 1.2.20
+# Version: 1.2.21
 # ============================================================================
 
 import pytest
@@ -56,3 +56,45 @@ def test_api_stats(client, mock_data):
     stats = resp.get_json()
     assert stats["total_rows"] == 2
     assert stats["total_columns"] == 3
+
+
+def test_api_data_filters_invalid_assets(client, monkeypatch):
+    """FEAT4: invalid assets must be excluded when the option is enabled."""
+    import sys
+    dm_module = sys.modules.get("lib.data_manager")
+    assert dm_module is not None
+
+    df = pd.DataFrame(
+        [
+            {
+                "DisplayName": "Valid Asset",
+                "DisplayPublisher": "Pub A",
+                "DisplayCategory": "Cat A",
+                "Slug": "valid-asset",
+                "Url": "",
+            }, {
+                "DisplayName": "Missing Link",
+                "DisplayPublisher": "Pub B",
+                "DisplayCategory": "Cat B",
+                "Slug": "",
+                "Url": "",
+            }, {
+                "DisplayName": "",
+                "DisplayPublisher": "Pub C",
+                "DisplayCategory": "Cat C",
+                "Slug": "has-slug",
+                "Url": "",
+            },
+        ]
+    )
+    monkeypatch.setattr(dm_module.dm, "_df", df)
+
+    without_filter = client.get("/api/data?draw=1&start=0&length=10")
+    assert without_filter.status_code == 200
+    assert without_filter.get_json()["recordsFiltered"] == 3
+
+    with_filter = client.get("/api/data?draw=1&start=0&length=10&filter_invalid_assets=true")
+    assert with_filter.status_code == 200
+    payload = with_filter.get_json()
+    assert payload["recordsFiltered"] == 1
+    assert payload["data"][0]["DisplayName"] == "Valid Asset"

@@ -10,6 +10,7 @@
 const MIN_COL_WIDTH = 150; // Largeur minimum en pixels pour chaque colonne
 const RESIZER_SENSITIVITY = 10; // Zone sensible pour le redimensionnement (pixels)
 const COLUMN_WIDTH_STORAGE_KEY = 'UnityAssetsManager.columnWidths.v1';
+const FILTER_INVALID_ASSETS_STORAGE_KEY = 'UnityAssetsManager.filterInvalidAssets.v1';
 
 let dataTable;
 let assetDetailModal;
@@ -19,6 +20,15 @@ let currentAliasMap = {};
 let currentProfileName = null; // Nom du profil actif
 let exportModal, profileModal;
 let loadedTemplates = []; // Templates d'export chargés depuis le serveur
+
+function isFilterInvalidAssetsEnabled() {
+  return $('#chkFilterInvalidAssets').prop('checked') === true;
+}
+
+function appendGlobalFilters(payload) {
+  payload.filter_invalid_assets = isFilterInvalidAssetsEnabled();
+  return payload;
+}
 
 // ============================================================================
 // GESTION DES TEMPLATES D'EXPORT
@@ -91,6 +101,9 @@ $(document).ready(function () {
     });
   });
 
+  const storedInvalidAssetsFlag = window.localStorage.getItem(FILTER_INVALID_ASSETS_STORAGE_KEY);
+  $('#chkFilterInvalidAssets').prop('checked', storedInvalidAssetsFlag === 'true');
+
   exportModal = new bootstrap.Modal(document.getElementById('exportModal'));
   profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
   assetDetailModal = new bootstrap.Modal(document.getElementById('assetDetailModal'));
@@ -158,7 +171,7 @@ function initializeTable() {
         if (currentAliasMap && Object.keys(currentAliasMap).length) {
           d.alias_map = JSON.stringify(currentAliasMap);
         }
-        return d;
+        return appendGlobalFilters(d);
       },
       error: function (xhr, status, error) {
         console.error('[API] Erreur:', error, xhr.responseText);
@@ -296,6 +309,13 @@ function setupEventHandlers() {
     addFilterFromBuilder();
   });
 
+  $('#chkFilterInvalidAssets').on('change', function () {
+    const enabled = $(this).prop('checked') === true;
+    window.localStorage.setItem(FILTER_INVALID_ASSETS_STORAGE_KEY, enabled ? 'true' : 'false');
+    showAlert(enabled ? 'Filtre assets invalides activé' : 'Filtre assets invalides désactivé', 'info');
+    dataTable.ajax.reload(null, false);
+  });
+
   $('#btnClearAllFilters').on('click', function () {
     if (confirm('Vider tous les filtres ?')) {
       currentFilterStack = [];
@@ -354,6 +374,8 @@ function showExportModal() {
     payload.filter_stack = JSON.stringify(currentFilterStack);
     payload.alias_map = JSON.stringify(currentAliasMap || {});
   }
+
+  appendGlobalFilters(payload);
 
   console.log('[Export] Demande comptage avec payload:', payload);
 
@@ -482,6 +504,7 @@ function performExport() {
       search: searchValue,
       filter_stack: currentFilterStack,
       alias_map: currentAliasMap,
+      filter_invalid_assets: isFilterInvalidAssetsEnabled(),
     }),
     xhrFields: {
       responseType: 'blob',
@@ -779,14 +802,16 @@ function deleteProfile() {
 function analyzeColumnForBooleans(column, callback) {
   // Analyser une colonne pour détecter si elle contient seulement des booléens.
   // Récupérer les 100 premières lignes pour analyser
+  const payload = appendGlobalFilters({
+    start: 0,
+    length: 100,
+    draw: 1,
+  });
+
   $.ajax({
     url: '/api/data',
     type: 'GET',
-    data: {
-      start: 0,
-      length: 100,
-      draw: 1,
-    },
+    data: payload,
     success: function (resp) {
       const values = new Set();
       if (resp.data) {
@@ -838,11 +863,11 @@ function loadColumnValues(column) {
   const searchVal = $('#searchInput').val() || '';
 
   // Payload pour récupérer les valeurs uniques (souvent via un scan des données filtrées ou non)
-  const payload = {
+  const payload = appendGlobalFilters({
     start: 0,
     length: 5000,
     draw: 1,
-  };
+  });
 
   // Si "Affichées uniquement", on passe les filtres courants
   if (displayedOnly) {

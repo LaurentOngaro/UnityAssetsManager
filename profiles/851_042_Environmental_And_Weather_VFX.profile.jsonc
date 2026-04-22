@@ -86,6 +86,31 @@
     }
   ],
   "column_aliases": {
-    "Url": "AssetLink"
+    "Url": {
+      "candidates": [
+        {
+          "source": "AssetLink"
+        },
+        {
+          "source": "Slug",
+          "transform": "asset_store_url"
+        }
+      ]
+    },
+    "Slug": {
+      "candidates": [
+        {
+          "source": "Slug"
+        },
+        {
+          "source": "Url",
+          "transform": "slug_from_url"
+        },
+        {
+          "source": "AssetLink",
+          "transform": "slug_from_url"
+        }
+      ]
+    }
   }
 }

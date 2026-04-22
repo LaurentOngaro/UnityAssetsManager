@@ -16,8 +16,6 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Filtrage et profils (last: PROF1)
 
-- [ ] PROF1: ajouter les "column_aliases" dans tous les profils json
-
 ### Pagination (last: PAG1)
 
 - [ ] PAG2: deplacer le selecteur du nombre d'assets par page (ex "Afficher 50 entrées") à gauche de la zone de pagination (cad à gauche du texte "Affichage de 1 à 50 sur 5 898 entrées")
@@ -36,7 +34,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 - [ ] AFF7: mettre les  Colonnes à afficher dans un panel collapsable  (similaire à "Générateur de filtres", inside "Contrôles"), nommé "Colonnes à afficher"
 - [ ] AFF5: ajoute un panel collapsable (similaire à "Générateur de filtres"), nommé "Options" qui recevra les options du l'app (même niveau que "Contrôles")
   - déplace y l'option "Afficher erreurs chargement CSV"
-  - [ ] FEAT4: ajoute une option "filter les assets invalides" pour filter les assets (quelque soit le profil), à qui il manque:
+  - ajoute une option "filter les assets invalides" pour filter les assets (quelque soit le profil), à qui il manque:
     - le slug ET l'url (1 seul des 2 c'est OK)
     - "DisplayName", "DisplayCategory", ou "DisplayPublisher"
   - supprimer la redondance du titre "Colonnes à afficher" qui est déjà indiqué dans le titre du panel
@@ -82,6 +80,8 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] FEAT4: ajoute une option "filter les assets invalides" pour filter les assets (quelque soit le profil), à qui il manque le slug+url ou les champs d'affichage requis; appliqué sur export interactif si coché et toujours actif en batch export
+- [x] PROF1: ajouter les "column_aliases" dans tous les profils json
 - [x] BUG5: les assets exportés ne sont pas filtrés (tous les asset sont présents dans les exports, même ceux qui sont filtrés dans l'app)
 - [x] AFF4: mémoriser la dimension des colonnes et la rétablir à l'ouverture suivante
 - [x] BUG4: lorsque qu'un profil est chargé, l'application du filtre échoue silencieusement et la liste n'est pas filtrée (route api_data ignorait filter_stack)
