@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_filters.py
 # ============================================================================
 # Description: Unit tests for the filtering functionality.
-# Version: 1.2.21
+# Version: 1.3.0
 # ============================================================================
 
 import pandas as pd

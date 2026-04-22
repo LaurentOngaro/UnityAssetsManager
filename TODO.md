@@ -18,47 +18,22 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Pagination (last: PAG1)
 
-- [ ] PAG2: deplacer le selecteur du nombre d'assets par page (ex "Afficher 50 entrées") à gauche de la zone de pagination (cad à gauche du texte "Affichage de 1 à 50 sur 5 898 entrées")
-- [ ] PAG1: mettre un doublon de la zone de pagination en haut de la liste (incluant le texte "Affichage de 1 à 50 sur 5 898 entrées" )
-
 ### Affichage (last: AFF10)
 
-#### part 1: réorganisation de l'UI: ajouter de la cohérence, de la lisibilité et permettre de reduire les sections pour se concentrer sur l'essentiel
+- [ ] AFF11: dans la zone "colonnes à afficher":
+  - diminuer la largeur de la liste et afficher à droite une zone contenant les boutons suivants:
+    - "Afficher tous" :affiche tous les champs disponibles dans la source de données
+    - "Afficher profil" :affiche uniquement les champs définis dans le champs "column_profile" du profil actif
+    - "Afficher minimum" :RAZ la selection et conserve uniquement displayname et url (ou slug si url indisponible)
+    - "Inverser" :inverse la selection
+- [ ] AFF12: dans la zone "Profils":
+  - [ ] diminuer la taille des 2 zones de texte et mettre tous les boutons sur la droite, le tout sur une ligne (au lieu de 2 actuellement)
+- [ ] AFF13: améliorer le design général
+  - apliquer un theme et un design cohérent
+  - enlever les icones dans les titre des sous sections (ex: "Recherche", "Colonnes à afficher", "Profils") pour alléger le design
+  - uniformiser la taille et le design des boutons car quasiement TOUS les boutons sont différents(sauf cas particulier tel que supprimer que reste en rouge)
 
-- [ ] AFF8: rendre les zone "Controles" et "Données" collapsable
-- [ ] AFF9: ajoute un panel collapsable (similaire à "Contrôles"), nommé "Message"
-  - juste en dessous du titre H1
-  - regroupe tous les messages de l'application (ex: "Filtres appliqués", "Profil chargé: xxx", "Erreur de chargement du profil: xxx", etc)
-    - actuellement certains messages s'affichent à la fois en haut de la page et en bas (tel que "Filtres appliqués"), supprimer ce doublon
-- [ ] AFF6: mettre la zone de recherche dans un panel collapsable (similaire à "Générateur de filtres", inside "Contrôles"), nommé "Recherche", placer l'option RegExe et la recherche sur la meme ligne
-- [ ] AFF7: mettre les  Colonnes à afficher dans un panel collapsable  (similaire à "Générateur de filtres", inside "Contrôles"), nommé "Colonnes à afficher"
-- [ ] AFF5: ajoute un panel collapsable (similaire à "Générateur de filtres"), nommé "Options" qui recevra les options du l'app (même niveau que "Contrôles")
-  - déplace y l'option "Afficher erreurs chargement CSV"
-  - ajoute une option "filter les assets invalides" pour filter les assets (quelque soit le profil), à qui il manque:
-    - le slug ET l'url (1 seul des 2 c'est OK)
-    - "DisplayName", "DisplayCategory", ou "DisplayPublisher"
-  - supprimer la redondance du titre "Colonnes à afficher" qui est déjà indiqué dans le titre du panel
-  - ajouter une zone de filtrage rapide par nom de colonne (ex: taper "url" pour n'afficher que les colonnes contenant "url" dans leur nom)
-- [ ] AFF10: layout de présentation final
-  - 5 sections principales: Titre, "Message", "Contrôles" , "Données" , "Options"
-    - l'indicateur (+) signifie que la section est collapsable
-  - P0(+): titre de l'application + info  (tel quel, en ajoutant la version de l'application)
-  - P1(+): "Message" : zone de message d'information et d'erreur de l'application (ex: "Filtres appliqués", "Profil chargé: xxx", "Erreur de chargement du profil: xxx", etc)
-  - P2(+): "Contrôles" : regroupe tous les éléments de contrôle de l'application (ex: générateur de filtres, options d'affichage, etc)
-    - P2.1(+): "Recherche" : regroupe tous les éléments liés à la recherche (ex: zone de recherche, option RegExe, etc)
-    - P2.2(+): "Colonnes à afficher" : regroupe tous les éléments liés à la sélection des colonnes à afficher (ex: liste de colonnes avec cases à cocher, zone de filtrage rapide par nom de colonne, etc)
-    - P2.3(+): "Filtrage" :
-      - "Generateur de filtres": laisser tel quel
-      - "Profil": ne plus afficher les profils dans une popup à part lors du clic sur "profils", mais les afficher toujours dans ce panel
-        - zone de selection du profil à charger (ex: dropdown ou liste de profils avec bouton "charger" à coté de chaque profil)
-        - zone de sauvegarde du profil (ex: champ de texte pour le nom du profil)
-        - zone des boutons: "sauvegarder", "charger", "supprimer"
-        "Action": mettre les boutons "Appliquer" , "Réinitialiser" et "exporter"
-  - P3(+): "Données": regroupe tous les éléments liés à l'affichage des données (ex: zone de recherche, tableau de données, pagination, etc)
-    - pagination 1 (incluant le texte "Affichage de 1 à 50 sur 5 898 entrées" )
-    - liste des assets
-    - pagination 2 (doublon)
-  - P4(+): "Options": regroupe toutes les options de configuration de l'application (ex: "Afficher erreurs chargement CSV", "Filter les assets invalides", etc)
+#### part 1: réorganisation de l'UI: ajouter de la cohérence, de la lisibilité et permettre de reduire les sections pour se concentrer sur l'essentiel
 
 ### Features (last: FEAT4)
 
@@ -82,6 +57,14 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] PAG2: deplacer le selecteur du nombre d'assets par page (ex "Afficher 50 entrées") à gauche de la zone de pagination (cad à gauche du texte "Affichage de 1 à 50 sur 5 898 entrées")
+- [x] PAG1: mettre un doublon de la zone de pagination en haut de la liste (incluant le texte "Affichage de 1 à 50 sur 5 898 entrées" )
+- [x] AFF8: rendre les zone "Controles" et "Données" collapsable
+- [x] AFF9: ajoute un panel collapsable (similaire à "Contrôles"), nommé "Message"
+- [x] AFF6: mettre la zone de recherche dans un panel collapsable (similaire à "Générateur de filtres", inside "Contrôles"), nommé "Recherche", placer l'option RegExe et la recherche sur la meme ligne
+- [x] AFF7: mettre les  Colonnes à afficher dans un panel collapsable  (similaire à "Générateur de filtres", inside "Contrôles"), nommé "Colonnes à afficher"
+- [x] AFF5: ajoute un panel collapsable (similaire à "Générateur de filtres"), nommé "Options" qui recevra les options du l'app (même niveau que "Contrôles")
+- [x] AFF10: layout de présentation final
 - [x] BUG5: supprimer les caractères "spéciaux" dans le nom des assets tel que ("・")
 - [x] FEAT4: ajoute une option "filter les assets invalides" pour filter les assets (quelque soit le profil), à qui il manque le slug+url ou les champs d'affichage requis; appliqué sur export interactif si coché et toujours actif en batch export
 - [x] PROF1: ajouter les "column_aliases" dans tous les profils json

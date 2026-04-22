@@ -1,6 +1,6 @@
 # 🚀 UnityAssetsManager (UAM)
 
-Version: 1.2.21
+Version: 1.3.0
 
 Local web application for fast and efficient management of asset inventories with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
 
@@ -25,18 +25,18 @@ The server starts by default on **http://localhost:5003**. This port can be chan
 
 ### Main Interface
 
-1. **Search** 🔍: Search all fields in real-time (server-side)
-2. **Column Selection** 📋: Choose columns to display (Ctrl+click for multiple selection)
-3. **Pagination**: 25/50/100/250 lines per page (DataTables)
-4. **Column Resizing** ↔️: Hover over the right edge of a header to resize (Sensitive area: 10px).
-5. **Quick Details** 📄: Click any row to open a popup with all asset details.
-6. **Profiles** 💽: Save/load your preferred settings
-7. **Export** 💾:
-   - Standard CSV / semicolon separator
-   - CSV with URL
-   - JSON
-   - Markdown table
-8. **Dark Theme** 🌙: Modern and comfortable interface (aligned with FabAssetsManager).
+1. **Search** 🔍: Search all fields in real-time (server-side, supports Regex).
+2. **Column Selection** 📋: Choose columns to display. Includes a **quick filter** to find columns by name.
+3. **Collapsible Panels** 📂: Organize your workspace by collapsing or expanding Message, Controls, Data, and Options sections.
+4. **Centralized Messages** 💬: All application alerts and status updates are grouped in a dedicated panel with history.
+5. **Dual Pagination** 🔢: Use pagination controls both at the top and bottom of the table for easier navigation.
+6. **Column Resizing** ↔️: Hover over the right edge of a header to resize. Widths are **automatically saved** and restored.
+7. **Quick Details** 📄: Click any row to open a popup with all asset details.
+8. **Advanced Filtering** 🧱: Use the Filter Builder to stack inclusion/exclusion rules on specific columns.
+9. **Invalid Asset Filter** 🚫: Toggle a global filter in "Options" to exclude assets with missing links or incomplete display fields.
+10. **Profiles** 💽: Save/load your preferred setting combinations (columns + filters + aliases).
+11. **Export** 💾: Interactive or Batch export (CSV, MD, JSON, TXT).
+12. **Dark Theme** 🌙: Modern and comfortable interface.
 
 ## 🔧 Configuration
 

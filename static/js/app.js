@@ -18,7 +18,8 @@ let currentColumns = [];
 let currentFilterStack = [];
 let currentAliasMap = {};
 let currentProfileName = null; // Nom du profil actif
-let exportModal, profileModal;
+let exportModal; // Modal export
+let profileModal = null; // Obsolète depuis Sprint 2 (intégré dans le panel)
 let loadedTemplates = []; // Templates d'export chargés depuis le serveur
 
 function isFilterInvalidAssetsEnabled() {
@@ -105,15 +106,41 @@ $(document).ready(function () {
   $('#chkFilterInvalidAssets').prop('checked', storedInvalidAssetsFlag === 'true');
 
   exportModal = new bootstrap.Modal(document.getElementById('exportModal'));
-  profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
   assetDetailModal = new bootstrap.Modal(document.getElementById('assetDetailModal'));
 
   initializeTable();
   setupEventHandlers();
+  setupCollapsibleLogic(); // Sprint 2
+  setupColumnFilter(); // Sprint 2
   loadExportTemplates(); // Charger les templates d'export au démarrage
   updateDataInfo();
   loadProfilesList(); // Charger la liste des profils au démarrage
 });
+
+function setupCollapsibleLogic() {
+  console.log('[UI] Configuration de la logique collapsible...');
+
+  // Gérer l'état visuel des headers lors du collapse (via classes CSS pour les icônes)
+  $('.collapse').on('show.bs.collapse', function () {
+    const targetId = $(this).attr('id');
+    $(`[data-bs-target="#${targetId}"]`).removeClass('collapsed');
+  });
+
+  $('.collapse').on('hide.bs.collapse', function () {
+    const targetId = $(this).attr('id');
+    $(`[data-bs-target="#${targetId}"]`).addClass('collapsed');
+  });
+}
+
+function setupColumnFilter() {
+  $('#columnFilterInput').on('input', function() {
+    const search = $(this).val().toLowerCase();
+    $('#columnSelector option').each(function() {
+      const text = $(this).text().toLowerCase();
+      $(this).toggle(text.includes(search));
+    });
+  });
+}
 
 function initializeTable() {
   console.log('[Table] Initialisation DataTables...');
@@ -238,7 +265,10 @@ function setupEventHandlers() {
 
     // Cacher/montrer les colonnes selon la sélection
     dataTable.columns().every(function () {
-      const colName = this.header().textContent;
+      const header = this.header();
+      if (!header) return;
+
+      const colName = header.textContent.trim();
       const shouldShow = selectedCols.length === 0 || selectedCols.includes(colName);
       this.visible(shouldShow);
     });
@@ -249,7 +279,6 @@ function setupEventHandlers() {
 
   // Boutons
   $('#btnExport').on('click', showExportModal);
-  $('#btnProfile').on('click', showProfileModal);
   $('#btnReset').on('click', resetFilters);
   $('#btnConfirmExport').on('click', performExport);
   $('#btnSaveProfile').on('click', saveProfile);
@@ -611,12 +640,11 @@ function performExport() {
 // ============================================================================
 
 function loadProfilesList() {
-  // Charger la liste des profils disponibles (sans afficher la modal)
+  // Charger la liste des profils disponibles
   $.ajax({
     url: '/api/profiles',
     type: 'GET',
     success: function (response) {
-      // response est une liste directement, ou contient {profiles: ...} selon le backend
       const profiles = Array.isArray(response) ? response : response.profiles || [];
       const $select = $('#profilesList');
 
@@ -625,14 +653,10 @@ function loadProfilesList() {
       // Garder l'option par défaut, remplacer les autres
       $select.find('option:not(:first)').remove();
 
-      // Ajouter les profils récupérés
       if (profiles.length > 0) {
         profiles.forEach(function (profile) {
           $select.append(`<option value="${profile}">${profile}</option>`);
         });
-        console.log('[Profile] ' + profiles.length + ' profils disponibles');
-      } else {
-        console.log('[Profile] Aucun profil trouvé');
       }
     },
     error: function (xhr, status, error) {
@@ -642,13 +666,8 @@ function loadProfilesList() {
 }
 
 function showProfileModal() {
-  console.log('[Profile] Ouverture modal profil');
-
-  // Recharger la liste des profils juste avant afficher la modal
-  loadProfilesList();
-
-  // Afficher la modale
-  profileModal.show();
+  // Obsolète Sprint 2: Les profils sont dans le panel Filtrage
+  console.warn('[Profile] showProfileModal est obsolète');
 }
 
 function saveProfile() {
@@ -661,7 +680,6 @@ function saveProfile() {
 
   console.log('[Profile] Sauvegarde profil:', name);
 
-  // Récupérer les colonnes actuellement visibles
   const visibleCols = [];
   dataTable.columns().every(function () {
     if (this.visible()) {
@@ -686,7 +704,7 @@ function saveProfile() {
     contentType: 'application/json',
     data: JSON.stringify({
       name: name,
-      columns: visibleCols, // Sauvegarder colonnes réellement visibles
+      columns: visibleCols,
       filter_stack: filterStackToSave,
       column_aliases: currentAliasMap,
     }),
@@ -694,8 +712,7 @@ function saveProfile() {
       console.log('[Profile] Sauvegardé:', response);
       showAlert(`Profil "${name}" sauvegardé (${visibleCols.length} colonnes)`, 'success');
       $('#profileName').val('');
-      profileModal.hide();
-      // Ne pas recharger la page - les colonnes sont déjà visibles
+      loadProfilesList();
     },
     error: function (xhr, status, error) {
       console.error('[Profile] Erreur:', error);
@@ -719,36 +736,22 @@ function loadProfile() {
     type: 'GET',
     dataType: 'json',
     success: function (profile) {
-      console.log('[Profile] Réponse brute:', profile);
-      currentProfileName = name; // Mémoriser le profil actif
-      console.log('[Profile] Type:', typeof profile);
-      console.log('[Profile] Keys:', Object.keys(profile));
+      currentProfileName = name;
 
-      // colonnes à afficher
       if (profile.columns && Array.isArray(profile.columns)) {
-        console.log('[Profile] Colonnes valides:', profile.columns);
         $('#columnSelector').val(profile.columns).change();
         showAlert(`Profil "${profile.name || name}" chargé (${profile.columns.length} colonnes)`, 'success');
       }
 
-      // filters
       currentFilterStack = profile.filter_stack || [];
       $('#filterStackEditor').val(JSON.stringify(currentFilterStack, null, 2));
-      // P3.2: Afficher les filtres du profil dans la liste
       renderFilterList();
 
-      // alias map (used server-side to resolve names)
       currentAliasMap = profile.column_aliases || {};
-
-      // reload table to apply new filters
       dataTable.ajax.reload();
-
-      profileModal.hide();
     },
     error: function (xhr, status, error) {
       console.error('[Profile] Erreur API:', error);
-      console.log('[Profile] Status:', xhr.status);
-      console.log('[Profile] Response:', xhr.responseText);
       showAlert(`Erreur lors du chargement du profil: ${error}`, 'danger');
     },
   });
@@ -1133,60 +1136,71 @@ function reloadData() {
 }
 
 function updateDataInfo() {
-  const info = dataTable.page.info();
+  const info = dataTable ? dataTable.page.info() : null;
   if (info) {
-    const msg = `${info.recordsDisplay} / ${info.recordsTotal} lignes affichées`;
+    const msg = `Affichage de ${info.start + 1} à ${info.start + info.length} sur ${info.recordsDisplay} entrées`;
+    if (info.recordsDisplay !== info.recordsTotal) {
+      msg += ` (filtré sur ${info.recordsTotal} entrées totales)`;
+    }
+
+    // Mettre à jour zone native (si visible)
     $('#dataInfo').text(msg);
+
+    // Mettre à jour zone dupliquée en haut
+    $('#paginationInfoTop').text(msg);
+
+    // Dupliquer les contrôles de pagination
+    syncPaginationControls();
   }
 }
 
-function showStats() {
-  console.log('[Stats] Chargement statistiques...');
+function syncPaginationControls() {
+  // Cloner les boutons de pagination vers le haut
+  const $src = $('.dataTables_paginate').first();
+  const $dst = $('#paginationControlsTop');
 
-  $.ajax({
-    url: '/api/stats',
-    type: 'GET',
-    success: function (stats) {
-      console.log('[Stats]', stats);
+  if ($src.length && $dst.length) {
+    $dst.html($src.html());
 
-      let html = `<h5>📊 Statistiques</h5>`;
-      html += `<p><strong>Total:</strong> ${stats.total_rows} lignes × ${stats.total_columns} colonnes</p>`;
-      html += `<p><strong>Colonnes:</strong> ${stats.columns.join(', ')}</p>`;
-      html += `<p><strong>Aperçu (5 premières lignes):</strong></p>`;
-      html += `<pre style="font-size:0.8rem;max-height:300px;overflow:auto;">`;
-      stats.sample.forEach((row) => {
-        html += row.join(' | ') + '\n';
-      });
-      html += `</pre>`;
+    // Récâbler les clics
+    $dst.find('.paginate_button').on('click', function(e) {
+      e.preventDefault();
+      if ($(this).hasClass('disabled') || $(this).hasClass('current')) return;
 
-      showModal('Statistiques', html);
-    },
-    error: function (xhr, status, error) {
-      console.error('[Stats] Erreur:', error);
-      showAlert('Erreur lors du chargement des statistiques', 'danger');
-    },
-  });
+      const btnText = $(this).text();
+      if (btnText === 'Précédent') dataTable.page('previous').draw('page');
+      else if (btnText === 'Suivant') dataTable.page('next').draw('page');
+      else {
+        const pageNum = parseInt(btnText) - 1;
+        if (!isNaN(pageNum)) dataTable.page(pageNum).draw('page');
+      }
+    });
+  }
 }
 
 function showAlert(message, type = 'info') {
+  const timestamp = new Date().toLocaleTimeString();
   const alertHtml = `
-        <div class="alert alert-${type} alert-dismissible fade show" role="alert" style="margin-bottom:1rem;">
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="alert alert-${type} alert-dismissible fade show small" role="alert">
+            <strong>[${timestamp}]</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" style="padding: 0.5rem"></button>
         </div>
     `;
 
-  // Insérer en haut du container
-  $('.container-fluid').prepend(alertHtml);
+  const $container = $('#appMessages');
 
-  // Auto-dismiss après 5s si success/info
-  if (type === 'success' || type === 'info') {
-    setTimeout(() => {
-      $('.alert:first').fadeOut(function () {
-        $(this).remove();
-      });
-    }, 5000);
+  // Supprimer le message "Aucun message" s'il existe
+  if ($container.find('.text-muted').length) {
+    $container.empty();
   }
+
+  // Garder seulement les 5 derniers messages
+  if ($container.find('.alert').length >= 5) {
+    $container.find('.alert').last().remove();
+  }
+
+  // Insérer en haut
+  $container.prepend(alertHtml);
 }
 
 function showModal(title, content) {
@@ -1251,6 +1265,7 @@ function createResizableColumn(col, resizer) {
   };
 
   const mouseMoveHandler = function (e) {
+    if (!col || !col.style) return;
     const dx = e.clientX - x;
     col.style.width = `${w + dx}px`;
     col.style.minWidth = `${w + dx}px`;
@@ -1305,7 +1320,11 @@ function restoreColumnWidths() {
   const table = document.getElementById('assetsTable');
   if (!table) return;
 
-  table.querySelectorAll('thead th').forEach((col) => {
+  const headerCells = table.querySelectorAll('thead th');
+  if (!headerCells) return;
+
+  headerCells.forEach((col) => {
+    if (!col) return;
     const columnName = (col.textContent || '').trim();
     const width = storedWidths[columnName];
     if (!columnName || !width) {
@@ -1313,8 +1332,10 @@ function restoreColumnWidths() {
     }
 
     const normalizedWidth = Math.max(MIN_COL_WIDTH, parseInt(width, 10) || MIN_COL_WIDTH);
-    col.style.width = `${normalizedWidth}px`;
-    col.style.minWidth = `${normalizedWidth}px`;
+    if (col.style) {
+      col.style.width = `${normalizedWidth}px`;
+      col.style.minWidth = `${normalizedWidth}px`;
+    }
   });
 
   if (dataTable && dataTable.columns) {

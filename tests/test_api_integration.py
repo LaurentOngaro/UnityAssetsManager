@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_api_integration.py
 # ============================================================================
 # Description: Integration tests for data retrieval and filtering endpoints.
-# Version: 1.2.21
+# Version: 1.3.0
 # ============================================================================
 
 import pytest

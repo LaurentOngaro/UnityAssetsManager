@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-04-22
+
+### ✨ Added
+
+- Sprint 2 UI overhaul: collapsible main panels (`Message`, `Contrôles`, `Données`, `Options`) and sub-panels.
+- Duplicated top pagination summary/controls for faster navigation in long tables.
+- Quick column-name filter in the "Colonnes à afficher" panel.
+- Centralized message zone to avoid duplicated alerts across the page.
+
+### 🐛 Fixed
+
+- Fixed JS TypeError (`Cannot read properties of undefined (reading 'style')`) during column visibility changes.
+- Hardened column width restoration against missing DOM/header states.
+
+### ✅ Tests
+
+- Validated major export and API workflows before minor bump (integration + export non-regression suites).
+
 ## [1.2.21] - 2026-04-22
 
 ### 🐛 Fixed

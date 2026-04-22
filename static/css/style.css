@@ -68,6 +68,67 @@ body {
   font-weight: 600;
   border-bottom: 2px solid rgb(8, 238, 238);
   font-variant: small-caps;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header .collapse-icon::after {
+  content: '▼';
+  font-size: 0.8rem;
+  transition: transform 0.3s;
+}
+
+.card-header.collapsed .collapse-icon::after {
+  transform: rotate(-90deg);
+}
+
+.sub-panel {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.sub-panel-header {
+  background-color: rgba(1, 169, 175, 0.1);
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sub-panel-header .collapse-icon::after {
+  content: '▼';
+  font-size: 0.7rem;
+}
+
+.sub-panel-header.collapsed .collapse-icon::after {
+  transform: rotate(-90deg);
+}
+
+.sub-panel-body {
+  padding: 1rem;
+}
+
+.pagination-top {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: var(--secondary-bg-color);
+  border-radius: 4px;
+}
+
+#columnFilterInput {
+  margin-bottom: 0.5rem;
+}
+
+.message-zone .alert {
+  margin-bottom: 0.5rem;
 }
 
 /* Forms */

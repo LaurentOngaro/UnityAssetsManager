@@ -3,140 +3,252 @@
 UnityAssetsManager - templates/index.html
 ============================================================================
 Description: Main inventory management interface template.
-Version: 1.2.21
+Version: 1.3.0
 ============================================================================
 -->
 {% extends "base.html" %} {% block content %}
 <div class="row mb-4">
   <div class="col-md-12">
-    <h1 class="mb-3">📦 UnityAssetsManager</h1>
+    <h1 class="mb-3">📦 UnityAssetsManager <small class="text-muted" style="font-size: 0.5em">v1.3.0</small></h1>
     <p class="text-muted">Gestionnaire d'assets haute performance • Flask + DataTables • <strong>{{ row_count }}</strong> assets disponibles</p>
   </div>
 </div>
 
-<!-- Panneau de contrôle -->
-<div class="card mb-4">
-  <div class="card-header bg-primary text-white">
-    <h5 class="mb-0">🎛️ Contrôles</h5>
+<!-- P1: Message zone -->
+<div class="card mb-4" id="messagePanel">
+  <div class="card-header bg-info text-white" data-bs-toggle="collapse" data-bs-target="#messageCollapse">
+    <h5 class="mb-0">💬 Message</h5>
+    <span class="collapse-icon"></span>
   </div>
-  <div class="card-body">
-    <div class="row g-3">
-      <!-- Recherche -->
-      <div class="col-md-4">
-        <label for="searchInput" class="form-label">🔍 Recherche</label>
-        <div class="input-group">
-          <input type="text" class="form-control" id="searchInput" placeholder="Chercher..." />
-          <button class="btn btn-primary" id="btnSearch" type="button">Chercher</button>
-        </div>
-        <div class="form-check mt-2">
-          <input class="form-check-input" type="checkbox" id="chkSearchRegex" />
-          <label class="form-check-label" for="chkSearchRegex"> Mode Regex </label>
-        </div>
-        <small class="text-muted">Pressez Entrée ou cliquez le bouton pour chercher</small>
-      </div>
+  <div id="messageCollapse" class="collapse show">
+    <div class="card-body message-zone" id="appMessages">
+      <p class="text-muted mb-0">Aucun nouveau message.</p>
+    </div>
+  </div>
+</div>
 
-      <!-- Sélection des colonnes -->
-      <div class="col-md-4">
-        <label for="columnSelector" class="form-label">📋 Colonnes à afficher</label>
-        <select multiple class="form-select" id="columnSelector" size="3">
-          {% for col in columns %}
-          <option value="{{ col }}" selected>{{ col }}</option>
-          {% endfor %}
-        </select>
-        <small class="text-muted">Ctrl+Click pour sélectionner plusieurs</small>
-      </div>
-
-      <!-- Contrôles de filtrage avancés -->
-      <details open class="mb-3 p-3 bg-light rounded">
-        <summary style="cursor: pointer; font-weight: bold">🧱 Générateur de filtres</summary>
-        <div class="mt-3">
-          <div class="row">
-            <div class="col-md-4">
-              <label for="filterBuilderCol" class="form-label">Colonne</label>
-              <select class="form-select" id="filterBuilderCol">
-                <option value="">-- Choisir une colonne --</option>
-                {% for col in columns %}
-                <option value="{{ col }}">{{ col }}</option>
-                {% endfor %}
-              </select>
+<!-- P2: Contrôles -->
+<div class="card mb-4" id="controlsPanel">
+  <div class="card-header bg-primary text-white" data-bs-toggle="collapse" data-bs-target="#controlsCollapse">
+    <h5 class="mb-0">🎛️ Contrôles</h5>
+    <span class="collapse-icon"></span>
+  </div>
+  <div id="controlsCollapse" class="collapse show">
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- P2.1: Recherche -->
+        <div class="col-md-12">
+          <div class="sub-panel">
+            <div class="sub-panel-header" data-bs-toggle="collapse" data-bs-target="#searchCollapse">
+              <span>🔍 Recherche</span>
+              <span class="collapse-icon"></span>
             </div>
-            <div class="col-md-8">
-              <label class="form-label">Opérateur</label>
-              <div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="filterOp" id="opValues" value="values" checked />
-                  <label class="form-check-label" for="opValues">Valeurs exactes</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="filterOp" id="opSearch" value="search" />
-                  <label class="form-check-label" for="opSearch">Recherche texte</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="filterOp" id="opRegex" value="regex" />
-                  <label class="form-check-label" for="opRegex">Regex</label>
+            <div id="searchCollapse" class="collapse show">
+              <div class="sub-panel-body">
+                <div class="row align-items-center">
+                  <div class="col-md-8">
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="searchInput" placeholder="Chercher dans toutes les colonnes..." />
+                      <button class="btn btn-primary" id="btnSearch" type="button">Chercher</button>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="chkSearchRegex" />
+                      <label class="form-check-label" for="chkSearchRegex"> Mode Regex </label>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="row mt-2">
-            <div class="col-md-4">
-              <label for="filterBuilderMode" class="form-label">Mode</label>
-              <select class="form-select" id="filterBuilderMode">
-                <option value="include" selected>Inclure (garder)</option>
-                <option value="exclude">Exclure (retirer)</option>
-              </select>
+        </div>
+
+        <!-- P2.2: Colonnes à afficher -->
+        <div class="col-md-12">
+          <div class="sub-panel">
+            <div class="sub-panel-header" data-bs-toggle="collapse" data-bs-target="#columnsCollapse">
+              <span>📋 Colonnes à afficher</span>
+              <span class="collapse-icon"></span>
             </div>
-          </div>
-          <div class="mt-2">
-            <label for="filterBuilderValue" class="form-label">Valeur/Texte (séparés par "," pour valeurs multiples)</label>
-            <div class="input-group">
-              <textarea class="form-control" id="filterBuilderValue" rows="2" placeholder="ex: Tool, Plugin ou pattern.*"></textarea>
-              <div class="input-group-text bg-light p-1" style="display: flex; flex-direction: column; justify-content: center; gap: 5px">
-                <div class="form-check form-switch" title="Filtrer uniquement sur les valeurs actuellement affichées">
-                  <input class="form-check-switch" type="checkbox" id="chkFilterDisplayedOnly" style="transform: scale(0.8)" />
-                  <label class="form-check-label" for="chkFilterDisplayedOnly" style="font-size: 0.7rem">Affichées</label>
-                </div>
+            <div id="columnsCollapse" class="collapse">
+              <div class="sub-panel-body">
+                <input type="text" id="columnFilterInput" class="form-control form-control-sm mb-2" placeholder="Filtrer les noms de colonnes..." />
+                <select multiple class="form-select" id="columnSelector" size="5">
+                  {% for col in columns %}
+                  <option value="{{ col }}" selected>{{ col }}</option>
+                  {% endfor %}
+                </select>
+                <small class="text-muted">Ctrl+Click pour sélectionner plusieurs</small>
               </div>
             </div>
-            <!-- Checkboxes pour colonnes booléennes (affichées dynamiquement) -->
-            <div id="filterBuilderCheckboxes" style="display: none"></div>
-            <!-- Multiselect pour colonnes texte/nombre (affichées dynamiquement) -->
-            <div id="filterBuilderValues" style="display: none"></div>
           </div>
-          <div class="mt-2">
-            <button class="btn btn-sm btn-success" id="btnAddFilter">+ Ajouter filtre</button>
-            <button class="btn btn-sm btn-warning" id="btnClearAllFilters">🗑️ Vider tous les filtres</button>
-          </div>
-          <div class="mt-3" id="filterBuilderList"></div>
         </div>
-      </details>
 
-      <!-- Actions -->
-      <div class="col-md-12">
-        <button class="btn btn-sm btn-primary" id="btnExport">💾 Exporter</button>
-        <button class="btn btn-sm btn-info" id="btnProfile">💾 Profil</button>
-        <button class="btn btn-sm btn-secondary" id="btnReset">↺ Réinitialiser</button>
+        <!-- P2.3: Filtrage -->
+        <div class="col-md-12">
+          <div class="sub-panel">
+            <div class="sub-panel-header" data-bs-toggle="collapse" data-bs-target="#filteringCollapse">
+              <span>🧱 Filtrage & Profils</span>
+              <span class="collapse-icon"></span>
+            </div>
+            <div id="filteringCollapse" class="collapse show">
+              <div class="sub-panel-body">
+                <!-- Générateur de filtres -->
+                <div class="mb-4 p-3 bg-dark rounded border border-secondary">
+                  <h6 class="border-bottom border-secondary pb-2 mb-3 text-info">Générateur de filtres</h6>
+                  <div class="row g-2">
+                    <div class="col-md-3">
+                      <label for="filterBuilderCol" class="form-label small">Colonne</label>
+                      <select class="form-select form-select-sm" id="filterBuilderCol">
+                        <option value="">-- Choisir --</option>
+                        {% for col in columns %}
+                        <option value="{{ col }}">{{ col }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label small">Opérateur</label>
+                      <div class="d-flex gap-2">
+                        <div class="form-check form-check-inline small">
+                          <input class="form-check-input" type="radio" name="filterOp" id="opValues" value="values" checked />
+                          <label class="form-check-label" for="opValues">Valeurs</label>
+                        </div>
+                        <div class="form-check form-check-inline small">
+                          <input class="form-check-input" type="radio" name="filterOp" id="opSearch" value="search" />
+                          <label class="form-check-label" for="opSearch">Texte</label>
+                        </div>
+                        <div class="form-check form-check-inline small">
+                          <input class="form-check-input" type="radio" name="filterOp" id="opRegex" value="regex" />
+                          <label class="form-check-label" for="opRegex">Regex</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="filterBuilderMode" class="form-label small">Mode</label>
+                      <select class="form-select form-select-sm" id="filterBuilderMode">
+                        <option value="include" selected>Inclure</option>
+                        <option value="exclude">Exclure</option>
+                      </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                      <div class="form-check form-switch" title="Uniquement valeurs affichées">
+                        <input class="form-check-input" type="checkbox" id="chkFilterDisplayedOnly" />
+                        <label class="form-check-label small" for="chkFilterDisplayedOnly">Affichées</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <div id="filterBuilderInputArea">
+                      <textarea class="form-control form-control-sm" id="filterBuilderValue" rows="2" placeholder="Valeurs séparées par ','"></textarea>
+                    </div>
+                    <div id="filterBuilderCheckboxes" style="display: none"></div>
+                    <div id="filterBuilderValues" style="display: none"></div>
+                  </div>
+                  <div class="mt-2">
+                    <button class="btn btn-sm btn-success" id="btnAddFilter">+ Ajouter</button>
+                    <button class="btn btn-sm btn-outline-warning" id="btnClearAllFilters">Vider</button>
+                  </div>
+                  <div class="mt-3" id="filterBuilderList"></div>
+                </div>
+
+                <!-- Profils -->
+                <div class="mb-4 p-3 bg-dark rounded border border-secondary">
+                  <h6 class="border-bottom border-secondary pb-2 mb-3 text-info">Profils</h6>
+                  <div class="row g-2 align-items-end">
+                    <div class="col-md-5">
+                      <label for="profilesList" class="form-label small">Charger/Supprimer</label>
+                      <select class="form-select form-select-sm" id="profilesList">
+                        <option value="">-- Nouveau profil --</option>
+                        {% for profile in profiles %}
+                        <option value="{{ profile }}">{{ profile }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="profileName" class="form-label small">Sauvegarder sous</label>
+                      <input type="text" class="form-control form-control-sm" id="profileName" placeholder="Nom..." />
+                    </div>
+                    <div class="col-md-3">
+                      <div class="d-flex gap-1">
+                        <button class="btn btn-sm btn-info w-100" id="btnLoadProfile">Charger</button>
+                        <button class="btn btn-sm btn-danger" id="btnDeleteProfile">🗑️</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-2 text-end">
+                    <button class="btn btn-sm btn-primary" id="btnSaveProfile">Enregistrer Profil</button>
+                  </div>
+                </div>
+
+                <!-- Actions globales -->
+                <div class="d-flex gap-2 justify-content-end">
+                  <button class="btn btn-sm btn-primary" id="btnExport">💾 Exporter</button>
+                  <button class="btn btn-sm btn-secondary" id="btnReset">↺ Réinitialiser</button>
+                </div>
+
+                <!-- Filter stack editor -->
+                <details class="mt-3">
+                  <summary class="small text-muted" style="cursor: pointer">Expert: Éditeur JSON</summary>
+                  <textarea id="filterStackEditor" class="form-control form-control-sm mt-2" rows="3" placeholder="[{ mode: 'include', filters: {...} }, ...]"></textarea>
+                  <button class="btn btn-xs btn-outline-secondary mt-1" id="btnApplyFilters" style="font-size: 0.7rem">Appliquer JSON</button>
+                </details>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- P3: Données -->
+<div class="card mb-4" id="dataPanel">
+  <div class="card-header bg-dark text-white" data-bs-toggle="collapse" data-bs-target="#dataCollapse">
+    <h5 class="mb-0">📊 Données</h5>
+    <span class="collapse-icon"></span>
+  </div>
+  <div id="dataCollapse" class="collapse show">
+    <div class="card-body p-0">
+      <!-- Pagination dupliquée en haut -->
+      <div class="pagination-top d-flex align-items-center justify-content-between p-2">
+        <div id="paginationInfoTop" class="text-muted small"></div>
+        <div id="paginationControlsTop"></div>
       </div>
 
-      <!-- Debug options -->
-      <div class="col-md-12 mt-3">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="chkParserWarnings" {% if show_parser_warnings %}checked{% endif %} />
-          <label class="form-check-label" for="chkParserWarnings"> Afficher erreurs chargement CSV </label>
-        </div>
-        <div class="form-check mt-2">
-          <input class="form-check-input" type="checkbox" id="chkFilterInvalidAssets" />
-          <label class="form-check-label" for="chkFilterInvalidAssets">
-            Filtrer les assets invalides (slug/url manquant et champs d'affichage incomplets)
-          </label>
-        </div>
+      <div style="overflow-x: auto">
+        <table id="assetsTable" class="table table-striped table-hover mb-0 w-100">
+          <thead class="table-dark">
+            <tr>
+              {% for col in columns %}
+              <th>{{ col }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
+    </div>
+  </div>
+</div>
 
-      <!-- Filter stack editor -->
-      <div class="col-md-12 mt-3">
-        <label for="filterStackEditor" class="form-label">🧱 Filtres (JSON)</label>
-        <textarea id="filterStackEditor" class="form-control" rows="3" placeholder="[{ mode: 'include', filters: {...} }, ...]"></textarea>
-        <button class="btn btn-sm btn-secondary mt-1" id="btnApplyFilters">Appliquer filtres</button>
+<!-- P4: Options -->
+<div class="card mb-4" id="optionsPanel">
+  <div class="card-header bg-secondary text-white" data-bs-toggle="collapse" data-bs-target="#optionsCollapse">
+    <h5 class="mb-0">⚙️ Options</h5>
+    <span class="collapse-icon"></span>
+  </div>
+  <div id="optionsCollapse" class="collapse">
+    <div class="card-body">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="chkParserWarnings" {% if show_parser_warnings %}checked{% endif %} />
+        <label class="form-check-label" for="chkParserWarnings"> Afficher erreurs chargement CSV </label>
+      </div>
+      <div class="form-check mt-2">
+        <input class="form-check-input" type="checkbox" id="chkFilterInvalidAssets" />
+        <label class="form-check-label" for="chkFilterInvalidAssets">
+          Filtrer les assets invalides (slug/url manquant ou champs d'affichage incomplets)
+        </label>
       </div>
     </div>
   </div>
@@ -181,45 +293,6 @@ Version: 1.2.21
   </div>
 </div>
 
-<!-- Modal Profil -->
-<div class="modal fade" id="profileModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">💾 Gérer les profils</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <p class="text-muted">Un profil sauvegarde votre sélection de colonnes et vos paramètres.</p>
-
-        <div class="mb-3">
-          <label for="profileName" class="form-label">Nom du profil</label>
-          <input type="text" class="form-control" id="profileName" placeholder="ex: MyProfile" />
-        </div>
-
-        <div class="mb-3">
-          <label for="profilesList" class="form-label">Profils existants</label>
-          <select class="form-select" id="profilesList">
-            <option value="">-- Nouveau profil --</option>
-            {% for profile in profiles %}
-            <option value="{{ profile }}">{{ profile }}</option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <div id="profileActions" style="display: none">
-          <button class="btn btn-sm btn-danger" id="btnDeleteProfile">Supprimer</button>
-          <button class="btn btn-sm btn-info" id="btnLoadProfile">Charger</button>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-        <button type="button" class="btn btn-primary" id="btnSaveProfile">Enregistrer profil</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Modal Détails Asset -->
 <div class="modal fade" id="assetDetailModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -239,27 +312,6 @@ Version: 1.2.21
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- Table des données -->
-<div class="card">
-  <div class="card-header bg-light">
-    <h5 class="mb-0">📊 Données</h5>
-  </div>
-  <div class="card-body p-0">
-    <div style="overflow-x: auto">
-      <table id="assetsTable" class="table table-striped table-hover mb-0 w-100">
-        <thead class="table-dark">
-          <tr>
-            {% for col in columns %}
-            <th>{{ col }}</th>
-            {% endfor %}
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
     </div>
   </div>
 </div>
