@@ -22,7 +22,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Affichage (last: AFF14)
 
-- [ ] AFF14: ajouter un lien vers la page de setup dans la navbar ou a droite du titrepour faciliter l'accès à la configuration de la source de données.
+- [x] AFF14: ajouter un lien vers la page de setup dans la navbar ou a droite du titrepour faciliter l'accès à la configuration de la source de données.
 
 ### Features (last: FEAT4)
 

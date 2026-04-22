@@ -480,6 +480,10 @@ function setupEventHandlers() {
     reloadData();
   });
 
+  $('#navSetup').on('click', function (e) {
+    // Nav link points to /setup directly, no AJAX needed.
+  });
+
   $('#navStats').on('click', function (e) {
     e.preventDefault();
     showStats();

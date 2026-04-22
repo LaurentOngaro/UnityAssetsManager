@@ -3,13 +3,16 @@
 UnityAssetsManager - templates/index.html
 ============================================================================
 Description: Main inventory management interface template.
-Version: 1.5.0
+Version: 1.5.1
 ============================================================================
 -->
 {% extends "base.html" %} {% block content %}
 <div class="row mb-4">
   <div class="col-md-12">
-    <h1 class="mb-3">📦 UnityAssetsManager <small class="text-muted" style="font-size: 0.5em">v1.3.0</small></h1>
+    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+      <h1 class="mb-0">📦 UnityAssetsManager <small class="text-muted" style="font-size: 0.5em">v1.3.0</small></h1>
+      <a class="btn btn-sm btn-outline-light" href="/setup" title="Configurer la source de données">⚙️ Setup</a>
+    </div>
     <p class="text-muted">Gestionnaire d'assets haute performance • Flask + DataTables • <strong>{{ row_count }}</strong> assets disponibles</p>
   </div>
 </div>
