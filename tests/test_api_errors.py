@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_api_errors.py
 # ============================================================================
 # Description: Unit tests for API error handling.
-# Version: 1.4.1
+# Version: 1.5.0
 # ============================================================================
 
 from .test_unity_assets_manager_helpers import import_unity_assets_manager_module
@@ -64,6 +64,13 @@ def test_api_errors_contract(monkeypatch, tmp_path):
     assert resp.status_code == 400
     data = resp.get_json()
     _assert_error_contract(data, "INVALID_PAYLOAD", 400)
+
+    # 8. Test-path SEC1: Invalid extension (path traversal prevention)
+    resp = client.post("/api/test-path", json={"path": "C:/Windows/System32/cmd.exe"})
+    assert resp.status_code == 400
+    data = resp.get_json()
+    _assert_error_contract(data, "INVALID_PAYLOAD", 400)
+    assert "Extension de fichier non autorisée" in data["error"]["message"]
 
 
 def test_api4_test_and_config_endpoints(monkeypatch):

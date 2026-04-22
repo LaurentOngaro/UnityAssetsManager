@@ -3,7 +3,7 @@
 UnityAssetsManager - templates/setup.html
 ============================================================================
 Description: Data source configuration and initialization template.
-Version: 1.4.1
+Version: 1.5.0
 ============================================================================
 -->
 {% extends "base.html" %} {% block content %}
@@ -174,7 +174,7 @@ Version: 1.4.1
         contentType: 'application/json',
         data: JSON.stringify(payload),
         success: function (response) {
-          if (response.success) {
+          if (response.status === 'success') {
             let msg = '✅ Configuration sauvegardée!';
             if (response.db_table) {
               msg += `\nTable: ${response.db_table}`;

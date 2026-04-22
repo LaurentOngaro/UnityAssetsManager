@@ -2,7 +2,7 @@
 # UnityAssetsManager - routes.py
 # ============================================================================
 # Description: Web route definitions and API endpoints.
-# Version: 1.4.1
+# Version: 1.5.0
 # ============================================================================
 
 import logging
@@ -211,8 +211,14 @@ def api_data():
         filtered_df = filter_invalid_assets(filtered_df, alias_map)
 
     if search_value:
-        search_mask = filtered_df.astype(str).apply(lambda row: row.str.contains(search_value, case=False, na=False).any(), axis=1)
-        filtered_df = filtered_df[search_mask]
+        import numpy as np
+        is_regex = _parse_bool(request.args.get('search[regex]'), False)
+        try:
+            masks = [filtered_df[c].astype(str).str.contains(search_value, case=False, na=False, regex=is_regex) for c in filtered_df.columns]
+            search_mask = np.column_stack(masks).any(axis=1)
+            filtered_df = filtered_df[search_mask]
+        except Exception:
+            pass
 
     # Handle sorting
     order_col_idx = request.args.get('order[0][column]')
@@ -429,7 +435,13 @@ def api_test_path():
     if not path_str:
         raise AppError(ErrorCode.INVALID_PAYLOAD, "Path vide", 400)
 
-    path = Path(path_str)
+    path = Path(path_str).resolve()
+
+    # Validation SEC1: vérifier l'extension pour limiter l'exploration arbitraire
+    allowed_extensions = {'.csv', '.db', '.sqlite', '.sqlite3'}
+    if path.suffix.lower() not in allowed_extensions:
+        raise AppError(ErrorCode.INVALID_PAYLOAD, f"Extension de fichier non autorisée. Extensions acceptées: {', '.join(allowed_extensions)}", 400)
+
     exists = path.exists()
     is_dir = path.is_dir() if exists else False
 

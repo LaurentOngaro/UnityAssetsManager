@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-04-22
+
+### 🔧 Changed
+
+- **PERF1**: Remplacement de l'itération ligne par ligne de la recherche globale (`apply(axis=1)`) par une approche vectorisée via `np.column_stack` (optimisation massive des performances sur gros volumes).
+- **PERF3**: Sécurisation des accès concurrents au cache de `AssetDataManager` via un `threading.Lock()` afin de prévenir les conditions de course et les surconsommations mémoire lors des rechargements simultanés.
+- **SEC1**: Sécurisation de la route `/api/test-path` pour éviter les accès arbitraires au système de fichier hôte (Path Traversal restreint aux extensions valides: `.csv`, `.db`, `.sqlite`, `.sqlite3`).
+
+### 🐛 Fixed
+
+- **BUG6**: Correction d'un problème dans la page Setup (`templates/setup.html`) où une redirection vers la page d'accueil échouait silencieusement après une sauvegarde de configuration réussie, due à une vérification incorrecte du payload de retour (`response.success` au lieu de `response.status === 'success'`).
+
+### ✅ Tests
+
+- Ajout d'un test de sécurité `SEC1` dans `test_api_errors.py` validant le rejet des extensions non autorisées sur l'endpoint `/api/test-path`.
+
 ## [1.4.1] - 2026-04-22
 
 ### 📝 Documentation

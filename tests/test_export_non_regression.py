@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_export_non_regression.py
 # ============================================================================
 # Description: Tests de non-régression pour les templates d'export.
-# Version: 1.4.1
+# Version: 1.5.0
 # ============================================================================
 
 from io import BytesIO

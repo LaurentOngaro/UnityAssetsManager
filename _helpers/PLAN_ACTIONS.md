@@ -30,16 +30,6 @@ Règle de pilotage:
 - A la fin d'un sprint significatif, utiliser `python _helpers/bumpImportantVersion.py --scope minor`.
 - Ne pas multiplier les bumps pour les corrections mineures isolées; les regrouper dans le sprint en cours ou en fin de sprint.
 
-### Sprint 5 - [BUG6/PERF1/PERF2/PERF3/SEC1] Optimisations & Robustesse
-
-Suite à une analyse complète du code (Frontend/Backend/Data), voici des propositions d'améliorations techniques et corrections :
-
-- **BUG6** : Corriger la redirection silencieusement bloquée dans `templates/setup.html` (vérification de `response.status === 'success'`).
-- **SEC1** : Sécuriser la route `/api/test-path` pour éviter les accès arbitraires (Path Traversal) sur la machine hôte.
-- **PERF1** : Remplacer l'itération ligne par ligne de la recherche globale (`apply(axis=1)`) par une approche vectorisée (ex: `np.column_stack`) pour de meilleures performances sur les grands datasets.
-- **PERF2** : Implémenter le filtrage SQL natif pour la source SQLite (éviter le chargement complet de la table en mémoire).
-- **PERF3** : Sécuriser les accès concurrents au cache de `AssetDataManager` via un `threading.Lock()` (Flask fonctionnant en mode multi-threadé).
-
 ### Standby - [FEAT2]
 
 - Mettre le scraping Unity Store en attente tant que les sprints ci-dessus ne sont pas stables.

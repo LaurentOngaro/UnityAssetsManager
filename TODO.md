@@ -2,8 +2,6 @@
 
 ## Bugs (last: BUG6)
 
-- [ ] BUG6: Redirection bloquée dans la page Setup (`templates/setup.html`). Le callback AJAX vérifie `response.success` au lieu de `response.status === 'success'`, ce qui bloque la redirection après une configuration réussie.
-
 ## Corrections immédiates (last:CI1)
 
 ## Améliorations du projet
@@ -22,7 +20,9 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Pagination (last: PAG1)
 
-### Affichage (last: AFF13)
+### Affichage (last: AFF14)
+
+- [ ] AFF14: ajouter un lien vers la page de setup dans la navbar ou a droite du titrepour faciliter l'accès à la configuration de la source de données.
 
 ### Features (last: FEAT4)
 
@@ -38,13 +38,9 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Performance (last: PERF3)
 
-- [ ] PERF1: Optimisation du moteur de recherche global (`lib/routes.py` et `lib/filters.py`). La recherche via `pd.DataFrame.apply(axis=1)` est inefficace sur de gros volumes. La remplacer par une approche vectorisée (ex: `np.column_stack`).
-- [ ] PERF2: Filtrage SQL natif pour SQLite (`lib/data_manager.py`). Actuellement, la table entière est chargée en mémoire. Traduire le `filter_stack` en clauses SQL (`WHERE`, `LIKE`, `LIMIT`, `OFFSET`) pour soulager la RAM.
-- [ ] PERF3: Thread-Safety du DataManager (`lib/data_manager.py`). Flask tournant en mode multi-threadé (`threaded=True`), l'absence de `threading.Lock()` lors du chargement des données peut créer des *race conditions* et des pics de consommation mémoire lors des rechargements simultanés.
+- [ ] PERF2: (Reportée car nécessite refonte Python) : Filtrage SQL natif pour SQLite (`lib/data_manager.py`). Actuellement, la table entière est chargée en mémoire. Traduire le `filter_stack` en clauses SQL (`WHERE`, `LIKE`, `LIMIT`, `OFFSET`) pour soulager la RAM.
 
 ### Sécurité (last: SEC1)
-
-- [ ] SEC1: Sécurisation de l'endpoint `/api/test-path`. Restreindre la vérification d'existence de fichier pour éviter l'exploration arbitraire du système (Path Traversal), ou documenter explicitement le risque assumé pour cet outil local.
 
 ### Intégration future (last: INT4)
 
@@ -56,6 +52,10 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] BUG6: Redirection bloquée dans la page Setup (`templates/setup.html`). Le callback AJAX vérifie `response.success` au lieu de `response.status === 'success'`, ce qui bloque la redirection après une configuration réussie.
+- [x] PERF1: Optimisation du moteur de recherche global (`lib/routes.py` et `lib/filters.py`). La recherche via `pd.DataFrame.apply(axis=1)` est inefficace sur de gros volumes. La remplacer par une approche vectorisée (ex: `np.column_stack`).
+- [x] PERF3: Thread-Safety du DataManager (`lib/data_manager.py`). Flask tournant en mode multi-threadé (`threaded=True`), l'absence de `threading.Lock()` lors du chargement des données peut créer des *race conditions* et des pics de consommation mémoire lors des rechargements simultanés.
+- [x] SEC1: Sécurisation de l'endpoint `/api/test-path`. Restreindre la vérification d'existence de fichier pour éviter l'exploration arbitraire du système (Path Traversal), ou documenter explicitement le risque assumé pour cet outil local.
 - [x] REF5: Uniformiser le contrat d'erreur sur toutes les routes (GET /api/columns retourne AppError au lieu de jsonify([]))
 - [x] API5: Gestion explicite des erreurs sur POST /api/reload et validation du data_path sur POST /api/setup
 - [x] DOC4: Mise a jour de openapi.yaml (parametres manquants pour /api/data, /api/export, /api/setup, schema ProfileResponse)

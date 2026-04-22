@@ -2,7 +2,7 @@
 # UnityAssetsManager - filters.py
 # ============================================================================
 # Description: Filtering engine and search logic (filter stacks, tags).
-# Version: 1.4.1
+# Version: 1.5.0
 # ============================================================================
 
 import pandas as pd
@@ -175,9 +175,12 @@ def apply_filter_stack(df: pd.DataFrame, filter_stack: list | None, alias_map: d
                 if '__search_blob__' in filtered_df.columns:
                     search_mask = filtered_df['__search_blob__'].str.contains(item_search_term.lower(), case=False, na=False, regex=item_search_regex)
                 else:
-                    search_mask = filtered_df.astype(str).apply(
-                        lambda row: row.str.contains(item_search_term, case=False, na=False, regex=item_search_regex).any(), axis=1
-                    )
+                    import numpy as np
+                    masks = [
+                        filtered_df[c].astype(str).str.contains(item_search_term, case=False, na=False, regex=item_search_regex)
+                        for c in filtered_df.columns
+                    ]
+                    search_mask = np.column_stack(masks).any(axis=1)
                 item_mask &= search_mask
             except re.error:
                 pass

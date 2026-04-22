@@ -2,13 +2,14 @@
 # UnityAssetsManager - data_manager.py
 # ============================================================================
 # Description: Data manager (AssetDataManager) for CSV and SQLite sources.
-# Version: 1.4.1
+# Version: 1.5.0
 # ============================================================================
 
 import sqlite3
 import pandas as pd
 import logging
 import warnings
+import threading
 from pathlib import Path
 from datetime import datetime
 from .config import config
@@ -24,6 +25,7 @@ class AssetDataManager:
     _df: pd.DataFrame | None = None
     _loaded_at: datetime | None = None
     _source_type: str | None = None
+    _lock = threading.Lock()
 
     def __new__(cls):
         if cls._instance is None:
@@ -56,50 +58,56 @@ class AssetDataManager:
             if age < config.cache_ttl_seconds:
                 return self._df
 
-        try:
-            if config.data_path is None:
-                return pd.DataFrame()
+        with self._lock:
+            if not force_reload and self._df is not None and self._loaded_at is not None:
+                age = (datetime.now() - self._loaded_at).total_seconds()
+                if age < config.cache_ttl_seconds:
+                    return self._df
 
-            data_path = Path(config.data_path)
-            if not data_path.exists():
-                return pd.DataFrame()
-
-            self._source_type = self.detect_source_type(data_path)
-
-            if self._source_type == 'sqlite':
-                conn = sqlite3.connect(str(data_path))
-                tables = self.list_sqlite_tables(data_path)
-                table_name = config.db_table if config.db_table in tables else (tables[0] if tables else None)
-                if not table_name:
+            try:
+                if config.data_path is None:
                     return pd.DataFrame()
 
-                # OPTIMIZATION: For large SQLite, we might NOT want to load everything in memory.
-                # But currently apply_filter_stack uses Pandas.
-                # For now, we still load everything if we want to keep current filtering logic.
-                # TODO: Implement SQL-based filtering for SQLite source.
-                self._df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
-                conn.close()
-            else:
-                # CSV logic
-                with warnings.catch_warnings():
-                    if not config.show_parser_warnings:
-                        warnings.simplefilter('ignore', pd.errors.ParserWarning)
-                    try:
-                        self._df = pd.read_csv(
-                            data_path, sep=None, engine='python', dtype_backend='numpy_nullable', on_bad_lines='warn', encoding='utf-8'
-                        )
-                    except UnicodeDecodeError:
-                        self._df = pd.read_csv(
-                            data_path, sep=None, engine='python', dtype_backend='numpy_nullable', on_bad_lines='warn', encoding='latin-1'
-                        )
+                data_path = Path(config.data_path)
+                if not data_path.exists():
+                    return pd.DataFrame()
 
-            self._df = sanitize_asset_dataframe(self._df)
+                self._source_type = self.detect_source_type(data_path)
 
-            self._loaded_at = datetime.now()
-            return self._df
-        except Exception as e:
-            logger.error(f"❌ Erreur chargement: {e}")
-            return pd.DataFrame()
+                if self._source_type == 'sqlite':
+                    conn = sqlite3.connect(str(data_path))
+                    tables = self.list_sqlite_tables(data_path)
+                    table_name = config.db_table if config.db_table in tables else (tables[0] if tables else None)
+                    if not table_name:
+                        return pd.DataFrame()
+
+                    # OPTIMIZATION: For large SQLite, we might NOT want to load everything in memory.
+                    # But currently apply_filter_stack uses Pandas.
+                    # For now, we still load everything if we want to keep current filtering logic.
+                    # TODO: Implement SQL-based filtering for SQLite source.
+                    self._df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
+                    conn.close()
+                else:
+                    # CSV logic
+                    with warnings.catch_warnings():
+                        if not config.show_parser_warnings:
+                            warnings.simplefilter('ignore', pd.errors.ParserWarning)
+                        try:
+                            self._df = pd.read_csv(
+                                data_path, sep=None, engine='python', dtype_backend='numpy_nullable', on_bad_lines='warn', encoding='utf-8'
+                            )
+                        except UnicodeDecodeError:
+                            self._df = pd.read_csv(
+                                data_path, sep=None, engine='python', dtype_backend='numpy_nullable', on_bad_lines='warn', encoding='latin-1'
+                            )
+
+                self._df = sanitize_asset_dataframe(self._df)
+
+                self._loaded_at = datetime.now()
+                return self._df
+            except Exception as e:
+                logger.error(f"❌ Erreur chargement: {e}")
+                return pd.DataFrame()
 
     def get_data(self) -> pd.DataFrame:
         if self._df is None:
