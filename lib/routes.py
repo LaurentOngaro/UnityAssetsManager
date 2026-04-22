@@ -2,7 +2,7 @@
 # UnityAssetsManager - routes.py
 # ============================================================================
 # Description: Web route definitions and API endpoints.
-# Version: 1.2.18
+# Version: 1.2.20
 # ============================================================================
 
 import logging
@@ -281,21 +281,30 @@ def api_export():
         raise AppError(ErrorCode.DATA_NOT_FOUND, "Aucune donnee a exporter", 404)
 
     filtered_df = df
-    alias_map = data.get('alias_map', {})
+    filter_stack = data.get('filter_stack', []) or []
+    alias_map = data.get('alias_map', {}) or {}
     export_alias_map = alias_map
+
     if profile_name:
         profile = load_profile(profile_name)
         if profile:
-            filter_stack = profile.get('filter_stack', [])
-            export_alias_map = profile.get('column_aliases', {}) or {}
-            alias_map = _build_alias_map_from_profile(profile)
+            profile_filter_stack = profile.get('filter_stack', []) or []
+            profile_alias_map = profile.get('column_aliases', {}) or {}
+            if not filter_stack:
+                filter_stack = profile_filter_stack
+            if not alias_map:
+                alias_map = _build_alias_map_from_profile(profile)
+            if not export_alias_map:
+                export_alias_map = profile_alias_map
             logger.debug(
                 f"Export using profile '{profile_name}', filter_stack length {len(filter_stack)}, alias_map {alias_map}, export_alias_map {export_alias_map}"
             )
-            filtered_df = apply_filter_stack(df, filter_stack, alias_map)
-            logger.debug(f"Export filtered rows: {len(filtered_df)} (original {len(df)})")
         else:
             logger.warning(f"Profile '{profile_name}' not found, using unfiltered data")
+
+    if filter_stack:
+        filtered_df = apply_filter_stack(df, filter_stack, alias_map)
+        logger.debug(f"Export filtered rows: {len(filtered_df)} (original {len(df)})")
 
     try:
         if template_name:

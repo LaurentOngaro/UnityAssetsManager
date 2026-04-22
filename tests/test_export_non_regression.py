@@ -2,9 +2,10 @@
 # UnityAssetsManager - tests/test_export_non_regression.py
 # ============================================================================
 # Description: Tests de non-régression pour les templates d'export.
-# Version: 1.2.18
+# Version: 1.2.20
 # ============================================================================
 
+from io import BytesIO
 from pathlib import Path
 
 import pandas as pd
@@ -175,6 +176,52 @@ def test_batch_export_applies_include_exclude_stack(monkeypatch, tmp_path):
     assert out_file.exists()
 
     exported_df = pd.read_csv(out_file)
+    assert len(exported_df) == 1
+    assert exported_df.iloc[0]["DisplayName"] == "Tree Pack"
+
+
+def test_api_export_applies_filter_stack(monkeypatch):
+    """The interactive export endpoint must export only the currently filtered rows."""
+    mod = import_unity_assets_manager_module()
+    import sys
+    dm_module = sys.modules.get("lib.data_manager")
+    assert dm_module is not None, "lib.data_manager not loaded"
+
+    monkeypatch.setattr(dm_module.dm, "_df", SAMPLE_DF.copy())
+    monkeypatch.setattr(
+        mod.config, "export_templates",
+        {"CSV export": {
+            "description": "Template CSV de test",
+            "pattern": "%DisplayName%,%DisplayPublisher%,%DisplayCategory%",
+        }}
+    )
+
+    filter_stack = [
+        {
+            "mode": "include",
+            "filters": {
+                "DisplayCategory": {
+                    "values": ["Tools"],
+                }
+            },
+            "search_term": "",
+        }, {
+            "mode": "exclude",
+            "filters": {
+                "DisplayPublisher": {
+                    "values": ["PublisherB"],
+                }
+            },
+            "search_term": "",
+        },
+    ]
+
+    client = mod.app.test_client()
+    response = client.post("/api/export", json={"template": "CSV export", "filter_stack": filter_stack, "alias_map": {}, }, )
+
+    assert response.status_code == 200
+
+    exported_df = pd.read_csv(BytesIO(response.data))
     assert len(exported_df) == 1
     assert exported_df.iloc[0]["DisplayName"] == "Tree Pack"
 

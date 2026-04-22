@@ -4,7 +4,7 @@
 #              UnityAssetsManager Flask API (/api/batch-export).
 #              Writes raw exports to assetsExports/Unity for later normalization.
 #
-# Version: 1.2.18
+# Version: 1.2.20
 #
 # Requirements:
 #   - UnityAssetsManager server must be running (default: http://localhost:5003)
