@@ -31,6 +31,10 @@
     "description": "Liste Markdown à puces avec lien sur le nom : NOM(URL) - ÉDITEUR - CATÉGORIE - TAGS",
     "pattern": "- [%DisplayName%](%Url%) - %DisplayPublisher% - %DisplayCategory% - %PackageTags%"
   },
+  "TerraBloom - raw normalize (markdown)": {
+    "description": "Template recommandé TerraBloom : NOM | SLUG | URL | CATÉGORIE | ÉDITEUR",
+    "pattern": "| %DisplayName% | %Slug% | %Url% | %DisplayCategory% | %DisplayPublisher% |"
+  },
   "Issue tracker - liste markdown": {
     "description": "Modèle pour tracker d'issues : NOM(URL) - ÉDITEUR - VERSION - CATÉGORIE - TAGS - AVIS",
     "pattern": "- [%DisplayName%](%Url%) - **%DisplayPublisher%** - %DisplayCategory% - Tags: %PackageTags% - Avis: %AssetRating%"

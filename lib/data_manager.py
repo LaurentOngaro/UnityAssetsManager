@@ -12,6 +12,7 @@ import warnings
 from pathlib import Path
 from datetime import datetime
 from .config import config
+from .utils import sanitize_asset_dataframe
 
 logger = logging.getLogger(__name__)
 
@@ -91,6 +92,8 @@ class AssetDataManager:
                         self._df = pd.read_csv(
                             data_path, sep=None, engine='python', dtype_backend='numpy_nullable', on_bad_lines='warn', encoding='latin-1'
                         )
+
+            self._df = sanitize_asset_dataframe(self._df)
 
             self._loaded_at = datetime.now()
             return self._df

@@ -1,6 +1,6 @@
 # TODOs
 
-## Bugs (last: BUG4)
+## Bugs (last: BUG5)
 
 ## Corrections immédiates (last:CI1)
 
@@ -72,7 +72,9 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Migration (last: MIG3)
 
-### Intégration future (last: INT2)
+### Intégration future (last: INT4)
+
+- [ ] INT4: Traduire l'application en Anglais pour faciliter l'internationalisation future et l'adoption par des utilisateurs non francophones.
 
 ### Idées à creuser (last: IDEA1) - utilité à questionner
 
@@ -80,6 +82,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] BUG5: supprimer les caractères "spéciaux" dans le nom des assets tel que ("・")
 - [x] FEAT4: ajoute une option "filter les assets invalides" pour filter les assets (quelque soit le profil), à qui il manque le slug+url ou les champs d'affichage requis; appliqué sur export interactif si coché et toujours actif en batch export
 - [x] PROF1: ajouter les "column_aliases" dans tous les profils json
 - [x] BUG5: les assets exportés ne sont pas filtrés (tous les asset sont présents dans les exports, même ceux qui sont filtrés dans l'app)

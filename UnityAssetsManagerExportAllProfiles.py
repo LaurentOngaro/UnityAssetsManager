@@ -62,9 +62,10 @@ CACHE_DIR = SCRIPT_DIR / ".cache"
 STATE_FILE = CACHE_DIR / "export_state.json"
 
 # Defaults
-DEFAULT_TEMPLATE = "table markdown avec URL"
+# DEFAULT_TEMPLATE = "table markdown avec URL"
+DEFAULT_TEMPLATE = "TerraBloom - raw normalize (markdown)"
 DEFAULT_API_URL = "http://localhost:5003/api"
-DEFAULT_WORKERS = 4  # Number of parallel exports
+DEFAULT_WORKERS = 8  # Number of parallel exports
 LINT_BATCH_SCRIPT = Path(r"H:\Sync\Scripts\Windows\04c_dev_scripts\run_linters.bat")
 
 

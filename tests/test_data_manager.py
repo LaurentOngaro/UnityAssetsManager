@@ -16,6 +16,7 @@ if str(current_dir.parent) not in sys.path:
 
 # pylint: disable=wrong-import-position
 from lib.data_manager import AssetDataManager  # type: ignore # noqa: E402
+from lib.utils import normalize_asset_identifier_text, normalize_asset_label_text  # type: ignore # noqa: E402
 
 
 def test_detect_source_type():
@@ -61,3 +62,23 @@ def test_csv_loading(tmp_path, monkeypatch):
     assert not df.empty
     assert len(df) == 2
     assert "asset1" in df["name"].values
+
+
+def test_csv_loading_normalizes_special_separators(tmp_path, monkeypatch):
+    dm = AssetDataManager()
+
+    csv_path = tmp_path / "test_assets_unicode.csv"
+    csv_path.write_text("DisplayName,Slug\nEpic・Pack,Epic・Pack\n", encoding="utf-8")
+
+    from lib.config import config as app_config  # type: ignore
+    monkeypatch.setattr(app_config, "data_path", str(csv_path))
+
+    df = dm.load_data(force_reload=True)
+    assert not df.empty
+    assert df.iloc[0]["DisplayName"] == "Epic Pack"
+    assert df.iloc[0]["Slug"] == "epic-pack"
+
+
+def test_unicode_label_normalization_removes_problematic_symbols():
+    assert normalize_asset_label_text("【戴永翔】 ⭐ 小豬點火工作室 ・ Pack") == "Pack"
+    assert normalize_asset_identifier_text("【戴永翔】 ⭐ 小豬點火工作室 ・ Pack") == "pack"

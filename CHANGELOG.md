@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🐛 Fixed
 
+- BUG5: remove "special" characters in asset names such as ("・")
 - `POST /api/export` now applies invalid-asset filtering when `filter_invalid_assets=true`.
 - `POST /api/batch-export` now always removes invalid assets to reduce noise in automated exports.
 
