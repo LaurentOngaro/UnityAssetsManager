@@ -267,7 +267,7 @@ def main():
                 continue
 
             current_global_idx = start_idx + i
-            output_file = EXPORT_DIR / f"{profile}{expected_output_suffix(args.template)}"
+            output_file = EXPORT_DIR / f"{Path(profile).stem}{expected_output_suffix(args.template)}"
 
             if not args.force and output_file.exists():
                 cprint(f"⏩ Skipping {profile}: already exists", "WHITE")
