@@ -7,27 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.6.0] - 2026-05-05
 
-### ✨ Added
+### 🔧 Changed
 
-- **Child Asset Filter**: Exports (both interactive `/api/export` and batch `/api/batch-export`) now automatically exclude rows where `ParentId` is non-null/empty, eliminating duplicate child assets.
-- **`--get-childs` CLI flag**: Added to `UnityAssetsManagerExportAllProfiles.py` to disable the child asset filter and include child rows in batch exports.
-- **`get_childs` API parameter**: Both `/api/export` and `/api/batch-export` now accept a `get_childs` boolean field (default `false`) to control whether child assets are included.
-
-### ✅ Tests
-
-- Added 28 new extended coverage tests in `test_api_coverage_extended.py`:
-  - `get_childs` parameter for both export endpoints (default exclude / explicit include)
-  - Child filter combined with filter_stack
-  - Sorting in `/api/data` (ascending, descending, invalid column)
-  - `/api/data` with profile parameter loading filter_stack
-  - Profile CRUD via API (save, get, delete, delete nonexistent)
-  - `sanitize_asset_dataframe` and Unicode normalization
-  - `/api/reload` and `/api/templates` endpoints
-  - Config update validation (invalid log_level, log_output, log_max_bytes, log_backup_count, db_table)
-  - JSONC parsing (strip_jsonc, read_json, write_json_normalized backup)
-- Total test count: 64 (was 36).
-
-## [1.6.0] - 2026-05-05
+fix: ensure dtype preservation in sanitize_asset_dataframe and clean up test_filters
 
 ### ✨ Added
 

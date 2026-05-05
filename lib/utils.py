@@ -180,6 +180,7 @@ def sanitize_asset_dataframe(df):
             continue
         if not any(token in column.lower() for token in ("slug", "id", "identifier", "key", "name", "title", "label", "publisher", "category")):
             continue
-        sanitized[column] = sanitized[column].apply(lambda value: normalize_asset_column_value(column, value))
+        original_dtype = sanitized[column].dtype
+        sanitized.loc[:, column] = sanitized[column].apply(lambda value: normalize_asset_column_value(column, value)).astype(original_dtype)
 
     return sanitized
