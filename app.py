@@ -2,14 +2,14 @@
 # UnityAssetsManager - app.py
 # ============================================================================
 # Description: Flask application entry point and initialization.
-# Version: 1.6.0
+# Version: 1.6.2
 # ============================================================================
 
 import logging
 from flask import Flask
 from flask import request
 from flask_cors import CORS
-from lib.config import config, SCRIPT_DIR
+from lib.config import config, APP_DIR
 from lib.routes import bp as main_bp
 from lib.errors import AppError, ErrorCode, create_error_response
 from lib.logging_setup import configure_logging
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_app():
-    app = Flask(__name__, template_folder=str(SCRIPT_DIR / "templates"), static_folder=str(SCRIPT_DIR / "static"))
+    app = Flask(__name__, template_folder=str(APP_DIR / "templates"), static_folder=str(APP_DIR / "static"))
 
     app.config["SECRET_KEY"] = config.secret_key
     app.config["MAX_CONTENT_LENGTH"] = config.max_content_length_mb * 1024 * 1024
@@ -32,7 +32,7 @@ def create_app():
         log_output=config.log_output,
         log_max_bytes=config.log_max_bytes,
         log_backup_count=config.log_backup_count,
-        log_file_path=SCRIPT_DIR / config.log_file,
+        log_file_path=APP_DIR / config.log_file,
     )
 
     # Register routes
@@ -71,7 +71,11 @@ if __name__ == "__main__":
     server_host = config.server_host
     flask_debug = config.flask_debug
     flask_threaded = config.flask_threaded
+    version = config.version
+
+    print("=" * 40)
     print("🚀 UnityAssetsManager")
+    print(f"version: {version}")
     print("=" * 40)
     print(f"\nOpen: http://{server_host}:{server_port}\n")
     if flask_debug:

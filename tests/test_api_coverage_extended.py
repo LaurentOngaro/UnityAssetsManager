@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_api_coverage_extended.py
 # ============================================================================
 # Description: Extended API coverage tests for previously untested features.
-# Version: 1.6.0
+# Version: 1.6.2
 # ============================================================================
 
 import json

@@ -1,49 +1,40 @@
 @echo off
-REM Version: 1.2.0
+:: ============================================================================
+:: UnityAssetsManager - start_UnityAssetsManager.bat
+:: ============================================================================
+:: Description: Launcher script that detects Python and starts the Flask server.
+:: Version: 1.6.0
+:: ============================================================================
 setlocal
 
 cd /d "%~dp0"
 
-set "PYTHON_CMD="
-set "PYTHON_ARGS="
+if exist ".venv\Scripts\python.exe" (
+    echo [INFO] Using local virtual environment: .venv\Scripts\python.exe
+    ".venv\Scripts\python.exe" app.py
+    goto :after_run
+)
 
 where python >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
-    set "PYTHON_CMD=python"
-) else (
-    where py >nul 2>&1
-    if %ERRORLEVEL% EQU 0 (
-        set "PYTHON_CMD=py"
-        set "PYTHON_ARGS=-3"
-    )
+    echo [INFO] Using Python from PATH
+    python app.py
+    goto :after_run
 )
 
-if not defined PYTHON_CMD (
-    echo [ERROR] Python not found.
-    echo Install Python 3 or add it to PATH.
-    pause
-    exit /b 1
+where py >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo [INFO] Using Python launcher (py -3)
+    py -3 app.py
+    goto :after_run
 )
 
-echo [INFO] Using Python from PATH
-if defined PYTHON_ARGS (
-    %PYTHON_CMD% %PYTHON_ARGS% --version
-    if errorlevel 1 goto :python_error
-    %PYTHON_CMD% %PYTHON_ARGS% -m pip install -q -r requirements.txt
-) else (
-    %PYTHON_CMD% --version
-    if errorlevel 1 goto :python_error
-    %PYTHON_CMD% -m pip install -q -r requirements.txt
-)
-if errorlevel 1 goto :pip_error
+echo [ERROR] Python not found.
+echo Install Python 3 or create a .venv environment in this folder.
+pause
+exit /b 1
 
-echo [INFO] Starting UnityAssetsManager
-if defined PYTHON_ARGS (
-    %PYTHON_CMD% %PYTHON_ARGS% app.py
-) else (
-    %PYTHON_CMD% app.py
-)
-
+:after_run
 set EXIT_CODE=%ERRORLEVEL%
 if not "%EXIT_CODE%"=="0" (
     echo.
@@ -52,13 +43,3 @@ if not "%EXIT_CODE%"=="0" (
 )
 
 exit /b %EXIT_CODE%
-
-:python_error
-echo [ERROR] Python is available but could not start.
-pause
-exit /b 1
-
-:pip_error
-echo [ERROR] Failed to install dependencies from requirements.txt.
-pause
-exit /b 1

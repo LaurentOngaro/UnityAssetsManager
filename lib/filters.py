@@ -2,7 +2,7 @@
 # UnityAssetsManager - filters.py
 # ============================================================================
 # Description: Filtering engine and search logic (filter stacks, tags).
-# Version: 1.6.0
+# Version: 1.6.2
 # ============================================================================
 
 import pandas as pd
@@ -99,7 +99,12 @@ def _missing_mask(series: pd.Series) -> pd.Series:
 
 
 def filter_child_assets(df: pd.DataFrame) -> pd.DataFrame:
-    """Remove rows where ParentId is not null/empty to eliminate duplicate child assets."""
+    """Remove rows where ParentId is not null/empty/zero to eliminate duplicate child assets.
+
+    In Unity assets data, ParentId uses integer semantics:
+      - 0 (or empty/null) means "no parent" (root asset)
+      - positive integer means "child of asset with that ID"
+    """
     if df is None or df.empty:
         return df
 
@@ -112,9 +117,22 @@ def filter_child_assets(df: pd.DataFrame) -> pd.DataFrame:
     if parent_id_col is None:
         return df
 
-    text = df[parent_id_col].astype(str).str.strip()
-    is_null_or_empty = df[parent_id_col].isna() | text.eq('') | text.str.lower().isin({'nan', 'none', 'null'})
-    return df[is_null_or_empty]
+    series = df[parent_id_col]
+    text = series.astype(str).str.strip()
+    is_root = (
+        series.isna()
+        | text.eq('')
+        | text.str.lower().isin({'nan', 'none', 'null', '0'})
+    )
+
+    # Also handle numeric zero values that survived str conversion
+    try:
+        numeric = pd.to_numeric(series, errors='coerce')
+        is_root = is_root | (numeric == 0)
+    except Exception:
+        pass
+
+    return df[is_root]
 
 
 def filter_invalid_assets(df: pd.DataFrame, alias_map: dict | None = None) -> pd.DataFrame:

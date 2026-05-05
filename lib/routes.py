@@ -2,7 +2,7 @@
 # UnityAssetsManager - routes.py
 # ============================================================================
 # Description: Web route definitions and API endpoints.
-# Version: 1.6.0
+# Version: 1.6.2
 # ============================================================================
 
 import logging
@@ -13,7 +13,7 @@ from pathlib import Path
 from flask import render_template, request, jsonify, send_file, redirect, url_for, Blueprint
 from io import BytesIO
 
-from .config import config, PROFILES_DIR, EXPORTS_DIR, SCRIPT_DIR
+from .config import config, PROFILES_DIR, EXPORTS_DIR, APP_DIR
 from .utils import read_json, write_json_normalized, _parse_bool, _parse_int
 from .data_manager import dm
 from .filters import apply_filter_stack, _build_alias_map_from_profile, filter_invalid_assets, filter_child_assets
@@ -30,7 +30,7 @@ _ALLOWED_CONFIG_UPDATE_FIELDS = {"db_table", "show_parser_warnings", "log_level"
 
 
 def _read_version() -> str:
-    version_file = SCRIPT_DIR / "VERSION.txt"
+    version_file = APP_DIR / "VERSION.txt"
     if version_file.exists():
         return version_file.read_text(encoding="utf-8").strip()
     return "unknown"
@@ -425,7 +425,7 @@ def api_update_config():
         log_output=config.log_output,
         log_max_bytes=config.log_max_bytes,
         log_backup_count=config.log_backup_count,
-        log_file_path=SCRIPT_DIR / "app.log",
+        log_file_path=APP_DIR / "app.log",
     )
 
     return jsonify({"status": "success", "message": "Configuration mise a jour", "config": config.to_public_runtime_config(), })

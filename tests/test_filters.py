@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_filters.py
 # ============================================================================
 # Description: Unit tests for the filtering functionality.
-# Version: 1.6.0
+# Version: 1.6.2
 # ============================================================================
 
 import pandas as pd
@@ -82,14 +82,16 @@ def test_filter_child_assets_removes_rows_with_parent_id():
         [
             {"Name": "Parent1", "ParentId": ""},
             {"Name": "Parent2", "ParentId": None},
-            {"Name": "Child1", "ParentId": "parent-123"},
-            {"Name": "Child2", "ParentId": "parent-456"},
+            {"Name": "Parent3", "ParentId": 0},
+            {"Name": "Child1", "ParentId": 192},
+            {"Name": "Child2", "ParentId": 261},
         ]
     )
     res = filter_child_assets(df)
-    assert len(res) == 2
+    assert len(res) == 3
     assert "Parent1" in res["Name"].values
     assert "Parent2" in res["Name"].values
+    assert "Parent3" in res["Name"].values
 
 
 def test_filter_child_assets_no_parentid_column():
@@ -111,9 +113,11 @@ def test_filter_child_assets_nan_and_null_values():
             {"Name": "NullStr", "ParentId": "null"},
             {"Name": "NoneStr", "ParentId": "none"},
             {"Name": "NanStr", "ParentId": "nan"},
+            {"Name": "ZeroInt", "ParentId": 0},
+            {"Name": "ZeroStr", "ParentId": "0"},
             {"Name": "Child", "ParentId": "abc-123"},
         ]
     )
     res = filter_child_assets(df)
-    assert len(res) == 4
+    assert len(res) == 6
     assert "Child" not in res["Name"].values

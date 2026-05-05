@@ -2,7 +2,7 @@
 # UnityAssetsManager - app_settings.py
 # ============================================================================
 # Description: Configuration constants and default application paths.
-# Version: 1.6.0
+# Version: 1.6.2
 # ============================================================================
 
 from __future__ import annotations
@@ -30,11 +30,11 @@ DEFAULT_LOG_MAX_BYTES = 1048576
 DEFAULT_LOG_BACKUP_COUNT = 3
 
 
-def build_possible_data_paths(script_dir: Path, assets_csv_file: str = ASSETS_CSV_FILE) -> list[Path]:
+def build_possible_data_paths(APP_DIR: Path, assets_csv_file: str = ASSETS_CSV_FILE) -> list[Path]:
     """Retourner les chemins candidats pour la source de donnees Unity."""
     return [
         Path(f"H:/Sync/PKM_PROJECTS/TerraBloom/_Helpers/data/assetsExports/Unity/{assets_csv_file}"),
-        script_dir.parent.parent.parent / f"_Helpers/data/assetsExports/Unity/{assets_csv_file}",
+        APP_DIR.parent.parent.parent / f"_Helpers/data/assetsExports/Unity/{assets_csv_file}",
         Path.home() / f"Sync/PKM_PROJECTS/TerraBloom/_Helpers/data/assetsExports/Unity/{assets_csv_file}",
     ]
 

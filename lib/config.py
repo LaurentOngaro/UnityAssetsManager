@@ -2,7 +2,7 @@
 # UnityAssetsManager - config.py
 # ============================================================================
 # Description: Runtime configuration and export template management.
-# Version: 1.6.0
+# Version: 1.6.2
 # ============================================================================
 
 import logging
@@ -20,12 +20,12 @@ from .app_settings import (
 
 logger = logging.getLogger(__name__)
 
-SCRIPT_DIR = Path(__file__).parent.parent
-PROFILES_DIR = SCRIPT_DIR / "profiles"
-EXPORTS_DIR = SCRIPT_DIR / "exports"
-CACHE_DIR = SCRIPT_DIR / ".cache"
-CONFIG_FILE = SCRIPT_DIR / "config" / "config.json"
-TEMPLATES_FILE = SCRIPT_DIR / "data" / "export_templates.jsonc"
+APP_DIR = Path(__file__).parent.parent
+PROFILES_DIR = APP_DIR / "profiles"
+EXPORTS_DIR = APP_DIR / "exports"
+CACHE_DIR = APP_DIR / ".cache"
+CONFIG_FILE = APP_DIR / "config" / "config.json"
+TEMPLATES_FILE = APP_DIR / "data" / "export_templates.jsonc"
 
 # Ensure directories exist
 PROFILES_DIR.mkdir(exist_ok=True)
@@ -176,7 +176,7 @@ class AppConfig:
         self.log_output = _normalize_log_output(config_data.get('log_output', DEFAULT_LOG_OUTPUT), DEFAULT_LOG_OUTPUT)
         self.log_max_bytes = _parse_int(config_data.get('log_max_bytes'), DEFAULT_LOG_MAX_BYTES)
         self.log_backup_count = _parse_int(config_data.get('log_backup_count'), DEFAULT_LOG_BACKUP_COUNT)
-
+        self.version = self.read_version()
         # Determine data_path
         self.data_path = None
         if config_data.get('data_path'):
@@ -185,14 +185,14 @@ class AppConfig:
                 self.data_path = path
 
         if self.data_path is None:
-            possible_paths = build_possible_data_paths(SCRIPT_DIR)
+            possible_paths = build_possible_data_paths(APP_DIR)
             for path in possible_paths:
                 if path.exists():
                     self.data_path = path
                     break
 
         if self.data_path is None:
-            self.data_path = build_possible_data_paths(SCRIPT_DIR)[0]
+            self.data_path = build_possible_data_paths(APP_DIR)[0]
 
     def save(self, config_data):
         existing_config = {}
@@ -341,6 +341,15 @@ class AppConfig:
             elif ('{' in pattern or '[' in pattern) and '](' not in pattern:
                 ext, mimetype = 'json', 'application/json'
         return ext, mimetype
+
+    def read_version(self) -> str:
+        version_file = APP_DIR / "VERSION.txt"
+        if version_file.exists():
+            try:
+                return version_file.read_text().strip()
+            except Exception:
+                pass
+        return "1.0.0"
 
 
 # Global instance

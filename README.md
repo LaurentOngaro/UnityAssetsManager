@@ -1,6 +1,6 @@
 # 🚀 UnityAssetsManager (UAM)
 
-Version: 1.6.0
+Version: 1.6.2
 
 Local web application for fast and efficient management of asset inventories with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
 

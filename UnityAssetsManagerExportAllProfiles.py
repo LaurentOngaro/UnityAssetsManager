@@ -4,7 +4,7 @@
 #              UnityAssetsManager Flask API (/api/batch-export).
 #              Writes raw exports to assetsExports/Unity for later normalization.
 #
-# Version: 1.6.0
+# Version: 1.6.2
 #
 # Requirements:
 #   - UnityAssetsManager server must be running (default: http://localhost:5003)
@@ -56,10 +56,10 @@ except ImportError:
 #     format_markdown_path = None
 
 # Configuration local to UnityAssetsManager
-SCRIPT_DIR = Path(__file__).parent
+APP_DIR = Path(__file__).parent
 # Raw export directory used as input of the normalization step.
 EXPORT_DIR = DATA_DIR / "assetsExports" / "Unity"
-CACHE_DIR = SCRIPT_DIR / ".cache"
+CACHE_DIR = APP_DIR / ".cache"
 STATE_FILE = CACHE_DIR / "export_state.json"
 
 # Defaults

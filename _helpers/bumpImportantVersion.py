@@ -19,11 +19,11 @@ import sys
 from functools import lru_cache
 from pathlib import Path
 
-SCRIPT_DIR = Path(__file__).resolve().parent
-APP_ROOT = SCRIPT_DIR.parent
+APP_DIR = Path(__file__).resolve().parent
+APP_ROOT = APP_DIR.parent
 VERSION_FILE = APP_ROOT / "VERSION.txt"
 
-CONFIG_FILE = SCRIPT_DIR / "bumpImportantVersion.config.json"
+CONFIG_FILE = APP_DIR / "bumpImportantVersion.config.json"
 
 VERSION_TAG_EXTENSIONS = {".py", ".md", ".html", ".htm", ".js", ".yaml", ".yml"}
 VERSION_MARKER_RE = re.compile(r"(?m)^\s*(?:#\s*)?(?:\*\*Version:\*\*|\*\*Version\*\*:|Version:|version:)\s*\d+\.\d+\.\d+")

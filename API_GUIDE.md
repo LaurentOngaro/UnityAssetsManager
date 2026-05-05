@@ -1,6 +1,6 @@
 # API Guide - UnityAssetsManager
 
-**Version:** 1.6.0
+**Version:** 1.6.2
 
 ## Overview
 
@@ -151,7 +151,6 @@ Notes:
 - If `file_name` has no extension, it's inferred from the template.
 - If `output_dir` is relative, it's resolved from the application folder.
 - `/api/batch-export` always removes invalid assets (missing both slug+url, or missing one of DisplayName/DisplayCategory/DisplayPublisher).
-- `/api/batch-export` always removes child assets (rows with non-null `ParentId`) by default. Set `get_childs: true` to include them.
 - `/api/batch-export` always removes child assets (rows with non-null `ParentId`) by default. Set `get_childs: true` to include them.
 
 Retour success:

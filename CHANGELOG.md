@@ -5,11 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] - 2026-05-05
+
+### 🔧 Changed
+
+- fix issues with empty export files
+- Add version display and update configuration files for versioning consistency
+- refactor: standardize directory path variables across the project
+- refactor: standardize start_unity_assets_manager script
+
 ## [1.6.0] - 2026-05-05
 
 ### 🔧 Changed
 
-fix: ensure dtype preservation in sanitize_asset_dataframe and clean up test_filters
+- fix: ensure dtype preservation in sanitize_asset_dataframe and clean up test_filters
 
 ### ✨ Added
 
