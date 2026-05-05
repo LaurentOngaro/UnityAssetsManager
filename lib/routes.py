@@ -2,7 +2,7 @@
 # UnityAssetsManager - routes.py
 # ============================================================================
 # Description: Web route definitions and API endpoints.
-# Version: 1.5.1
+# Version: 1.6.0
 # ============================================================================
 
 import logging
@@ -16,7 +16,7 @@ from io import BytesIO
 from .config import config, PROFILES_DIR, EXPORTS_DIR, SCRIPT_DIR
 from .utils import read_json, write_json_normalized, _parse_bool, _parse_int
 from .data_manager import dm
-from .filters import apply_filter_stack, _build_alias_map_from_profile, filter_invalid_assets
+from .filters import apply_filter_stack, _build_alias_map_from_profile, filter_invalid_assets, filter_child_assets
 from .errors import AppError, ErrorCode
 from .logging_setup import configure_logging
 
@@ -294,6 +294,7 @@ def api_export():
     filter_stack = data.get('filter_stack', []) or []
     alias_map = data.get('alias_map', {}) or {}
     filter_invalid_assets_enabled = _parse_bool(data.get('filter_invalid_assets'), False)
+    get_childs_enabled = _parse_bool(data.get('get_childs'), False)
     export_alias_map = alias_map
 
     if profile_name:
@@ -316,6 +317,10 @@ def api_export():
     if filter_stack:
         filtered_df = apply_filter_stack(df, filter_stack, alias_map)
         logger.debug(f"Export filtered rows: {len(filtered_df)} (original {len(df)})")
+
+    if not get_childs_enabled:
+        filtered_df = filter_child_assets(filtered_df)
+        logger.debug(f"Export child-asset filter rows: {len(filtered_df)}")
 
     if filter_invalid_assets_enabled:
         filtered_df = filter_invalid_assets(filtered_df, alias_map)
@@ -526,6 +531,7 @@ def api_batch_export():
     filter_stack = data.get('filter_stack', [])
     alias_map = data.get('alias_map', {})
     export_alias_map = alias_map
+    get_childs_enabled = _parse_bool(data.get('get_childs'), False)
 
     # Support for both explicit path or split dir/name
     output_path = data.get('output_path')
@@ -552,6 +558,10 @@ def api_batch_export():
 
     filtered_df = apply_filter_stack(df, filter_stack, alias_map)
     logger.debug(f"Batch export filtered rows: {len(filtered_df)} (original {len(df)})")
+
+    if not get_childs_enabled:
+        filtered_df = filter_child_assets(filtered_df)
+        logger.debug(f"Batch export child-asset filter rows: {len(filtered_df)}")
 
     filtered_df = filter_invalid_assets(filtered_df, alias_map)
     logger.debug(f"Batch export invalid-asset filter rows: {len(filtered_df)}")

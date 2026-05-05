@@ -4,7 +4,7 @@
 #              UnityAssetsManager Flask API (/api/batch-export).
 #              Writes raw exports to assetsExports/Unity for later normalization.
 #
-# Version: 1.5.1
+# Version: 1.6.0
 #
 # Requirements:
 #   - UnityAssetsManager server must be running (default: http://localhost:5003)
@@ -18,6 +18,7 @@
 #   -f, --force                 : Force export even if the raw file already exists
 #   -l, --lint_markdown_results : Run markdown linters on exported folders (default: enabled)
 #   -u, --url                   : Base URL of the API (default: http://localhost:5003/api)
+#   --get-childs                : Include child assets (rows with non-null ParentId)
 # ----------------------------------------------------------------------------
 
 import argparse
@@ -104,9 +105,9 @@ def expected_output_suffix(template_name: str) -> str:
     return ".md"
 
 
-def export_profile(api_url, profile, template, output_file):
+def export_profile(api_url, profile, template, output_file, get_childs=False):
     """Unit function for profile export (used by workers)."""
-    payload = {"profile": profile, "template": template, "output_path": str(output_file.absolute())}
+    payload = {"profile": profile, "template": template, "output_path": str(output_file.absolute()), "get_childs": get_childs}
     try:
         resp = requests.post(f"{api_url}/batch-export", json=payload, timeout=60)
         return profile, resp.status_code, resp.json()
@@ -192,6 +193,7 @@ def main():
     )
     parser.add_argument("-u", "--url", default=DEFAULT_API_URL, help=f"API Base URL (default: {DEFAULT_API_URL})")
     parser.add_argument("--no-reload", action="store_true", help="Skip initial API reload")
+    parser.add_argument("--get-childs", action="store_true", help="Include child assets (rows with non-null ParentId)")
 
     args = parser.parse_args()
     api_url = args.url.rstrip('/')
@@ -275,7 +277,7 @@ def main():
                 exported_directories.add(output_file.parent)
                 continue
 
-            future = executor.submit(export_profile, api_url, profile, args.template, output_file)
+            future = executor.submit(export_profile, api_url, profile, args.template, output_file, args.get_childs)
             future_to_profile[future] = (profile, current_global_idx, output_file.parent)
 
         completed = 0

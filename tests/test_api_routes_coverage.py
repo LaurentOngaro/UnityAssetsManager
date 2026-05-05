@@ -3,7 +3,7 @@
 # ============================================================================
 # Description: Tests for previously uncovered API routes (profiles CRUD,
 #              reload, setup, config GET, templates).
-# Version: 1.5.1
+# Version: 1.6.0
 # ============================================================================
 
 import json

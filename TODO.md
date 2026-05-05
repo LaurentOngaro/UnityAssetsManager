@@ -22,8 +22,6 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Affichage (last: AFF14)
 
-- [x] AFF14: ajouter un lien vers la page de setup dans la navbar ou a droite du titrepour faciliter l'accès à la configuration de la source de données.
-
 ### Features (last: FEAT4)
 
 - [ ] FEAT2:  faire du scrapping direct depuis le unity store
@@ -52,6 +50,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] AFF14: ajouter un lien vers la page de setup dans la navbar ou a droite du titrepour faciliter l'accès à la configuration de la source de données.
 - [x] BUG6: Redirection bloquée dans la page Setup (`templates/setup.html`). Le callback AJAX vérifie `response.success` au lieu de `response.status === 'success'`, ce qui bloque la redirection après une configuration réussie.
 - [x] PERF1: Optimisation du moteur de recherche global (`lib/routes.py` et `lib/filters.py`). La recherche via `pd.DataFrame.apply(axis=1)` est inefficace sur de gros volumes. La remplacer par une approche vectorisée (ex: `np.column_stack`).
 - [x] PERF3: Thread-Safety du DataManager (`lib/data_manager.py`). Flask tournant en mode multi-threadé (`threaded=True`), l'absence de `threading.Lock()` lors du chargement des données peut créer des *race conditions* et des pics de consommation mémoire lors des rechargements simultanés.

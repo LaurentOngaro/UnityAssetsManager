@@ -2,7 +2,7 @@
 # UnityAssetsManager - filters.py
 # ============================================================================
 # Description: Filtering engine and search logic (filter stacks, tags).
-# Version: 1.5.1
+# Version: 1.6.0
 # ============================================================================
 
 import pandas as pd
@@ -96,6 +96,25 @@ def _resolve_first_col(cols: list, candidates: list[str], alias_map: dict | None
 def _missing_mask(series: pd.Series) -> pd.Series:
     text = series.astype(str).str.strip()
     return series.isna() | text.eq('') | text.str.lower().isin({'nan', 'none', 'null'})
+
+
+def filter_child_assets(df: pd.DataFrame) -> pd.DataFrame:
+    """Remove rows where ParentId is not null/empty to eliminate duplicate child assets."""
+    if df is None or df.empty:
+        return df
+
+    parent_id_col = None
+    for col in df.columns:
+        if isinstance(col, str) and col.lower() == 'parentid':
+            parent_id_col = col
+            break
+
+    if parent_id_col is None:
+        return df
+
+    text = df[parent_id_col].astype(str).str.strip()
+    is_null_or_empty = df[parent_id_col].isna() | text.eq('') | text.str.lower().isin({'nan', 'none', 'null'})
+    return df[is_null_or_empty]
 
 
 def filter_invalid_assets(df: pd.DataFrame, alias_map: dict | None = None) -> pd.DataFrame:

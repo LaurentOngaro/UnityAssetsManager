@@ -1,6 +1,6 @@
 # API Guide - UnityAssetsManager
 
-**Version:** 1.5.1
+**Version:** 1.6.0
 
 ## Overview
 
@@ -112,7 +112,8 @@ Sample payload:
   "profile": "851_011_Player_Character",
   "filter_stack": [],
   "alias_map": {},
-  "filter_invalid_assets": true
+  "filter_invalid_assets": true,
+  "get_childs": false
 }
 ```
 
@@ -121,6 +122,8 @@ Returns:
 - Success: Binary file for download.
 - Error: Standard error contract.
 - `filter_invalid_assets` is optional for interactive export (`/api/export`) and only applied when `true`.
+- `get_childs` defaults to `false`: exports automatically exclude rows where `ParentId` is non-null/empty (child asset duplicates). Set to `true` to include them.
+- `get_childs` defaults to `false`: exports automatically exclude rows where `ParentId` is non-null/empty (child asset duplicates). Set to `true` to include them.
 
 ### Batch export headless
 
@@ -136,7 +139,8 @@ Sample payload:
   "profile": "851_011_Player_Character",
   "filter_stack": [],
   "alias_map": {},
-  "output_path": "H:/.../assetsExports/Unity/Player_Character.csv"
+  "output_path": "H:/.../assetsExports/Unity/Player_Character.csv",
+  "get_childs": false
 }
 ```
 
@@ -147,6 +151,8 @@ Notes:
 - If `file_name` has no extension, it's inferred from the template.
 - If `output_dir` is relative, it's resolved from the application folder.
 - `/api/batch-export` always removes invalid assets (missing both slug+url, or missing one of DisplayName/DisplayCategory/DisplayPublisher).
+- `/api/batch-export` always removes child assets (rows with non-null `ParentId`) by default. Set `get_childs: true` to include them.
+- `/api/batch-export` always removes child assets (rows with non-null `ParentId`) by default. Set `get_childs: true` to include them.
 
 Retour success:
 

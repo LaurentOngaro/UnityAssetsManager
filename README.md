@@ -1,6 +1,6 @@
 # 🚀 UnityAssetsManager (UAM)
 
-Version: 1.5.1
+Version: 1.6.0
 
 Local web application for fast and efficient management of asset inventories with multi-source support (CSV/SQLite), advanced filtering, custom profiles, and flexible exports.
 
@@ -34,9 +34,10 @@ The server starts by default on **http://localhost:5003**. This port can be chan
 7. **Quick Details** 📄: Click any row to open a popup with all asset details.
 8. **Advanced Filtering** 🧱: Use the Filter Builder to stack inclusion/exclusion rules on specific columns.
 9. **Invalid Asset Filter** 🚫: Toggle a global filter in "Options" to exclude assets with missing links or incomplete display fields.
-10. **Profiles** 💽: Save/load your preferred setting combinations (columns + filters + aliases).
-11. **Export** 💾: Interactive or Batch export (CSV, MD, JSON, TXT).
-12. **Dark Theme** 🌙: Modern and comfortable interface.
+10. **Child Asset Filter** 👶: Exports automatically exclude rows with a non-null `ParentId` to eliminate duplicates. Use `--get-childs` in batch export or `get_childs: true` in API payloads to include them.
+11. **Profiles** 💽: Save/load your preferred setting combinations (columns + filters + aliases).
+12. **Export** 💾: Interactive or Batch export (CSV, MD, JSON, TXT).
+13. **Dark Theme** 🌙: Modern and comfortable interface.
 
 ## 🔧 Configuration
 
@@ -108,6 +109,9 @@ Main options:
 - `--force`: re-export even if output files already exist
 - `--url`: target API base URL (default: `http://localhost:5003/api`)
 - `--no-reload`: skip initial server-side reload step
+- `--get-childs`: include child assets (rows with non-null ParentId); by default these duplicates are excluded
+- `--get-childs`: include child assets (rows with non-null ParentId); by default these duplicates are excluded
+- `--get-childs`: include child assets (rows with non-null ParentId); by default these duplicates are excluded
 
 Before linting, each exported Markdown file receives a top-level title (`# <filename without extension>`).
 
