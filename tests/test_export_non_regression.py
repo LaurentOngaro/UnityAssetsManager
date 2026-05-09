@@ -326,6 +326,24 @@ def test_batch_export_always_filters_invalid_assets(monkeypatch, tmp_path):
     assert exported_df.iloc[0]["DisplayName"] == "Valid Asset"
 
 
+def test_api_export_normalizes_slug_column_in_default_csv(monkeypatch):
+    """The default CSV export must also normalize slug columns to numeric ids."""
+    mod = import_unity_assets_manager_module()
+    import sys
+    dm_module = sys.modules.get("lib.data_manager")
+    assert dm_module is not None, "lib.data_manager not loaded"
+
+    df = pd.DataFrame([{"DisplayName": "Monster", "Slug": "66-creatures-super-mega-pack-302151", "Url": "https://example.com"}])
+    monkeypatch.setattr(dm_module.dm, "_df", df)
+
+    client = mod.app.test_client()
+    response = client.post("/api/export", json={"filter_stack": [], "alias_map": {}})
+
+    assert response.status_code == 200
+    exported_df = pd.read_csv(BytesIO(response.data))
+    assert str(exported_df.iloc[0]["Slug"]) == "302151"
+
+
 def test_export_template_resolves_uppercase_url_alias_case_insensitive(monkeypatch):
     """%URL% must resolve via alias map even when alias key casing differs."""
     mod = import_unity_assets_manager_module()
@@ -382,6 +400,16 @@ def test_export_template_resolves_url_from_slug_variant_numeric(monkeypatch):
     alias_map = {"Url": {"candidates": [{"source": "Slug", "transform": "asset_store_url"}]}}
     content = mod.config.apply_export_template(df, "T", alias_map=alias_map)
     assert "https://assetstore.unity.com/packages/slug/302531" in content
+
+
+def test_export_template_normalizes_slug_column_from_name_dash_id(monkeypatch):
+    """%Slug% must keep only the numeric suffix when the source slug already contains the name prefix."""
+    mod = import_unity_assets_manager_module()
+    df = pd.DataFrame([{"DisplayName": "Test", "Slug": "66-creatures-super-mega-pack-302151"}])
+    monkeypatch.setattr(mod.config, "export_templates", {"T": {"pattern": "%Slug%"}})
+    content = mod.config.apply_export_template(df, "T")
+    assert "302151" in content
+    assert "66-creatures-super-mega-pack-302151" not in content
 
 
 def test_export_template_resolves_slug_from_url_variant_complex(monkeypatch):

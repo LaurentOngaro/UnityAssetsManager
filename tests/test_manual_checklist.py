@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_manual_checklist.py
 # ============================================================================
 # Description: Integration test coverage for the manual checklist flow.
-# Version: 1.6.2
+# Version: 1.6.3
 # ============================================================================
 
 from __future__ import annotations

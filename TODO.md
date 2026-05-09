@@ -50,6 +50,8 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ## Terminés
 
+- [x] BUG7: normaliser le slug exporté en forme numérique pure, quel que soit le template ou l'export CSV brut.
+
 - [x] AFF14: ajouter un lien vers la page de setup dans la navbar ou a droite du titrepour faciliter l'accès à la configuration de la source de données.
 - [x] BUG6: Redirection bloquée dans la page Setup (`templates/setup.html`). Le callback AJAX vérifie `response.success` au lieu de `response.status === 'success'`, ce qui bloque la redirection après une configuration réussie.
 - [x] PERF1: Optimisation du moteur de recherche global (`lib/routes.py` et `lib/filters.py`). La recherche via `pd.DataFrame.apply(axis=1)` est inefficace sur de gros volumes. La remplacer par une approche vectorisée (ex: `np.column_stack`).

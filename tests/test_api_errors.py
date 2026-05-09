@@ -2,7 +2,7 @@
 # UnityAssetsManager - tests/test_api_errors.py
 # ============================================================================
 # Description: Unit tests for API error handling.
-# Version: 1.6.2
+# Version: 1.6.3
 # ============================================================================
 
 from .test_unity_assets_manager_helpers import import_unity_assets_manager_module

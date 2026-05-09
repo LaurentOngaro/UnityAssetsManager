@@ -14,7 +14,7 @@ from flask import render_template, request, jsonify, send_file, redirect, url_fo
 from io import BytesIO
 
 from .config import config, PROFILES_DIR, EXPORTS_DIR, APP_DIR
-from .utils import read_json, write_json_normalized, _parse_bool, _parse_int
+from .utils import extract_numeric_slug_suffix, read_json, write_json_normalized, _parse_bool, _parse_int
 from .data_manager import dm
 from .filters import apply_filter_stack, _build_alias_map_from_profile, filter_invalid_assets, filter_child_assets
 from .errors import AppError, ErrorCode
@@ -131,6 +131,17 @@ def list_profiles():
         return all_profiles
     except Exception:
         return []
+
+
+def _normalize_export_slug_columns(df: pd.DataFrame) -> pd.DataFrame:
+    if df is None or df.empty:
+        return df
+
+    normalized_df = df.copy()
+    for column in normalized_df.columns:
+        if isinstance(column, str) and "slug" in column.lower():
+            normalized_df.loc[:, column] = normalized_df[column].apply(extract_numeric_slug_suffix)
+    return normalized_df
 
 
 # --- Routes ---
@@ -328,14 +339,14 @@ def api_export():
 
     try:
         if template_name:
-            export_content = config.apply_export_template(filtered_df, template_name, export_alias_map)
+            export_content = config.apply_export_template(_normalize_export_slug_columns(filtered_df), template_name, export_alias_map)
             ext, mimetype = config.detect_export_format(template_name)
             filename = f"export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{ext}"
             return send_file(BytesIO(export_content.encode('utf-8')), mimetype=mimetype, as_attachment=True, download_name=filename)
         else:
             # Export CSV par défaut
             output = BytesIO()
-            filtered_df.to_csv(output, index=False, encoding='utf-8')
+            _normalize_export_slug_columns(filtered_df).to_csv(output, index=False, encoding='utf-8')
             output.seek(0)
             return send_file(output, mimetype='text/csv', as_attachment=True, download_name=f"export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
     except Exception as e:
@@ -567,7 +578,7 @@ def api_batch_export():
     logger.debug(f"Batch export invalid-asset filter rows: {len(filtered_df)}")
 
     try:
-        export_content = config.apply_export_template(filtered_df, template_name, export_alias_map)
+        export_content = config.apply_export_template(_normalize_export_slug_columns(filtered_df), template_name, export_alias_map)
         ext, _ = config.detect_export_format(template_name)
 
         if output_path:

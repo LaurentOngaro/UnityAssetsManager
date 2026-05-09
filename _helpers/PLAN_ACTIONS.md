@@ -23,6 +23,11 @@ Chaque fois qu'une modification est teminée:
 
 ## Sprints de travail
 
+### DONE - [BUG7] Normalisation du slug exporté
+
+- Les exports template et CSV brut transforment désormais les slugs Unity Asset Store en identifiants numériques purs.
+- La non-régression couvre le cas des slugs déjà préfixés par le nom de l'asset ainsi que le cas direct `%Slug%`.
+
 Règle de pilotage:
 
 - Les corrections ponctuelles et les petits ajustements restent traités en mode patch.

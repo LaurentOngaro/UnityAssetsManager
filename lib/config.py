@@ -2,7 +2,7 @@
 # UnityAssetsManager - config.py
 # ============================================================================
 # Description: Runtime configuration and export template management.
-# Version: 1.6.2
+# Version: 1.6.3
 # ============================================================================
 
 import logging
@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 import pandas as pd
 import re
 import json
-from .utils import read_json, write_json_normalized, _parse_bool, _parse_int
+from .utils import extract_numeric_slug_suffix, read_json, write_json_normalized, _parse_bool, _parse_int
 from .app_settings import (
     DEFAULT_DB_TABLE, DEFAULT_EXPORT_TEMPLATES, DEFAULT_FLASK_DEBUG, DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, DEFAULT_FLASK_THREADED,
     DEFAULT_MAX_CONTENT_LENGTH_MB, DEFAULT_SECRET_KEY, DEFAULT_SHOW_PARSER_WARNINGS, DEFAULT_CACHE_TTL_SECONDS, DEFAULT_PAGE_SIZE, DEFAULT_LOG_LEVEL,
@@ -310,6 +310,8 @@ class AppConfig:
                 raw_value = row.get(actual_col, "")
                 value = str(raw_value) if pd.notna(raw_value) else ""
                 value = _apply_alias_transform(value, alias_transform, row)
+                if ph.lower() == "slug":
+                    value = extract_numeric_slug_suffix(value)
                 if is_markdown_table and '|' in value:
                     value = value.replace('|', '-')
                 line = line.replace(placeholder, value)

@@ -2,13 +2,14 @@
 # UnityAssetsManager - utils.py
 # ============================================================================
 # Description: Generic utility functions (JSONC, parsing).
-# Version: 1.6.2
+# Version: 1.6.3
 # ============================================================================
 
 import json
 import re
 import unicodedata
 from pathlib import Path
+from urllib.parse import urlparse
 from typing import Any
 
 _DISPLAY_SEPARATOR_RE = re.compile(r"[\u30fb\u00b7\u2022\u2219\u2043\u30a0\u30fc\u2010-\u2015\u3000]+")
@@ -148,6 +149,33 @@ def normalize_asset_identifier_text(value: Any) -> Any:
     text = text.encode("ascii", "ignore").decode("ascii")
     text = _IDENTIFIER_RE.sub("-", text)
     text = re.sub(r"-+", "-", text).strip("-").lower()
+    return text
+
+
+def extract_numeric_slug_suffix(value: Any) -> Any:
+    """Extract the numeric asset-store id from a slug-like value or URL."""
+    if not isinstance(value, str):
+        return value
+
+    text = value.strip()
+    if not text:
+        return text
+
+    candidate = text
+    if text.startswith(("http://", "https://")):
+        parsed = urlparse(text)
+        path = parsed.path.rstrip("/")
+        if path:
+            candidate = path.split("/")[-1]
+
+    match = re.search(r"(\d+)$", candidate)
+    if match:
+        return match.group(1)
+
+    match = re.search(r"(\d+)$", text)
+    if match:
+        return match.group(1)
+
     return text
 
 

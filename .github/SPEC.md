@@ -1,6 +1,6 @@
 # UnityAssetsManager - Specifications & Development Notes
 
-Version: 1.6.2
+Version: 1.6.3
 Last reviewed: 2026-04-16
 
 ## Context
