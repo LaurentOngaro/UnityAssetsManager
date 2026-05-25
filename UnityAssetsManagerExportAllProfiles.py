@@ -1,25 +1,29 @@
-# ----------------------------------------------------------------------------
-# Script: UnityAssetsManagerExportAllProfiles.py
-# Description: Automates the batch export of all asset profiles using the
-#              UnityAssetsManager Flask API (/api/batch-export).
-#              Writes raw exports to assetsExports/Unity for later normalization.
-#
-# Version: 1.6.3
-#
-# Requirements:
-#   - UnityAssetsManager server must be running (default: http://localhost:5003)
-#   - python -m pip install requests
-#
-# Parameters:
-#   -r, --resume                : Resume from the last successful profile
-#   -s, --start_index           : Start index in the profile list (1-based)
-#   -e, --end_index             : End index in the profile list (1-based)
-#   -t, --template              : Export template to use (default: table markdown avec URL)
-#   -f, --force                 : Force export even if the raw file already exists
-#   -l, --lint_markdown_results : Run markdown linters on exported folders (default: enabled)
-#   -u, --url                   : Base URL of the API (default: http://localhost:5003/api)
-#   --get-childs                : Include child assets (rows with non-null ParentId)
-# ----------------------------------------------------------------------------
+"""
+Script: UnityAssetsManagerExportAllProfiles.py
+Description: Automates the batch export of all asset profiles using the
+  UnityAssetsManager Flask API (/api/batch-export).
+  Writes raw exports to assetsExports/Unity for later normalization.
+
+Version: 1.6.3
+
+Requirements:
+  - UnityAssetsManager server must be running (default: http://localhost:5003)
+  - python -m pip install requests
+
+Parameters:
+  -r, --resume                : Resume from the last successful profile
+  -s, --start_index           : Start index in the profile list (1-based)
+  -e, --end_index             : End index in the profile list (1-based)
+  -t, --template              : Export template to use (default: table markdown avec URL)
+  -f, --force                 : Force export even if the raw file already exists
+  -l, --lint_markdown_results : Run markdown linters on exported folders (default: enabled)
+  -u, --url                   : Base URL of the API (default: http://localhost:5003/api)
+  --get-childs                : Include child assets (rows with non-null ParentId)
+
+Usage:
+  python _Helpers/04_Assets/UnityAssetsManager/UnityAssetsManagerExportAllProfiles.py
+
+"""
 
 import argparse
 import sys

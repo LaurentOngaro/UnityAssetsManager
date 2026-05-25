@@ -1,12 +1,22 @@
-"""Version bump helper using repo-local JSON configuration.
+"""
+Script: bumpImportantVersion.py
+Description: Version bump helper using repo-local JSON configuration.
+  Behavior:
+  - Uses VERSION.txt as source of truth.
+  - Bumps only when at least one important app file changed (unless --force).
+  - Scans repo files for version tags and synchronizes the bumped version only where a tag is found.
 
-Behavior:
-- Uses VERSION.txt as source of truth.
-- Bumps only when at least one important app file changed (unless --force).
-- Scans repo files for version tags and synchronizes the bumped version only where a tag is found.
+  Repo-specific configuration is loaded from:
+      `_helpers/bumpImportantVersion.config.json`
+Parameters:
+  --scope <patch|minor|major>, -s    Semver bump scope (default: patch)
+  --base-ref <git-ref>, -b           Git ref used to detect changes (default: HEAD)
+  --force, -f                        Force bump even if no important file changed
+  --dry-run, -d                      Show planned changes without writing files
 
-Repo-specific configuration is loaded from:
-    `_helpers/bumpImportantVersion.config.json`
+Usage:
+  python _Helpers/04_Assets/UnityAssetsManager/_helpers/bumpImportantVersion.py
+
 """
 
 from __future__ import annotations
@@ -66,10 +76,10 @@ def important_file_specs() -> list[str]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Bump version for UnityAssetsManager important files only")
-    parser.add_argument("--scope", choices=["patch", "minor", "major"], default="patch", help="Semver bump scope")
-    parser.add_argument("--base-ref", default="HEAD", help="Git ref used to detect changes")
-    parser.add_argument("--force", action="store_true", help="Force bump even if no important file changed")
-    parser.add_argument("--dry-run", action="store_true", help="Show planned changes without writing files")
+    parser.add_argument("--scope", "-s", choices=["patch", "minor", "major"], default="patch", help="Semver bump scope")
+    parser.add_argument("--base-ref", "-b", default="HEAD", help="Git ref used to detect changes")
+    parser.add_argument("--force", "-f", action="store_true", help="Force bump even if no important file changed")
+    parser.add_argument("--dry-run", "-d", action="store_true", help="Show planned changes without writing files")
     return parser.parse_args()
 
 
