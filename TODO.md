@@ -24,7 +24,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 
 ### Features (last: FEAT4)
 
-- [ ] FEAT2:  faire du scrapping direct depuis le unity store
+- [ ] FEAT2: faire du scrapping direct depuis le unity store
 
 ### Renforcement du contrat API (last: API5)
 
@@ -55,7 +55,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 - [x] AFF14: ajouter un lien vers la page de setup dans la navbar ou a droite du titrepour faciliter l'accès à la configuration de la source de données.
 - [x] BUG6: Redirection bloquée dans la page Setup (`templates/setup.html`). Le callback AJAX vérifie `response.success` au lieu de `response.status === 'success'`, ce qui bloque la redirection après une configuration réussie.
 - [x] PERF1: Optimisation du moteur de recherche global (`lib/routes.py` et `lib/filters.py`). La recherche via `pd.DataFrame.apply(axis=1)` est inefficace sur de gros volumes. La remplacer par une approche vectorisée (ex: `np.column_stack`).
-- [x] PERF3: Thread-Safety du DataManager (`lib/data_manager.py`). Flask tournant en mode multi-threadé (`threaded=True`), l'absence de `threading.Lock()` lors du chargement des données peut créer des *race conditions* et des pics de consommation mémoire lors des rechargements simultanés.
+- [x] PERF3: Thread-Safety du DataManager (`lib/data_manager.py`). Flask tournant en mode multi-threadé (`threaded=True`), l'absence de `threading.Lock()` lors du chargement des données peut créer des _race conditions_ et des pics de consommation mémoire lors des rechargements simultanés.
 - [x] SEC1: Sécurisation de l'endpoint `/api/test-path`. Restreindre la vérification d'existence de fichier pour éviter l'exploration arbitraire du système (Path Traversal), ou documenter explicitement le risque assumé pour cet outil local.
 - [x] REF5: Uniformiser le contrat d'erreur sur toutes les routes (GET /api/columns retourne AppError au lieu de jsonify([]))
 - [x] API5: Gestion explicite des erreurs sur POST /api/reload et validation du data_path sur POST /api/setup
@@ -78,7 +78,7 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 - [x] AFF8: rendre les zone "Controles" et "Données" collapsable
 - [x] AFF9: ajoute un panel collapsable (similaire à "Contrôles"), nommé "Message"
 - [x] AFF6: mettre la zone de recherche dans un panel collapsable (similaire à "Générateur de filtres", inside "Contrôles"), nommé "Recherche", placer l'option RegExe et la recherche sur la meme ligne
-- [x] AFF7: mettre les  Colonnes à afficher dans un panel collapsable  (similaire à "Générateur de filtres", inside "Contrôles"), nommé "Colonnes à afficher"
+- [x] AFF7: mettre les Colonnes à afficher dans un panel collapsable (similaire à "Générateur de filtres", inside "Contrôles"), nommé "Colonnes à afficher"
 - [x] AFF5: ajoute un panel collapsable (similaire à "Générateur de filtres"), nommé "Options" qui recevra les options du l'app (même niveau que "Contrôles")
 - [x] AFF10: layout de présentation final
 - [x] BUG5: supprimer les caractères "spéciaux" dans le nom des assets tel que ("・")
@@ -91,9 +91,9 @@ classement des demandes par priorité de la plus urgente à la moins urgente:
 - [x] BUG3: un clic sur le tri de colonne ne change pas la liste
 - [x] BUG2: valeur undefined dans le texte en bas de page: "UnityAssetsManager Flask • undefined / 5059 lignes affichées
 - Décision actée (Pivot stratégique): UAM reste spécialisé Unity donc pas d'intégration des autres boutiques (un script dédié gérera l'uniformisation des données):
-  - [-] INT1: ignoré, NE PAS intégrer le moteur `buildStoreRawNormalized`. (Uniformisation gérée par les scripts du pipeline de curation).
+  - [-] INT1: ignoré, NE PAS intégrer le moteur `preStep2_buildStoreRawNormalized`. (Uniformisation gérée par les scripts du pipeline de curation).
   - [-] INT3: ignoré, NE PAS intégrer de provider Fab. (Géré par FAM - FabAssetsManager).
-  - [-] INT4: ignoré, NE PAS intégrer de provider boutiques manuelles. (Géré par `buildStoreRawNormalized.py`).
+  - [-] INT4: ignoré, NE PAS intégrer de provider boutiques manuelles. (Géré par `preStep2_buildStoreRawNormalized.py`).
 - [x] INT2: Finaliser l'export batch pour générer les fichiers de catégories bruts (profils) dans `assetsExports/Unity/`.
 - [x] MIG3: Archiver V1 (`AssetsManager/assetManager.py`) après validation de la chaîne complète V2.
 - [x] MIG2: Finaliser la dépréciation des flux legacy `assetsCuration/85X_A00_*.json` après migration complète.
