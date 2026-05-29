@@ -6,12 +6,12 @@ La priorisation des tâches est définie dans `TODO.md` et doit être respectée
 
 ## Contexte et Lignes Directrices (Héritées du plan de migration)
 
+**RÈGLE D'OR : Toujours proposer d'effectuer les corrections de bugs et les corrections immédiates en premier. Elles sont listées dans les section "Corrections immédiates" et "Bugs" du fichier `TODO.md`.**
+
 - **Séparation des rôles** : Garder une séparation claire entre l'outil applicatif (`UnityAssetsManager`) et le pipeline de curation (`_Helpers/04_Assets/AssetsCuration/`).
 - **Nomenclature** : Le nom officiel est `UnityAssetsManager`. Toute ancienne référence (AssetManager, AssetManager V1, AssetsManager V2) est dépréciée.
 
-**REGLE D'OR : Toujours proposer d'effectuer les corrections de bugs et les corrections immédiates en premier. Elles sont listées dans les section "Corrections immédiates" et "Bugs" du fichier `TODO.md`.**
-
-Chaque fois qu'une modification est teminée:
+Chaque fois qu'une modification est terminée:
 
 - dans ce document:
   - ajouter "DONE " en début du titre de la section correspondante (ex: `### 1. [FIL1] Sections de filtres collapsables` devient `### 1. DONE [FIL1] Sections de filtres collapsables`)
