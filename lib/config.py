@@ -295,7 +295,7 @@ class AppConfig:
         elif ',' in pattern and '[' not in pattern and '(' not in pattern:
             header = ','.join(used_columns)
             header_lines = [header]
-        elif pattern.strip().startswith('-') or pattern.strip().startswith('*'):
+        elif pattern.strip().startswith("-") or pattern.strip().startswith('*'):
             header = f"<!-- Colonnes: {', '.join(used_columns)} -->"
             header_lines = [header]
         else:
@@ -313,7 +313,7 @@ class AppConfig:
                 if ph.lower() == "slug":
                     value = extract_numeric_slug_suffix(value)
                 if is_markdown_table and '|' in value:
-                    value = value.replace('|', '-')
+                    value = value.replace('|', "-")
                 line = line.replace(placeholder, value)
                 logger.debug(f"Row {row_idx}: placeholder %{ph}% -> column '{actual_col}' -> value '{value}'")
             line = re.sub(r'%[^%]*%', '', line)
@@ -336,7 +336,7 @@ class AppConfig:
                 ext, mimetype = 'csv', 'text/csv'
             elif '|' in pattern and '{' not in pattern:
                 ext, mimetype = 'md', 'text/markdown'
-            elif pattern.strip().startswith(('-', '*')):
+            elif pattern.strip().startswith(("-", '*')):
                 ext, mimetype = 'md', 'text/markdown'
             elif ',' in pattern and '[' not in pattern and '(' not in pattern:
                 ext, mimetype = 'csv', 'text/csv'

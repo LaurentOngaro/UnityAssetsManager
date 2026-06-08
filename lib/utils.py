@@ -15,7 +15,7 @@ from typing import Any
 _DISPLAY_SEPARATOR_RE = re.compile(r"[\u30fb\u00b7\u2022\u2219\u2043\u30a0\u30fc\u2010-\u2015\u3000]+")
 _SPACE_RE = re.compile(r"\s+")
 _IDENTIFIER_RE = re.compile(r"[^A-Za-z0-9]+")
-_SAFE_LABEL_PUNCTUATION = {"-", "_", "'", "’", ".", ",", ":", ";", "/", "&", "+"}
+_SAFE_LABEL_PUNCTUATION = {'-', '_', '—', ''', ''', '.', ',', ':', ';', '/', '&', '+'}
 
 
 def _normalize_unicode_label_char(ch: str) -> str:
