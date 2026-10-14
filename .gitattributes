@@ -1,0 +1,26 @@
+# .gitattributes — TerraBloom/_Helpers/04_Assets/UnityAssetsManager (Python)
+
+*               text=auto eol=lf
+
+*.py            text eol=lf
+*.md            text eol=lf
+*.txt           text eol=lf
+*.json          text eol=lf
+*.yaml          text eol=lf
+*.yml           text eol=lf
+*.toml          text eol=lf
+*.cfg           text eol=lf
+*.ini           text eol=lf
+
+# Assets Unity : binaires
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.fbx           binary
+*.obj           binary
+*.blend         binary
+*.unitypackage  binary
+*.asset         binary
+*.prefab        binary
+*.mat           binary
+*.anim          binary
